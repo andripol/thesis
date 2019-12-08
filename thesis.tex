@@ -1,0 +1,237 @@
+\documentclass[9pt,a4paper]{article}
+\usepackage[utf8]{inputenc}
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{amssymb}
+
+\usepackage{graphicx}
+\usepackage[colorlinks=true,citecolor=magenta,linkcolor=blue]{hyperref}
+
+\begin{document}
+
+\begin{center}
+\begin{Large}
+\textbf{NIPoPoWs under Velvet Fork\\}
+\end{Large}
+
+\end{center}
+
+\section{Introduction}
+Since the release of Bitcoin about a decade ago, the interest in cryptocurrencies has increased tremendously, while a number of other ``altcoins'' have been constructed in the meantime. Given that cryptocurrencies are starting to be considered a generally accepted means of payment and are used for everyday transactions, the issue of efficiently handling cryptocurrencies by light clients, such as smartphones, has become of great importance.
+
+In this work, we consider the problem of optimizing light clients, or ``SPV clients'' as described in the original Bitcoin paper\cite{Nakamoto}. As blockchains are ever growing, the main setback for efficient light client applications is the processing of data amount linear to the size of the blockchain, e.g. for syncrhronization purposes. 
+
+Our work is based on the construction of Non-Interactive Proofs of Proof of Work\cite{NIPoPoWs} that achieves SPV proofs of polylogarithmic portion of the blockchain size. The NIPoPoWs construction suggests a protocol update, that could be possibly implemented by a soft or a hard fork. Given the reluctancy of the community to proceed to such forks, we consider the case of a velvet fork\cite{NIPoPoWs}\cite{Zamyatin}.
+
+Under this scope, our contributions come as follows:
+\begin{itemize}
+	\item We describe an attack, that we name \textit{Chainsewing Attack}, against NIPoPoWs suffix proof construction, which is used for the light client's synchronization
+	\item We suggest a patch to the NIPoPoWs protocol that eliminates the \textit{Chainsewing Attack} and prove its security
+\end{itemize}
+
+\section{Suffix Proofs}
+NIPoPoWs suffix proofs are used to prove predicates that pertain to the suffix of the blockchain. For example, this is the case of light client synchronization to the longest valid chain.
+ [...]
+ 
+%\section{Model Definition and Notation}
+
+\section{Security of NIPoPoWs Suffix Proofs}
+
+In this section we provide the full security proof for the NIPoPoWs suffix proof protocol\cite{NIPoPoWs}. Apart from the proof itself (Theorem 2), we describe the definitions and lemmas being used. We try to give intuition for arguments and conclusions in each step.
+
+Assume $t$ adversarial out of $n$ total parties, each with $q$ PoW random oracle queries per round. We define $p = \frac{T}{2^\kappa}$ the probability of a successful Random Oracle query. We will call a query to the RO $\mu$\textit{-successful} if the RO returns a value $h$ such that $h \leq 2^{-\mu}T$.
+
+We define the boolean random variables $X_r^{\mu}$, $Y_r^{\mu}$, $Z_r^{\mu}$. Fix some round $r$, query index $j$ and adversarial party index $k$ (out of $t$). If at round $r$ an honest party obtains a PoW with $id < 2^{-\mu}T$, set $X_r^{\mu} = 1$, otherwise $X_r^{\mu} = 0$. If at round $r$ exactly one honest party obtains $id < 2^{-\mu}T$, set $Y_r^{\mu} = 1$, otherwise $Y_r^{\mu} = 0$. If at round $r$ the $j$-th query of the $k$-th corrupted party is $\mu$-successful, set $Z_{rjk}^{\mu} = 1$, otherwise $Z_{rjk}^{\mu} = 0$. Let $Z_r^{\mu} = \sum_{k=1}^t\sum_{j=1}^qZ_{rjk}^{\mu}$. For a set of rounds $S$, let $X^\mu(S) = \sum_{r \in S}X^{\mu}_r$ and similarly define $Y_S^{\mu}$, $Z_S^{\mu}$.\\
+
+\textbf{Definition 1 (Typical Execution).} \textit{An execution of the protocol is $(\epsilon, \eta)$-typical if:}
+
+\textbf{Block counts don't deviate.} \textit{For all $\mu \geq 0$ and any set $S$ of consecutive rounds with $\vert S \vert \geq 2^\mu \eta k$, we have:}
+\begin{itemize}
+\item[-] $(1-\epsilon)E[X^\mu(S)] < X^\mu(S) < (1+\epsilon)E[X^\mu(S)] $ and $(1-\epsilon)E[Y^\mu(S)] < Y^\mu(S)$
+\item[-] $Z^\mu(S) < (1+\epsilon)E[Z^\mu(S)]$
+\end{itemize}
+
+\textbf{Round count doesn't deviate.} \textit{Let $S$ be a set of consecutive rounds such that $Z^\mu(S) \geq k$ for some security parameter $k$. Then $\vert S \vert \geq (1-\epsilon)2^\mu \frac{k}{pqt}$ with overwhelming probability.}
+
+\textbf{Chain regularity.} \textit{No insertions, no copies and no predictions \cite{Backbone} have occurred.}\\
+
+\textbf{Theorem 1 (Typicality).} \textit{Executions are $(\epsilon, \eta)$-typical  with overwhelming probability in $\kappa$.}\\
+
+\textit{Proof.} \textbf{Block counts and regularity.} We refer to \cite{Backbone} for the full proof.
+
+\textbf{Round count.} First, observe that for a specific round $r$ we have $Z_{rjk} \sim Bern(p)$, so for the $\mu$-level superblocks $Z_{rjk}^\mu \sim Bern(2^{-\mu}p)$ and these are jointly independent. Therefore, since for $\vert S \vert$ rounds we have $tq\vert S \vert$ adversarial RO queries, we have that $Z_S^\mu \sim \text{Bin}(tq \vert S \vert, 2^{-\mu}p)$. So $tq \vert S \vert \sim \text{NB}(Z_S^\mu, 2^{-\mu}p)$. Negative Binomial distribution is defined as $\text{NB}(r, p')$ and, for our purposes, expresses the number of trials in a sequence of independent and identically distributed Bernoulli trials before a specified $(r)$ number of successes occurs. The expected total number of trials of a negative binomial distribution with parameters $(r, p')$ is $r/p'$. To see this, imagine an experiment simulating the negative binomial performed many times, that is a set of trials is performed until $r$ successes occur. Consider you perform $n$ experiments of total $N$ trials. Now we would expect $Np' = nr$, so $N/n = r/p'$. See that $N/n$ is just the average number of trials per experiment. So we have $E[tq \vert S \vert] = \frac{Z^\mu_S}{2^{-\mu}p} \Rightarrow E[\vert S \vert] = 2^\mu \frac{Z^\mu_S}{tqp}$. So if $Z^\mu(S) \geq k$ then $E[\vert S \vert] \geq 2^\mu \frac{k}{tqp}$. Applying a tail bound to the negative binomial distribution, we obtain that $\text{Pr}[\vert S \vert < (1 - \epsilon)E(\vert S \vert)] \in \Omega(\epsilon^{2}m)$.  \\
+
+\textbf{Lemma 1.} \textit{Suppose S is a set of consecutive rounds $r_1 ... r_2$ and $C_B$ is a chain adopted by an honest party at round $r_2$ of a typical execution. Let $C^{B}_{S} = \{$ b $\in C_B:$ b was generated during $S\}$. Let $\mu_A, \mu_B \in \mathbb{N}$. Suppose $C^{B}_{S}\uparrow^{\mu_B}$ is good. Suppose $C'_A$ is a $\mu_A$-superchain containing only adversarially generated blocks generated during S and suppose that $\vert C'_A \vert \geq k$. Then $2^{\mu_A} \vert C'_A \vert <  2^\mu_B \vert    C^{B}_{S}\uparrow^{\mu_B}\vert $. }\\
+
+\textit{Proof.} From $\vert C'_A \vert \geq k$ we have that $\vert Z^{\mu_A}_S \vert \geq k$. Applying Theorem 1, we conclude that $\vert S \vert \geq (1-\epsilon')2^{\mu_A} \frac{\vert C'_A \vert}{pqt}$. Applying the Chain Growth theorem \cite{Backbone} we obtain $\vert C_{B}^S \vert \geq (1 - \epsilon)f \vert S \vert$. But from the goodness of $C_{B}^S \uparrow^{\mu_B}$, we know that $\vert C_{B}^S\uparrow^{\mu_B} \vert \geq (1 - \delta)2^{-\mu_B} \vert C_{B}^S \vert $. So we have $\vert C_{B}^S\uparrow^{\mu_B} \vert \geq (1 - \delta)2^{-\mu_B} (1 - \epsilon)f \vert S \vert $ and follows that $\vert C_{B}^S\uparrow^{\mu_B} \vert \geq (1 - \delta)2^{-\mu_B} (1 - \epsilon)f (1-\epsilon')2^{\mu_A} \frac{\vert C'_A \vert}{pqt} $. Consequently we have that $2^{\mu_A} \vert C'_A \vert \leq \frac{pqt}{(1- \delta)(1-\epsilon)(1-\epsilon')f} 2^{\mu_B} \vert C_{B}^S\uparrow^{\mu_B} \vert $.   \\
+
+So, according to the above equation we have that $2^{\mu_A} \vert C'_A \vert <  2^\mu_B \vert    C^{B}_{S}\uparrow^{\mu_B}\vert $ considering that honest  majority assumption holds, specifically considering that $ \frac{pqt}{f} \approx \frac{t}{n-t} \leq 1 $ .\\
+
+\textbf{Definition 2 (Adequate level of honest proof).} \textit{Let $\pi$ be an honestly generated proof constructed upon some adopted chain $C$ and let $b \in \pi $. Then $\mu'$ is defined as $\mu' = \max \{ \mu: \vert \pi\{b:\}\uparrow^{\mu} \vert \geq \max( m+1, (1-\delta)2^{-\mu} \vert \pi\{b:\}\uparrow^{\mu}\downarrow \vert )   \}$}.
+\textit{We call $\mu'$ the adequate level of proof $\pi$ with respect to block b with security parameters $\delta$ and m. Note that the adequate level of a proof is a function of both the proof $\pi$ and the chosen block b.}\\
+
+\textit{Intuitively, adequate is the level $\mu'$ of a proof $\pi$ for a block b if there are at least $m$ blocks after b in $\pi$ under the condition that there is good chain quality for this level, meaning that there are at least so many blocks at this level as expected considering the number of 0-level blocks.\\ 
+NOTE: adequate level is mostly useful for Claim 1a of the Security Proof (Theorem 2).}\\
+
+\textbf{Lemma 2.} \textit{Let $\pi$ be some honest proof generated with security parameters $\delta$, m. Let C be the underlying chain, $b \in C$ be any block and $\mu'$ be the adequate level of the proof with respect to b and the same security parameters.\\Then $C\{b:\}\uparrow\mu' = \pi\{b:\}\uparrow\mu'$.}\\
+
+\textit{Proof.} $ \pi\{b:\}\uparrow\mu' \subseteq C\{b:\}\uparrow\mu'$ is trivial. For the converse, we have that in the iteration of the \emph{Prove for loop}\cite{NIPoPoWs} with $\mu = \mu^*$, the block stored in variable $B$ preceds $b$ in $C$.
+
+Note that the Prover's for loop iterates over all levels in the interlink structure, and places in the proof all of the blocks that are of the corresponding level and succeed $B$ in $C$. 
+
+Suppose $\mu = \mu^*$ is the first \emph{for} iteration during which the property is violated. This cannot be the first iteration since $B = C[0]$ and Genesis precedes all blocks. By induction hypothesis we see that during the iteration $\mu = mu^* + 1$, $B$ preceded $b$. From the definition of $\mu'$ we know that $\mu'$ is the highest level for which $\vert \pi\{b:\}\uparrow^{\mu} \vert \geq \max( m, (1-\delta)2^{-\mu} \vert \pi\{b:\}\uparrow^{\mu}\downarrow \vert ) $. 
+
+Hence, this property cannot hold for $\mu^* > \mu$ and therefore $\vert \pi\{b:\}\uparrow^{\mu} \vert < m$ or $\neg$local-good$_\delta(\pi\{b: \}\uparrow \mu^*[1:], C, \mu^*)$.
+
+In case local-good is violated, variable $B$ remains unmodified and the induction step holds. If local-good is not violated, then $ \vert \pi\{b:\} \uparrow^{\mu^*}[1:] \vert < m$ and so $\pi\uparrow^{\mu^*}[-m]$, which is the updated value of $B$ at the end of $\mu^*$ iteration, precedes $b$.
+
+\textbf{Lemma 3.} \textit{Suppose the verifier evaluates $\pi_A \geq \pi_B$ in a protocol interaction where B is honest and assume during the comparison that the compared level of the honest party is $\mu_B$. Let $b = LCA(\pi_A, \pi_B)$ and let ${\mu}'_B$ be the adequate level of $\pi_B$ with respect to b. Then ${\mu}'_B \geq \mu_B$.}\\
+
+\textit{Proof.} Because $\mu_B$ is the compared level of the honest party, from the definition of the $\geq_m$ operator, we have $2^{\mu_B} \vert \pi\{b:\}\uparrow^{\mu_B} \vert > 2^{{\mu}'_B} \vert \pi\{b:\}\uparrow^{{\mu}'_B} \vert $. This is true, otherwise the Verifier would have chosen level $\mu'_B$ as level of comparison. The proof is by contradiction. Suppose $\mu'_B < \mu_B$. 
+By definition, $\mu'_B$ is the maximum level such that $\vert \pi_B\{b:\}\uparrow^\mu [1:] \vert \geq max(m, (1-\delta)2^{-\mu}\vert \pi_B\{b:\}\uparrow^\mu [1:]\downarrow \vert)$, 
+therefore $\mu_B$ does not satisfy this condition. 
+But we know that $\vert \pi_B\{b:\}\uparrow^\mu [1:] \vert > m$ because $\mu_B$ was selected by the Verifier. 
+Therefore $ 2^{\mu_B} \vert \pi\{b:\}\uparrow^{\mu_B} \vert < (1-\delta)\vert C\{b:\}\vert $. \\
+But also $\mu'_B$ satisfies goodness, so $ 2^{\mu'_B} \vert \pi\{b:\}\uparrow^{\mu'_B} \vert > (1-\delta)\vert C\{b:\}\vert $.\\ From the last two equations we obtain $ 2^{\mu_B} \vert \pi\{b:\}\uparrow^{\mu_B} \vert < 2^{\mu'_B} \vert \pi\{b:\}\uparrow^{\mu'_B} \vert$ which contradicts the initial equation.\\
+
+@To Be Discussed: would the verifier ever choose a non-adequate level for proof comparison? \\
+Intuitively the above Lemma says: the comparison level chosen by the Verifier can be no other than the adequate level in respect to block b ($LCA(\pi_A, \pi_B)$), since any other choice would be a level of non-good quality, because of the definition of the adequate level. A level of non-good quality would contain less PoW than that of the adequate level for the range of interest $C\{b:\}$. \\
+
+
+\textbf{Theorem 2. (Security)}\textit{Assuming honest majority, the non-interactive proofs-of-proof-of-work construction for computable $\kappa$-stable monotonic suffix-sensitive predicates is secure with overwhelmng probability in $\kappa$.}\\
+
+By contradiction. Let $m = k_1 + k_2 + k_3$ and let $k_1, k_2, k_3$ be polynomial functions of $\kappa$. Let $Q$ be a $k-$stable monotonic suffix-sensitive chain predicate. Assume NIPoPoWs on $Q$ is insecure. Then, during an execution of at some round  $r_3$, $Q(C)$ is defined and the verifier $V$ disagrees with some honest participant. Assume the execution is typical. $V$ communicates with adversary $A$ and honest prover $B$. The verifier receives proofs $\pi_A, \pi_B$. Because $B$ is honest, $\pi_B$ is a proof constructed based on underlying blockchain $C_B$ (with $\pi_B \subseteq C_B$), which $B$ has adopted during round $r_3$ at which $\pi_B$ was generated. Furthermore, $\pi_A$ was generated at round $r'_3 \leq r_3$.
+
+The verifier outputs $\neg Q(C_B)$. We show that $\pi_A \geq \pi_B$ is a negligible event. 
+
+Let $b = LCA(\pi_A, \pi_B)$. let $b^\star$ be the most recently honestly generated block in $C_B$ preceding $b$. Note that $b^\star$ necessarily exists because Genesis is honestly generated. Let the levels of comparison decided by the verifier be $\mu_A$ and $\mu_B$ respectively. Let $\mu'_B$ be the adequate level of proof $\pi_B$  with respect to block $b$. Call $\alpha_A = \pi_A \uparrow^{\mu_A}\{b:\}$, 
+$\alpha'_B = \pi_B \uparrow^{\mu'_B}\{b:\}$.
+
+%%ANDRI:
+Note that we consider the parts of the proofs succeeding block $b$ are the decisive ones for the choice of the verifier. This is to adversary's advantage, since the parts preceding this block demonstrate the proof-of-work contained in common (sub)chain of $A$ and $B$, and considering chain quality for the proof of any honest player, the adversary could only include equal or less proof-of-work in her proof for this part of the chain.
+
+We will now show three successive claims: First, $\alpha_A$ and $\alpha'_B \downarrow$ are mostly disjoint. Second, $a_A$ contains mostly adversarially generated blocks. And third, the adversary is able to produce this $a_A$ with negligible probability.
+
+First, $\alpha_A, \alpha'_B\downarrow$ are mostly disjoint, where $\alpha_A = \pi_A\uparrow^{\mu_A}\{b:\}$ and $\alpha'_B = \pi_B\uparrow^{\mu'_B}\{b:\}$.\\
+\textbf{Claim 1a:} If $\mu'_B \leq \mu_A$ then they are completely disjoint. In such a case of inequality, every block in $\alpha_A$ would also be of lower level $\mu'_B$. Applying Lemma 2 to $C\{b:\}\uparrow^{\mu'_B}$  we see that $C\{b:\}\uparrow^{\mu'_B} = \pi\{b:\}\uparrow^{\mu'_B}$. Subsequently, any block in $\pi_A\uparrow^{\mu_A}\{b:\}[1:]$ would also be included in proof $\alpha'_B$, but $b=LCA(\pi_A, \pi_B)$ so there can be no succeeding block common in $\alpha_A, \alpha'_B$. \\
+\\
+\textbf{Claim 1b:} If  $\mu'_B \geq \mu_A$ then $\vert \alpha_A[1:] \cap \alpha'_B\downarrow[1:] \vert = k_1 \leq 2^{\mu'_B - \mu_A}$.\\
+First observe that because the adversary is winning $2^{\mu_A} \vert \alpha_a \vert > 2^{\mu'_B} \vert \alpha'_b \vert \geq 2^{\mu'_B} m \Rightarrow \vert \alpha_A \vert > 2^{\mu'_B - \mu_A}m$.  Let's call $b_1$ the first block in $\alpha'_B$ after block b.
+Suppose for contradiction that $k_1 > 2^{\mu'_B - \mu_A}$.  Since $C_B^{\mu'_B}$ is of good chain quality, this would mean that block $b_1$, of level $\mu'_B$, also exists in $\alpha_A$ since it is of level $\mu_A$ too. But $b_1$ cannot exist in both $\alpha_A, \alpha'_B$ since $\alpha_A \cap \alpha'_B = \emptyset$ by definition.  \\
+
+The above argument implies that we suppose good quality for $\alpha_a$. Isn't this reasonable since $A$ would have nothing to gain by hurting her own proof's chain quality...
+Key idea: since $C^{\mu'_B}_B$ is of good quality , the adversary would have no chance winning by staying on the same chain and omitting greater level block of $\mu'_B$.
+
+\textit{Intuitively: in this case the common blocks of $\alpha_A, \alpha'_B\downarrow$ may only be blocks, of level $\mu_A$, preceding the first block appearing in $\alpha'_B$, of level $\mu'_B$, since if that block was common it would also be included in $\alpha_A$ and thus this would be the LCA of $\alpha_A, \alpha'_B$. So, $2^{\mu'_B - \mu_A}$ means: in the range between two consequent $\mu'_B$-level blocks, we have $n = 2^{\mu'_B}$ 0-level blocks and, thus, $2^{\mu_A}n = 2^{\mu'_B - \mu_A}$ blocks of $\mu_A$-level.}\\
+
+From Claim $1a$ and Claim $1b$, we conclude that there are at least $k_2 + k_3$ blocks after block $b$ in $\alpha_A$ which do not exist in $\alpha_B\downarrow$. We now set $b_2 = LCA(C_B, \alpha_A)$.\\
+
+\textbf{Claim 2:} At least $k_3$ superblocks of $\alpha_A$ are adversarially generated. We show this by showing that $\alpha_A[k_1 + k_2 + 1:]$ contains no honestly generated blocks. Suppose for contradiction that the block $\alpha_A[i]$ for some $i \geq k_1 + k_2 + 1$ was honestly generated. This means that an honest party adopted the chain $\alpha_A[:i - 1]\downarrow$ at some round $r_2 \leq r_3$. Because of the way honest parties adopt chains, the superchain $\alpha_A[:i - 1]$ has an underlying properly constructed 0-level anchored chain $C_A$ such that $\alpha_A[:i - 1] \subseteq C_A$. Let $j$ be the index of block $b_2$ within $\alpha_A$, $j_\downarrow$ be the index of block $b_2$ within $C_A$ and $k_{2\downarrow} = \vert \alpha_A[j:j+k_2]\downarrow\vert$. Observe that $\vert C_A[:\{\alpha_A[i-1]\}] \vert \geq \vert C_A[:{j_\downarrow}+k_{2\downarrow}] \vert$, while $C_A[j_\downarrow:j_\downarrow + k_{2\downarrow}] \npreceq C_B$ as proved in Claim 1. But $C_A$ was adopted by an honest party at round $r_2$, which is prior to round $r_3$ during which $C_B$ was adopted by an honest party. This contradicts the Common Prefix\cite{Backbone} with parameter $k_{2\downarrow}$. It follows that with overwhelming probability in $k_{2\downarrow}$, the $k_3 = m - k_2 - k_1$ last blocks of the adversarial proof have been adversarially generated.\\
+
+\begin{figure}[h]
+	\begin{center}
+		\includegraphics[scale=0.5]{figures/proof.png}
+	\end{center}
+	\caption{\textit{Two competing proofs at different levels. At the bottom the corresponding 0-level chains are represented.}}
+	\label{fig:proof}
+\end{figure}
+
+\textit{Intuitively: Because of Common Prefix on $k_2$ parameter (actually on $k_{2\downarrow} = \vert \alpha_A[j:j+k_2]\downarrow\vert$, where $E[k_{2\downarrow}] = 2^{\mu_A}k_2$) there can be no honest party adopting $C_A$ at any round $i \geq k_1 + k_2 + 1$. }\\
+
+\textbf{Claim 3:} Adversary $A$ is able to produce $\alpha_A$ that wins against $\alpha_B$ with negligible probability.
+
+Let $b'$ be the latest honestly generated block in $a_A$, or $b^*$ if no such block exists in $a_A$. Let $r_1$ be the round when $b^*$ was generated. Consider the set $S$ of consecutive rounds $r_1..r_3$. Every block in $\alpha_A[-k_3:]$ has been adversarially generated during $S$ and $\vert \alpha_A[-k_3:] \vert = \vert \alpha_A\{b':\} \vert = k_3$. $C_B$ is a chain adopted by an honest party at round $r_3$ and filtering the blocks by the rounds during which they were generated to obtain $C_B^S$, we see that $C_B^S = C_B\{ b^*: \}$. But $C_B^S \uparrow^{\mu'_B}$ is good with respect to $C_B^S$. Applying Lemma 1, we obtain that with overwhelming probability  $2^{\mu_A} \vert \alpha_A\{b':\} \vert < 2^{\mu'_B} \vert C_B^S \uparrow^{\mu'_B} \vert$, which is equal to
+\begin{equation}
+2^{\mu_A} \vert \alpha_A\{b':\} \vert < 2^{\mu'_B} \vert \alpha'_B \vert
+\end{equation} 
+since $\alpha'_B$ contains all the $\mu'_B$-level blocks in $C_B^S$. \\
+But $\vert \alpha\{b': \} \vert = k_3  $ so we have
+\begin{equation}
+\vert \alpha_A\{b': \} \vert \geq \vert \alpha_A \vert - k_1
+\end{equation}
+\begin{equation}
+\vert \alpha_A\{b': \} \vert \geq \vert \alpha_A \vert - k_2
+\end{equation}
+By adding (2) and (3) we have
+\begin{equation*}
+2\vert \alpha_A\{b': \} \vert \geq 2\vert \alpha_A \vert - (k_1 + k_2) \Rightarrow 
+\end{equation*}
+\begin{equation*}
+\vert \alpha_A\{b': \} \vert \geq \vert \alpha_A \vert - \dfrac{1}{2}(k_1 + k_2) \Rightarrow
+\end{equation*}
+\begin{equation}
+\vert \alpha_A\{b': \} \vert \geq \vert \alpha_A \vert - \dfrac{1}{2}(m - k_3) 
+\end{equation}
+
+By combining (1) and (4) we have
+\begin{equation*}
+2^{\mu_A} \vert \alpha_A\ \vert - \dfrac{2^{\mu_A}}{2}(m - k_3) < 2^{\mu'_B} \vert \alpha'_B \vert \Rightarrow
+\end{equation*}
+\begin{equation}
+2^{\mu_A} \vert \alpha_A\ \vert < 2^{\mu'_B} \vert \alpha'_B \vert + \dfrac{2^{\mu_A}}{2}(m - k_3)
+\end{equation}
+
+Therefore we have that $2^{\mu_A} \vert \alpha_A\ \vert < 2^{\mu'_B} \vert \alpha'_B \vert$ with overwhelming probability in $k_3$, in particular as $(m - k_3) \longrightarrow 0 $.
+
+Therefore we have proven that $2^{\mu'_B} \vert \pi_B \uparrow^{\mu'_B} \vert > 2^{\mu_A} \vert \pi_A^{\mu_A} \vert$. From the definition of $\mu_B$, we know that $2^{\mu_B} \vert \pi_B \uparrow^{\mu_B} \vert > 2^{\mu'_B} \vert \pi_B \uparrow^{\mu'_B} \vert$ because it was chosen $\mu_B$ as level of comparison by the Verifier. So we conclude that $2^{\mu_B} \vert \pi_B \uparrow^{\mu_B} \vert > 2^{\mu_A} \vert \pi_A \uparrow^{\mu_A} \vert$.
+\begin{flushright}
+$\square$
+\end{flushright}
+
+
+
+\section{The Chainsewing Attack}
+We  will now describe an explicit attack against the NIPoPoW suffix proof construction under a velvet fork. Note that since the protocol is implemented under a velvet fork, any adversarial block that is mined in the proper way except containing false interlink data structure will be accepted as valid. A false interlink may contain invalid pointers, for example pointers to superblocks of a fork chain, as shown in Figure \ref{fig:false_interlink}.
+Taking advantage of this fact, an adversary maintaining a fork chain could produce suffix proofs that claim blocks of the chain adopted by an honest player as her own. The attack is described in detail in the following.
+
+\begin{figure}[h]
+	\begin{center}
+		\includegraphics[scale=0.6]{figures/false_interlink.png}
+	\end{center}
+	\caption{\textit{Example of false interlink structure of an adversarial block, coloured black, in an honest player's chain. The dashed arrow is a pointer to a fork chain superblock included in the interlink.}}
+	\label{fig:false_interlink}
+\end{figure}
+
+Assume that chain $C_B$ was adopted by an honest player B and chain $C_A$, a fork of $C_B$, maintained by an adversary A. Assume the adversary wants to produce a suffix proof in order to attack an honest light client to have him adopt chain $C_A$. In order to achieve this, the adversary needs to include a greater amount of PoW in her suffix proof, $\pi_A$, in comparison to the honest player's proof, $\pi_B$, so as to achieve $\pi_A \geq_m \pi_B$. For this she works as follows. She produces some blocks in chains $C_A$ and $C_B$ containing false interlink pointers which will allow for claiming blocks of chain $C_B$ as of chain $C_A$ in her suffix proof. She acts as described below. 
+As shown in Figure \ref{fig:attack} she first generates a superblock, say $a'$, in chain $C_B$ which contains an interlink pointer to a superblock, say $b'$, in chain $C_A$. As argued earlier, the block will be accepted as valid in chain $C_B$ despite the false pointers in the interlink.  Then, the adversary may mine on chain $C_A$ or $C_B$. At some point she produces a block, say a, in $C_A$ containing an interlink pointer to a block, say b, in honest player's chain $C_B$.
+At this point the adversary will produce a suffix proof for chain $C_A$ containing the subchain $C\{ab\} \cup C\{b:a'\} \cup C\{a':b'\}$. Notice that following the interlink pointers constructed in such a way, a light client perceives $C\{ab\} \cup C\{b:a'\} \cup C\{a':b'\}$  as a valid chain.
+
+\begin{figure}[h!]
+	\begin{center}
+		\includegraphics[scale=0.6]{figures/chainsewing_attack.png}
+	\end{center}
+	\caption{\textit{Chainsewing Attack. The chain at the bottom represents the chain of an honest player, $C_B$, while the above one is the adversarial fork, $C_A$. Blocks generated by the adversary are coloured black. Dashed arrows represent interlink pointers included in the suffix proof by the adversary. Wavy lines imply one or more blocks. Firm lines imply the previousId relationship between two sequential blocks.}}
+	\label{fig:attack}
+\end{figure}
+
+In this attack the adversary uses false interlink pointers, under a velvet fork,  to ``sew`` portions of the chain adopted by an honest player to her own fork. This remark justifies the name given.  
+
+Note that in order to make this attack successful, the adversary has to produce only a few superblocks which let her arrogate an arbitrary large number of blocks of an honest player's chain, while she can mine for her own fork chain. Thus intuitively we expect this attack to succeed with overwhelming probability.
+
+@TODO
+
+Needs proof via simulation. It is not probable that the attacker will succeed in high probability, since the most important adversarially generated blocks , $a$ and $a'$, set a limit to the adversarial blocks produced in parallel to the honest blocks of subchain $C\{ab\} \cup C\{b:a'\} \cup C\{a':b'\}$ and can take part in the suffix proof.
+
+
+\section{Protocol Update}
+
+In order to eliminate the Chainsewing Attack we propose an update to the NIPoPoWs protocol under velvet fork. The core problem is that in her suffix proof the adversary claims not only blocks of the fork chain,  which are in majority adversarially generated because of Common Prefix property, but also an arbitrarily large number of blocks generated by honest miners. The vulnerability that makes this attack possible is the acceptance of blocks containing false interlink pointers. Since we operate under a velvet fork we cannot eliminate blocks containing false interlinks, we need, however, to restrict the adversary from being able to claim portion of another chain as part of her fork chain. 
+
+The key observation on the Chainsewing Attack is that the adversary needs at least two adversarially generated blocks, one in the fork (block $a$) and one in the honest player's chain (block $a'$), which are connected in a superblock path formed by interlink pointers. This path may contain both honest or adversarial blocks. 
+
+In case it contains only adversarial blocks, the attack cannot harm security since we assume an attacker of less than $50\%$ hashing power.
+So in order to be successful, the attacker needs to ``sew`` honestly generated blocks. Thus there will be at least one honest block in the superblock path connecting blocks $a$ and $a'$, which points to an adversarial block containing false interlink or, by induction, pointing to a block containing false interlink.
+The idea is to ban all blocks generated by honest players from participating in this superblock path. In this way the adversary could not misuse hashing power of the honest players and the sewed blocks could only be adversarially generated, thus the attack would never succeed. 
+
+We describe a protocol patch that operates as follows. The NIPoPoW protocol under velvet fork works as usual but each miner constructs a block's interlink excluding the blocks with false interlink (except the pointers of level 0). In this way, blocks containing false interlink pointers are integrated in the chain but are not taken into consideration when updating the interlink structure for the next block to be mined. No honest block could now point to an adversarial superblock that may act as the passing point to the fork chain in an adversarial suffix proof. 
+
+
+\section{Security Proof}
+
+
+\section{Infix Proofs}
+
+\bibliographystyle{plain} % We choose the "plain" reference style
+\bibliography{refs} % Entries are in the "refs.bib" file
+
+\end{document}
