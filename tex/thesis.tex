@@ -145,30 +145,20 @@ Let $b'$ be the latest honestly generated block in $a_A$, or $b^*$ if no such bl
 2^{\mu_A} \vert \alpha_A\{b':\} \vert < 2^{\mu'_B} \vert \alpha'_B \vert
 \end{equation} 
 since $\alpha'_B$ contains all the $\mu'_B$-level blocks in $C_B^S$. \\
-But $\vert \alpha\{b': \} \vert = k_3  $ so we have
+But $\vert \alpha_A\{b': \} \vert = k_3  $ and $\vert \alpha_A\vert = k_1 + k_2 + k_3  $ so we have
 \begin{equation}
-\vert \alpha_A\{b': \} \vert \geq \vert \alpha_A \vert - k_1
+\vert \alpha_A\{b': \} \vert \equiv \vert \alpha_A \vert - k_1 - k_2
 \end{equation}
 \begin{equation}
-\vert \alpha_A\{b': \} \vert \geq \vert \alpha_A \vert - k_2
-\end{equation}
-By adding (2) and (3) we have
-\begin{equation*}
-2\vert \alpha_A\{b': \} \vert \geq 2\vert \alpha_A \vert - (k_1 + k_2) \Rightarrow 
-\end{equation*}
-\begin{equation*}
-\vert \alpha_A\{b': \} \vert \geq \vert \alpha_A \vert - \dfrac{1}{2}(k_1 + k_2) \Rightarrow
-\end{equation*}
-\begin{equation}
-\vert \alpha_A\{b': \} \vert \geq \vert \alpha_A \vert - \dfrac{1}{2}(m - k_3) 
+\vert \alpha_A\{b': \} \vert \equiv \vert \alpha_A \vert - (m - k_3)
 \end{equation}
 
-By combining (1) and (4) we have
+By combining (1) and (3) we have
 \begin{equation*}
-2^{\mu_A} \vert \alpha_A\ \vert - \dfrac{2^{\mu_A}}{2}(m - k_3) < 2^{\mu'_B} \vert \alpha'_B \vert \Rightarrow
+2^{\mu_A} \vert \alpha_A\ \vert - 2^{\mu_A}(m - k_3) < 2^{\mu'_B} \vert \alpha'_B \vert \Rightarrow
 \end{equation*}
 \begin{equation}
-2^{\mu_A} \vert \alpha_A\ \vert < 2^{\mu'_B} \vert \alpha'_B \vert + \dfrac{2^{\mu_A}}{2}(m - k_3)
+2^{\mu_A} \vert \alpha_A\ \vert < 2^{\mu'_B} \vert \alpha'_B \vert + 2^{\mu_A}(m - k_3)
 \end{equation}
 
 Therefore we have that $2^{\mu_A} \vert \alpha_A\ \vert < 2^{\mu'_B} \vert \alpha'_B \vert$ with overwhelming probability in $k_3$, in particular as $(m - k_3) \longrightarrow 0 $.
