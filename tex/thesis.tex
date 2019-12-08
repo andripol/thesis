@@ -73,9 +73,9 @@ So, according to the above equation we have that $2^{\mu_A} \vert C'_A \vert <  
 \textit{Intuitively, adequate is the level $\mu'$ of a proof $\pi$ for a block b if there are at least $m$ blocks after b in $\pi$ under the condition that there is good chain quality for this level, meaning that there are at least so many blocks at this level as expected considering the number of 0-level blocks.\\ 
 NOTE: adequate level is mostly useful for Claim 1a of the Security Proof (Theorem 2).}\\
 
-\textbf{Lemma 2.} \textit{Let $\pi$ be some honest proof generated with security parameters $\delta$, m. Let C be the underlying chain, $b \in C$ be any block and $\mu'$ be the adequate level of the proof with respect to b and the same security parameters.\\Then $C\{b:\}\uparrow\mu' = \pi\{b:\}\uparrow\mu'$.}\\
+\textbf{Lemma 2.} \textit{Let $\pi$ be some honest proof generated with security parameters $\delta$, m. Let C be the underlying chain, $b \in C$ be any block and $\mu'$ be the adequate level of the proof with respect to b and the same security parameters.\\Then $C\{b:\}\uparrow^{\mu'} = \pi\{b:\}\uparrow^{\mu'}$.}\\
 
-\textit{Proof.} $ \pi\{b:\}\uparrow\mu' \subseteq C\{b:\}\uparrow\mu'$ is trivial. For the converse, we have that in the iteration of the \emph{Prove for loop}\cite{NIPoPoWs} with $\mu = \mu^*$, the block stored in variable $B$ preceds $b$ in $C$.
+\textit{Proof.} $ \pi\{b:\}\uparrow^{\mu'} \subseteq C\{b:\}\uparrow^{\mu'}$ is trivial. For the converse, we have that in the iteration of the \emph{Prove for loop}\cite{NIPoPoWs} with $\mu = \mu^*$, the block stored in variable $B$ preceds $b$ in $C$.
 
 Note that the Prover's for loop iterates over all levels in the interlink structure, and places in the proof all of the blocks that are of the corresponding level and succeed $B$ in $C$. 
 
@@ -100,7 +100,7 @@ Intuitively the above Lemma says: the comparison level chosen by the Verifier ca
 
 \textbf{Theorem 2. (Security)}\textit{Assuming honest majority, the non-interactive proofs-of-proof-of-work construction for computable $\kappa$-stable monotonic suffix-sensitive predicates is secure with overwhelmng probability in $\kappa$.}\\
 
-By contradiction. Let $m = k_1 + k_2 + k_3$ and let $k_1, k_2, k_3$ be polynomial functions of $\kappa$. Let $Q$ be a $k-$stable monotonic suffix-sensitive chain predicate. Assume NIPoPoWs on $Q$ is insecure. Then, during an execution of at some round  $r_3$, $Q(C)$ is defined and the verifier $V$ disagrees with some honest participant. Assume the execution is typical. $V$ communicates with adversary $A$ and honest prover $B$. The verifier receives proofs $\pi_A, \pi_B$. Because $B$ is honest, $\pi_B$ is a proof constructed based on underlying blockchain $C_B$ (with $\pi_B \subseteq C_B$), which $B$ has adopted during round $r_3$ at which $\pi_B$ was generated. Furthermore, $\pi_A$ was generated at round $r'_3 \leq r_3$.
+By contradiction. Let $m = k_1 + k_2 + k_3$ and let $k_1, k_2, k_3$ be polynomial functions of $\kappa$. Let $Q$ be a $k-$stable monotonic suffix-sensitive chain predicate. Assume NIPoPoWs on $Q$ is insecure. Then, during an execution at some round  $r_3$, $Q(C)$ is defined and the verifier $V$ disagrees with some honest participant. Assume the execution is typical. $V$ communicates with adversary $A$ and honest prover $B$. The verifier receives proofs $\pi_A, \pi_B$. Because $B$ is honest, $\pi_B$ is a proof constructed based on underlying blockchain $C_B$ (with $\pi_B \subseteq C_B$), which $B$ has adopted during round $r_3$ at which $\pi_B$ was generated. Furthermore, $\pi_A$ was generated at round $r'_3 \leq r_3$.
 
 The verifier outputs $\neg Q(C_B)$. We show that $\pi_A \geq \pi_B$ is a negligible event. 
 
@@ -108,7 +108,7 @@ Let $b = LCA(\pi_A, \pi_B)$. let $b^\star$ be the most recently honestly generat
 $\alpha'_B = \pi_B \uparrow^{\mu'_B}\{b:\}$.
 
 %%ANDRI:
-Note that we consider the parts of the proofs succeeding block $b$ are the decisive ones for the choice of the verifier. This is to adversary's advantage, since the parts preceding this block demonstrate the proof-of-work contained in common (sub)chain of $A$ and $B$, and considering chain quality for the proof of any honest player, the adversary could only include equal or less proof-of-work in her proof for this part of the chain.
+Note that we consider the parts of the proofs succeeding block $b$ the decisive ones for the verifier's choice. This is to adversary's advantage, since the parts preceding this block demonstrate the proof-of-work contained in common (sub)chain of $A$ and $B$. Thus, considering good chain quality for the proof of any honest player, the adversary could only include equal or less proof-of-work in her proof for this part of the chain.
 
 We will now show three successive claims: First, $\alpha_A$ and $\alpha'_B \downarrow$ are mostly disjoint. Second, $a_A$ contains mostly adversarially generated blocks. And third, the adversary is able to produce this $a_A$ with negligible probability.
 
@@ -116,7 +116,7 @@ First, $\alpha_A, \alpha'_B\downarrow$ are mostly disjoint, where $\alpha_A = \p
 \textbf{Claim 1a:} If $\mu'_B \leq \mu_A$ then they are completely disjoint. In such a case of inequality, every block in $\alpha_A$ would also be of lower level $\mu'_B$. Applying Lemma 2 to $C\{b:\}\uparrow^{\mu'_B}$  we see that $C\{b:\}\uparrow^{\mu'_B} = \pi\{b:\}\uparrow^{\mu'_B}$. Subsequently, any block in $\pi_A\uparrow^{\mu_A}\{b:\}[1:]$ would also be included in proof $\alpha'_B$, but $b=LCA(\pi_A, \pi_B)$ so there can be no succeeding block common in $\alpha_A, \alpha'_B$. \\
 \\
 \textbf{Claim 1b:} If  $\mu'_B \geq \mu_A$ then $\vert \alpha_A[1:] \cap \alpha'_B\downarrow[1:] \vert = k_1 \leq 2^{\mu'_B - \mu_A}$.\\
-First observe that because the adversary is winning $2^{\mu_A} \vert \alpha_a \vert > 2^{\mu'_B} \vert \alpha'_b \vert \geq 2^{\mu'_B} m \Rightarrow \vert \alpha_A \vert > 2^{\mu'_B - \mu_A}m$.  Let's call $b_1$ the first block in $\alpha'_B$ after block b.
+First observe that because the adversary is winning $2^{\mu_A} \vert \alpha_A \vert > 2^{\mu'_B} \vert \alpha'_B \vert \geq 2^{\mu'_B} m \Rightarrow \vert \alpha_A \vert > 2^{\mu'_B - \mu_A}m$.  Let's call $b_1$ the first block in $\alpha'_B$ after block b.
 Suppose for contradiction that $k_1 > 2^{\mu'_B - \mu_A}$.  Since $C_B^{\mu'_B}$ is of good chain quality, this would mean that block $b_1$, of level $\mu'_B$, also exists in $\alpha_A$ since it is of level $\mu_A$ too. But $b_1$ cannot exist in both $\alpha_A, \alpha'_B$ since $\alpha_A \cap \alpha'_B = \emptyset$ by definition.  \\
 
 The above argument implies that we suppose good quality for $\alpha_a$. Isn't this reasonable since $A$ would have nothing to gain by hurting her own proof's chain quality...
