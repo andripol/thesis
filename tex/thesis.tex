@@ -100,11 +100,11 @@ Intuitively the above Lemma says: the comparison level chosen by the Verifier ca
 
 \textbf{Theorem 2. (Security)}\textit{Assuming honest majority, the non-interactive proofs-of-proof-of-work construction for computable $\kappa$-stable monotonic suffix-sensitive predicates is secure with overwhelmng probability in $\kappa$.}\\
 
-By contradiction. Let $m = k_1 + k_2 + k_3$ and let $k_1, k_2, k_3$ be polynomial functions of $\kappa$. Let $Q$ be a $k-$stable monotonic suffix-sensitive chain predicate. Assume NIPoPoWs on $Q$ is insecure. Then, during an execution at some round  $r_3$, $Q(C)$ is defined and the verifier $V$ disagrees with some honest participant. Assume the execution is typical. $V$ communicates with adversary $A$ and honest prover $B$. The verifier receives proofs $\pi_A, \pi_B$. Because $B$ is honest, $\pi_B$ is a proof constructed based on underlying blockchain $C_B$ (with $\pi_B \subseteq C_B$), which $B$ has adopted during round $r_3$ at which $\pi_B$ was generated. Furthermore, $\pi_A$ was generated at round $r'_3 \leq r_3$.
+By contradiction. Let $Q$ be a $\kappa-$stable monotonic suffix-sensitive chain predicate. Assume NIPoPoWs on $Q$ is insecure. Then, during an execution at some round  $r_3$, $Q(C)$ is defined and the verifier $V$ disagrees with some honest participant. Assume the execution is typical. $V$ communicates with adversary $A$ and honest prover $B$. The verifier receives proofs $\pi_A, \pi_B$. Because $B$ is honest, $\pi_B$ is a proof constructed based on underlying blockchain $C_B$ (with $\pi_B \subseteq C_B$), which $B$ has adopted during round $r_3$ at which $\pi_B$ was generated. Furthermore, $\pi_A$ was generated at round $r'_3 \leq r_3$.
 
 The verifier outputs $\neg Q(C_B)$. We show that $\pi_A \geq \pi_B$ is a negligible event. 
 
-Let $b = LCA(\pi_A, \pi_B)$. let $b^\star$ be the most recently honestly generated block in $C_B$ preceding $b$. Note that $b^\star$ necessarily exists because Genesis is honestly generated. Let the levels of comparison decided by the verifier be $\mu_A$ and $\mu_B$ respectively. Let $\mu'_B$ be the adequate level of proof $\pi_B$  with respect to block $b$. Call $\alpha_A = \pi_A \uparrow^{\mu_A}\{b:\}$, 
+Let $b = LCA(\pi_A, \pi_B)$. Let $b^\star$ be the most recently honestly generated block in $C_B$ preceding $b$. Note that $b^\star$ necessarily exists because Genesis is honestly generated. Let the levels of comparison decided by the verifier be $\mu_A$ and $\mu_B$ respectively. Let $\mu'_B$ be the adequate level of proof $\pi_B$  with respect to block $b$. Call $\alpha_A = \pi_A \uparrow^{\mu_A}\{b:\}$, 
 $\alpha'_B = \pi_B \uparrow^{\mu'_B}\{b:\}$.
 
 %%ANDRI:
@@ -112,21 +112,21 @@ Note that we consider the parts of the proofs succeeding block $b$ the decisive 
 
 We will now show three successive claims: First, $\alpha_A$ and $\alpha'_B \downarrow$ are mostly disjoint. Second, $a_A$ contains mostly adversarially generated blocks. And third, the adversary is able to produce this $a_A$ with negligible probability.
 
-First, $\alpha_A, \alpha'_B\downarrow$ are mostly disjoint, where $\alpha_A = \pi_A\uparrow^{\mu_A}\{b:\}$ and $\alpha'_B = \pi_B\uparrow^{\mu'_B}\{b:\}$.\\
-\textbf{Claim 1a:} If $\mu'_B \leq \mu_A$ then they are completely disjoint. In such a case of inequality, every block in $\alpha_A$ would also be of lower level $\mu'_B$. Applying Lemma 2 to $C\{b:\}\uparrow^{\mu'_B}$  we see that $C\{b:\}\uparrow^{\mu'_B} = \pi\{b:\}\uparrow^{\mu'_B}$. Subsequently, any block in $\pi_A\uparrow^{\mu_A}\{b:\}[1:]$ would also be included in proof $\alpha'_B$, but $b=LCA(\pi_A, \pi_B)$ so there can be no succeeding block common in $\alpha_A, \alpha'_B$. \\
+Let $\alpha_A = k_1 + k_2 + k_3$ and let $k_1, k_2, k_3$ be as defined in the following Claims.
+
+\textbf{Claim 1:} $\alpha_A, \alpha'_B\downarrow$ are mostly disjoint. We show this by taking the two possible cases for the relation of $\mu_A$, $\mu'_B$.\\
+\textit{\underline{Claim 1a}:} If $\mu'_B \leq \mu_A$ then they are completely disjoint. In such a case of inequality, every block in $\alpha_A$ would also be of lower level $\mu'_B$. Applying Lemma 2 to $C\{b:\}\uparrow^{\mu'_B}$  we see that $C\{b:\}\uparrow^{\mu'_B} = \pi\{b:\}\uparrow^{\mu'_B}$. Subsequently, any block in $\pi_A\uparrow^{\mu_A}\{b:\}[1:]$ would also be included in proof $\alpha'_B$, but $b=LCA(\pi_A, \pi_B)$ so there can be no succeeding block common in $\alpha_A, \alpha'_B$. \\
 \\
-\textbf{Claim 1b:} If  $\mu'_B \geq \mu_A$ then $\vert \alpha_A[1:] \cap \alpha'_B\downarrow[1:] \vert = k_1 \leq 2^{\mu'_B - \mu_A}$.\\
+\textit{\underline{Claim 1b}:} If  $\mu'_B > \mu_A$ then $\vert \alpha_A[1:] \cap \alpha'_B\downarrow[1:] \vert = k_1 \leq 2^{\mu'_B - \mu_A}$.\\
 First observe that because the adversary is winning $2^{\mu_A} \vert \alpha_A \vert > 2^{\mu'_B} \vert \alpha'_B \vert \geq 2^{\mu'_B} m \Rightarrow \vert \alpha_A \vert > 2^{\mu'_B - \mu_A}m$.  Let's call $b_1$ the first block in $\alpha'_B$ after block b.
 Suppose for contradiction that $k_1 > 2^{\mu'_B - \mu_A}$.  Since $C_B^{\mu'_B}$ is of good chain quality, this would mean that block $b_1$, of level $\mu'_B$, also exists in $\alpha_A$ since it is of level $\mu_A$ too. But $b_1$ cannot exist in both $\alpha_A, \alpha'_B$ since $\alpha_A \cap \alpha'_B = \emptyset$ by definition.  \\
 
-The above argument implies that we suppose good quality for $\alpha_a$. Isn't this reasonable since $A$ would have nothing to gain by hurting her own proof's chain quality...
-Key idea: since $C^{\mu'_B}_B$ is of good quality , the adversary would have no chance winning by staying on the same chain and omitting greater level block of $\mu'_B$.
 
-\textit{Intuitively: in this case the common blocks of $\alpha_A, \alpha'_B\downarrow$ may only be blocks, of level $\mu_A$, preceding the first block appearing in $\alpha'_B$, of level $\mu'_B$, since if that block was common it would also be included in $\alpha_A$ and thus this would be the LCA of $\alpha_A, \alpha'_B$. So, $2^{\mu'_B - \mu_A}$ means: in the range between two consequent $\mu'_B$-level blocks, we have $n = 2^{\mu'_B}$ 0-level blocks and, thus, $2^{\mu_A}n = 2^{\mu'_B - \mu_A}$ blocks of $\mu_A$-level.}\\
+From Claim $1a$ and Claim $1b$, we conclude that there are $\vert \alpha_A \vert - k_1$ blocks after block $b$ in $\alpha_A$ which do not exist in $\alpha_B\downarrow$. We now set $b_2 = LCA(C_B, \alpha_A)$. This makes $b_2$ the last block before the fork point at the 0-level chain included in the adversary's proof.\\
 
-From Claim $1a$ and Claim $1b$, we conclude that there are at least $k_2 + k_3$ blocks after block $b$ in $\alpha_A$ which do not exist in $\alpha_B\downarrow$. We now set $b_2 = LCA(C_B, \alpha_A)$.\\
+Intuition: in this case the common blocks of $\alpha_A, \alpha'_B\downarrow$ may only be blocks of level $\mu_A$ which precede the first $\mu'_B$ block appearing in $\alpha'_B$. If this block of level $\mu'_B$ was common, it could also be included in $\alpha_A$. If it is included this would be the LCA of $\alpha_A, \alpha'_B$. If it is not, then the adversary could no more include blocks from the common part of chain $C_B$ in her proof since they no longer form a valid chain in $\alpha_A$. The quantity $2^{\mu'_B - \mu_A}$ means: in the range between two consequent $\mu'_B$-level blocks, we have $n = 2^{\mu'_B}$ 0-level blocks and, thus, $2^{-\mu_A}n = 2^{\mu'_B - \mu_A}$ blocks of $\mu_A$-level. \\
 
-\textbf{Claim 2:} At least $k_3$ superblocks of $\alpha_A$ are adversarially generated. We show this by showing that $\alpha_A[k_1 + k_2 + 1:]$ contains no honestly generated blocks. Suppose for contradiction that the block $\alpha_A[i]$ for some $i \geq k_1 + k_2 + 1$ was honestly generated. This means that an honest party adopted the chain $\alpha_A[:i - 1]\downarrow$ at some round $r_2 \leq r_3$. Because of the way honest parties adopt chains, the superchain $\alpha_A[:i - 1]$ has an underlying properly constructed 0-level anchored chain $C_A$ such that $\alpha_A[:i - 1] \subseteq C_A$. Let $j$ be the index of block $b_2$ within $\alpha_A$, $j_\downarrow$ be the index of block $b_2$ within $C_A$ and $k_{2\downarrow} = \vert \alpha_A[j:j+k_2]\downarrow\vert$. Observe that $\vert C_A[:\{\alpha_A[i-1]\}] \vert \geq \vert C_A[:{j_\downarrow}+k_{2\downarrow}] \vert$, while $C_A[j_\downarrow:j_\downarrow + k_{2\downarrow}] \npreceq C_B$ as proved in Claim 1. But $C_A$ was adopted by an honest party at round $r_2$, which is prior to round $r_3$ during which $C_B$ was adopted by an honest party. This contradicts the Common Prefix\cite{Backbone} with parameter $k_{2\downarrow}$. It follows that with overwhelming probability in $k_{2\downarrow}$, the $k_3 = m - k_2 - k_1$ last blocks of the adversarial proof have been adversarially generated.\\
+\textbf{Claim 2:} At least $k_3$ superblocks of $\alpha_A$ are adversarially generated. We show this by showing that $\alpha_A[k_1 + k_2 + 1:]$ contains no honestly generated blocks. Suppose for contradiction that the block $\alpha_A[i]$ for some $i \geq k_1 + k_2 + 1$ was honestly generated. This means that an honest party adopted the chain $\alpha_A[:i - 1]\downarrow$ at some round $r_2 \leq r_3$. Because of the way honest parties adopt chains, the superchain $\alpha_A[:i - 1]$ has an underlying properly constructed 0-level anchored chain $C_A$ such that $\alpha_A[:i - 1] \subseteq C_A$. Let $j$ be the index of block $b_2$ within $\alpha_A$, $j_\downarrow$ be the index of block $b_2$ within $C_A$ and $k_{2\downarrow} = \vert \alpha_A[j:j+k_2]\downarrow\vert$. Observe that $\vert C_A[:\{\alpha_A[i-1]\}] \vert \geq \vert C_A[:{j_\downarrow}+k_{2\downarrow}] \vert$, while $C_A[j_\downarrow:j_\downarrow + k_{2\downarrow}] \npreceq C_B$ as proved in Claim 1. But $C_A$ was adopted by an honest party at round $r_2$, which is prior to round $r_3$ during which $C_B$ was adopted by an honest party B. This contradicts the Common Prefix\cite{Backbone} with parameter $k_{2\downarrow}$. It follows that with overwhelming probability in $k_{2\downarrow}$, the $k_3 = \vert \alpha_A \vert - k_2 - k_1$ last blocks of the adversarial proof have been adversarially generated.\\
 
 \begin{figure}[h]
 	\begin{center}
@@ -136,7 +136,7 @@ From Claim $1a$ and Claim $1b$, we conclude that there are at least $k_2 + k_3$ 
 	\label{fig:proof}
 \end{figure}
 
-\textit{Intuitively: Because of Common Prefix on $k_2$ parameter (actually on $k_{2\downarrow} = \vert \alpha_A[j:j+k_2]\downarrow\vert$, where $E[k_{2\downarrow}] = 2^{\mu_A}k_2$) there can be no honest party adopting $C_A$ at any round $i \geq k_1 + k_2 + 1$. }\\
+Intuitively: Because of Common Prefix on $k_{2\downarrow}$ parameter, where $k_{2\downarrow} = \vert \alpha_A[j:j+k_2]\downarrow\vert$, where $E[k_{2\downarrow}] = 2^{\mu_A}k_2$, there can be no honest party adopting $C_A$ at any round $i \geq k_1 + k_2 + 1$. \\
 
 \textbf{Claim 3:} Adversary $A$ is able to produce $\alpha_A$ that wins against $\alpha_B$ with negligible probability.
 
@@ -150,18 +150,18 @@ But $\vert \alpha_A\{b': \} \vert = k_3  $ and $\vert \alpha_A\vert = k_1 + k_2 
 \vert \alpha_A\{b': \} \vert \equiv \vert \alpha_A \vert - k_1 - k_2
 \end{equation}
 \begin{equation}
-\vert \alpha_A\{b': \} \vert \equiv \vert \alpha_A \vert - (m - k_3)
+\vert \alpha_A\{b': \} \vert \equiv \vert \alpha_A \vert - (\vert \alpha_A \vert - k_3)
 \end{equation}
 
 By combining (1) and (3) we have
 \begin{equation*}
-2^{\mu_A} \vert \alpha_A\ \vert - 2^{\mu_A}(m - k_3) < 2^{\mu'_B} \vert \alpha'_B \vert \Rightarrow
+2^{\mu_A} \vert \alpha_A\ \vert - 2^{\mu_A}(\vert \alpha_A \vert - k_3) < 2^{\mu'_B} \vert \alpha'_B \vert \Rightarrow
 \end{equation*}
 \begin{equation}
-2^{\mu_A} \vert \alpha_A\ \vert < 2^{\mu'_B} \vert \alpha'_B \vert + 2^{\mu_A}(m - k_3)
+2^{\mu_A} \vert \alpha_A\ \vert < 2^{\mu'_B} \vert \alpha'_B \vert + 2^{\mu_A}(\vert \alpha_A \vert - k_3)
 \end{equation}
 
-Therefore we have that $2^{\mu_A} \vert \alpha_A\ \vert < 2^{\mu'_B} \vert \alpha'_B \vert$ with overwhelming probability in $k_3$, in particular as $(m - k_3) \longrightarrow 0 $.
+Therefore we have that $2^{\mu_A} \vert \alpha_A\ \vert < 2^{\mu'_B} \vert \alpha'_B \vert$ with overwhelming probability in $k_3$, in particular as $k_3$ is the dominant factor in  $\vert \alpha_A \vert$.
 
 Therefore we have proven that $2^{\mu'_B} \vert \pi_B \uparrow^{\mu'_B} \vert > 2^{\mu_A} \vert \pi_A^{\mu_A} \vert$. From the definition of $\mu_B$, we know that $2^{\mu_B} \vert \pi_B \uparrow^{\mu_B} \vert > 2^{\mu'_B} \vert \pi_B \uparrow^{\mu'_B} \vert$ because it was chosen $\mu_B$ as level of comparison by the Verifier. So we conclude that $2^{\mu_B} \vert \pi_B \uparrow^{\mu_B} \vert > 2^{\mu_A} \vert \pi_A \uparrow^{\mu_A} \vert$.
 \begin{flushright}
