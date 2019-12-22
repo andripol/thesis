@@ -98,7 +98,7 @@ But also $\mu'_B$ satisfies goodness, so $ 2^{\mu'_B} \vert \pi\{b:\}\uparrow^{\
 Intuitively the above Lemma says: the comparison level chosen by the Verifier can be no other than the adequate level in respect to block b ($LCA(\pi_A, \pi_B)$), since any other choice would be a level of non-good quality, because of the definition of the adequate level. A level of non-good quality would contain less PoW than that of the adequate level for the range of interest $C\{b:\}$. \\
 
 
-\textbf{Theorem 2. (Security)}\textit{Assuming honest majority, the non-interactive proofs-of-proof-of-work construction for computable $\kappa$-stable monotonic suffix-sensitive predicates is secure with overwhelmng probability in $\kappa$.}\\
+\textbf{Theorem 2. (Security)}\textit{Assuming honest majority, the non-interactive proofs-of-proof-of-work construction for computable $\kappa$-stable monotonic suffix-sensitive predicates is secure with overwhelming probability in $\kappa$.}\\
 
 By contradiction. Let $Q$ be a $\kappa-$stable monotonic suffix-sensitive chain predicate. Assume NIPoPoWs on $Q$ is insecure. Then, during an execution at some round  $r_3$, $Q(C)$ is defined and the verifier $V$ disagrees with some honest participant. Assume the execution is typical. $V$ communicates with adversary $A$ and honest prover $B$. The verifier receives proofs $\pi_A, \pi_B$. Because $B$ is honest, $\pi_B$ is a proof constructed based on underlying blockchain $C_B$ (with $\pi_B \subseteq C_B$), which $B$ has adopted during round $r_3$ at which $\pi_B$ was generated. Furthermore, $\pi_A$ was generated at round $r'_3 \leq r_3$.
 
@@ -126,7 +126,7 @@ From Claim $1a$ and Claim $1b$, we conclude that there are $\vert \alpha_A \vert
 
 Intuition: in this case the common blocks of $\alpha_A, \alpha'_B\downarrow$ may only be blocks of level $\mu_A$ which precede the first $\mu'_B$ block appearing in $\alpha'_B$. If this block of level $\mu'_B$ was common, it could also be included in $\alpha_A$. If it is included this would be the LCA of $\alpha_A, \alpha'_B$. If it is not, then the adversary could no more include blocks from the common part of chain $C_B$ in her proof since they no longer form a valid chain in $\alpha_A$. The quantity $2^{\mu'_B - \mu_A}$ means: in the range between two consequent $\mu'_B$-level blocks, we have $n = 2^{\mu'_B}$ 0-level blocks and, thus, $2^{-\mu_A}n = 2^{\mu'_B - \mu_A}$ blocks of $\mu_A$-level. \\
 
-\textbf{Claim 2:} At least $k_3$ superblocks of $\alpha_A$ are adversarially generated. We show this by showing that $\alpha_A[k_1 + k_2 + 1:]$ contains no honestly generated blocks. Suppose for contradiction that the block $\alpha_A[i]$ for some $i \geq k_1 + k_2 + 1$ was honestly generated. This means that an honest party adopted the chain $\alpha_A[:i - 1]\downarrow$ at some round $r_2 \leq r_3$. Because of the way honest parties adopt chains, the superchain $\alpha_A[:i - 1]$ has an underlying properly constructed 0-level anchored chain $C_A$ such that $\alpha_A[:i - 1] \subseteq C_A$. Let $j$ be the index of block $b_2$ within $\alpha_A$, $j_\downarrow$ be the index of block $b_2$ within $C_A$ and $k_{2\downarrow} = \vert \alpha_A[j:j+k_2]\downarrow\vert$. Observe that $\vert C_A[:\{\alpha_A[i-1]\}] \vert \geq \vert C_A[:{j_\downarrow}+k_{2\downarrow}] \vert$, while $C_A[j_\downarrow:j_\downarrow + k_{2\downarrow}] \npreceq C_B$ as proved in Claim 1. But $C_A$ was adopted by an honest party at round $r_2$, which is prior to round $r_3$ during which $C_B$ was adopted by an honest party B. This contradicts the Common Prefix\cite{Backbone} with parameter $k_{2\downarrow}$. It follows that with overwhelming probability in $k_{2\downarrow}$, the $k_3 = \vert \alpha_A \vert - k_2 - k_1$ last blocks of the adversarial proof have been adversarially generated.\\
+\textbf{Claim 2:} At least $k_3$ superblocks of $\alpha_A$ are adversarially generated. We show this by showing that $\alpha_A[k_1 + k_2 + 1:]$ contains no honestly generated blocks. Suppose for contradiction that the block $\alpha_A[i]$ for some $i \geq k_1 + k_2 + 1$ was honestly generated. This means that an honest party adopted the chain $\alpha_A[:i - 1]\downarrow$ at some round $r_2 \leq r_3$. Because of the way honest parties adopt chains, the superchain $\alpha_A[:i - 1]$ has an underlying properly constructed 0-level anchored chain $C_A$ such that $\alpha_A[:i - 1] \subseteq C_A$. Let $j$ be the index of block $b_2$ within $\alpha_A$, $j_\downarrow$ be the index of block $b_2$ within $C_A$ and $k_{2\downarrow} = \vert \alpha_A[j:j+k_2]\downarrow\vert$. See Figure \ref{fig:proof} for a demonstration. Observe that $\vert C_A[:\{\alpha_A[i-1]\}] \vert \geq \vert C_A[:{j_\downarrow}+k_{2\downarrow}] \vert$, while $C_A[j_\downarrow:j_\downarrow + k_{2\downarrow}] \npreceq C_B$ as proved in Claim 1. But $C_A$ was adopted by an honest party at round $r_2$, which is prior to round $r_3$ during which $C_B$ was adopted by an honest party B. This contradicts the Common Prefix\cite{Backbone} with parameter $k_{2\downarrow}$. It follows that with overwhelming probability in $k_{2\downarrow}$, the $k_3 = \vert \alpha_A \vert - k_2 - k_1$ last blocks of the adversarial proof have been adversarially generated.\\
 
 \begin{figure}[h]
 	\begin{center}
@@ -136,39 +136,75 @@ Intuition: in this case the common blocks of $\alpha_A, \alpha'_B\downarrow$ may
 	\label{fig:proof}
 \end{figure}
 
-Intuitively: Because of Common Prefix on $k_{2\downarrow}$ parameter, where $k_{2\downarrow} = \vert \alpha_A[j:j+k_2]\downarrow\vert$, where $E[k_{2\downarrow}] = 2^{\mu_A}k_2$, there can be no honest party adopting $C_A$ at any round $i \geq k_1 + k_2 + 1$. \\
+Intuitively: Because of Common Prefix on $k_{2\downarrow}$ parameter, where $k_{2\downarrow} = \vert \alpha_A[j:j+k_2]\downarrow\vert$, where $E[k_{2\downarrow}] = 2^{-\mu_A}k_2$, there can be no honest party adopting $C_A$ at any round $i \geq k_1 + k_2 + 1$. \\
+
+From these two Claims we have that $k_1$ blocks in $\alpha_A$ are blocks of the common zero-level chain, while $k_2$ blocks are blocks after the fork point at the zero-level chain. Subsequently, $k_2$ is subject to the Common Prefix $\kappa-$parameter limitations as described in the Backbone paper\cite{Backbone}.\\
 
 \textbf{Claim 3:} Adversary $A$ is able to produce $\alpha_A$ that wins against $\alpha_B$ with negligible probability.
 
-Let $b'$ be the latest honestly generated block in $a_A$, or $b^*$ if no such block exists in $a_A$. Let $r_1$ be the round when $b^*$ was generated. Consider the set $S$ of consecutive rounds $r_1..r_3$. Every block in $\alpha_A[-k_3:]$ has been adversarially generated during $S$ and $\vert \alpha_A[-k_3:] \vert = \vert \alpha_A\{b':\} \vert = k_3$. $C_B$ is a chain adopted by an honest party at round $r_3$ and filtering the blocks by the rounds during which they were generated to obtain $C_B^S$, we see that $C_B^S = C_B\{ b^*: \}$. But $C_B^S \uparrow^{\mu'_B}$ is good with respect to $C_B^S$. Applying Lemma 1, we obtain that with overwhelming probability  $2^{\mu_A} \vert \alpha_A\{b':\} \vert < 2^{\mu'_B} \vert C_B^S \uparrow^{\mu'_B} \vert$, which is equal to
+Let $b'$ be the latest honestly generated block in $a_A$, or $b' = b^*$ if no such block exists in $a_A$. Let $r_1$ be the round when $b'$ was generated. Consider the set $S$ of consecutive rounds $r_1..r_3$. Every block in $\alpha_A[-k_3:]$ has been adversarially generated during $S$ and $\vert \alpha_A[-k_3:] \vert = \vert \alpha_A\{b':\} \vert = k_3$. $C_B$ is a chain adopted by an honest party at round $r_3$ and filtering the blocks by the rounds during which they were generated to obtain $C_B^S$, we see that if $b''$ is the most recent honestly generated block in a round $r \leq r_1$, then $C_B^S = C_B\{ b'': \}$. But $C_B^S \uparrow^{\mu'_B}$ is good with respect to $C_B^S$. Applying Lemma 1, we obtain that with overwhelming probability  $2^{\mu_A} \vert \alpha_A\{b':\} \vert < 2^{\mu'_B} \vert C_B^S \uparrow^{\mu'_B} \vert$, which is equal to
+
 \begin{equation}
-2^{\mu_A} \vert \alpha_A\{b':\} \vert < 2^{\mu'_B} \vert \alpha'_B \vert
+2^{\mu_A} \vert \alpha_A\{b':\} \vert < 2^{\mu'_B} \vert \alpha'_B\{b'':\} \vert
 \end{equation} 
+
 since $\alpha'_B$ contains all the $\mu'_B$-level blocks in $C_B^S$. \\
-But $\vert \alpha_A\{b': \} \vert = k_3  $ and $\vert \alpha_A\vert = k_1 + k_2 + k_3  $ so we have
+
+
+In order to complete the proof, let us know consider $\alpha_A^{k_1}$, $\alpha_A^{k_2}$, $\alpha_A^{k_3}$ the parts of $\alpha_A$ where the $k_1$, $k_2$, $k_3$ blocks reside and 
+$\alpha_B^{k_1}$, $\alpha_B^{k_2}$, $\alpha_B^{k_3}$ the parts of $\alpha_B$ containing blocks generated in the corresponding round sets as illustrated in Figure \ref{fig:claim3}.
+
+\begin{figure}[h]
+	\begin{center}
+		\includegraphics[scale=0.5]{figures/claim3.png}
+	\end{center}
+	\caption{\textit{The three round sets in two competing proofs at different levels. The vertical dashed lines denote the area of interest corresponding to each round set. At the bottom the corresponding 0-level chains are represented.}}
+	\label{fig:claim3}
+\end{figure}
+
+Subsequently to the above Claims we have that
+
+because of the common underlying chain in the first round set:
 \begin{equation}
-\vert \alpha_A\{b': \} \vert \equiv \vert \alpha_A \vert - k_1 - k_2
-\end{equation}
-\begin{equation}
-\vert \alpha_A\{b': \} \vert \equiv \vert \alpha_A \vert - (\vert \alpha_A \vert - k_3)
+2^{\mu_A} \vert \alpha_A^{k_1} \vert = 2^{\mu'_B} \vert \alpha'{_B^{k_1}} \vert
 \end{equation}
 
-By combining (1) and (3) we have
+because of the adoption by an honest party of chain $C_B$ at a later round $r_3$:
+\begin{equation}
+2^{\mu_A} \vert \alpha_A^{k_2} \vert \leq 2^{\mu'_B} \vert \alpha'{_B^{k_2}} \vert
+\end{equation}
+
+because of Equation (1):
+\begin{equation}
+2^{\mu_A} \vert \alpha_A^{k_3} \vert < 2^{\mu'_B} \vert \alpha'{_B^{k_3}} \vert
+\end{equation}
+
+So we have 
+
 \begin{equation*}
-2^{\mu_A} \vert \alpha_A\ \vert - 2^{\mu_A}(\vert \alpha_A \vert - k_3) < 2^{\mu'_B} \vert \alpha'_B \vert \Rightarrow
+2^{\mu_A} ( \vert \alpha_A^{k_1} \vert + \vert \alpha_A^{k_2} \vert + \vert \alpha_A^{k_3} \vert ) < 2^{\mu'_B} ( \vert \alpha'{_B^{k_1}} \vert + \vert \alpha'{_B^{k_2}} \vert + \vert \alpha'{_B^{k_3}} \vert)
 \end{equation*}
+
+and finally 
 \begin{equation}
-2^{\mu_A} \vert \alpha_A\ \vert < 2^{\mu'_B} \vert \alpha'_B \vert + 2^{\mu_A}(\vert \alpha_A \vert - k_3)
+2^{\mu_A} \vert \alpha_A \vert < 2^{\mu'_B} \vert \alpha'{_B} \vert
 \end{equation}
 
-Therefore we have that $2^{\mu_A} \vert \alpha_A\ \vert < 2^{\mu'_B} \vert \alpha'_B \vert$ with overwhelming probability in $k_3$, in particular as $k_3$ is the dominant factor in  $\vert \alpha_A \vert$.
 
 Therefore we have proven that $2^{\mu'_B} \vert \pi_B \uparrow^{\mu'_B} \vert > 2^{\mu_A} \vert \pi_A^{\mu_A} \vert$. From the definition of $\mu_B$, we know that $2^{\mu_B} \vert \pi_B \uparrow^{\mu_B} \vert > 2^{\mu'_B} \vert \pi_B \uparrow^{\mu'_B} \vert$ because it was chosen $\mu_B$ as level of comparison by the Verifier. So we conclude that $2^{\mu_B} \vert \pi_B \uparrow^{\mu_B} \vert > 2^{\mu_A} \vert \pi_A \uparrow^{\mu_A} \vert$.
+
 \begin{flushright}
 $\square$
 \end{flushright}
 
+It remains to compute the security parameter $m$ that guarantee that all the above hold true in every implementation.
+In the first set of rounds, for the first $k_1$ blocks in $\alpha_A$, we only need 1 block included in $\alpha_B$ for the part of the proof described in Equation (2). In the second set of rounds we need $2^{-\mu_B}\kappa$ blocks for the part of the proof described in Equation (3), as it directly results from the Common Prefix property. In order to make $m$ independent of any specific level it suffices to consider the upper bound of $\kappa$ blocks for this set of rounds. In the last set of rounds we need at least $\kappa$ adversarially generated blocks in $\alpha_A^{k_3}$ so that Lemma 1 is applicable. Since we assume honest majority, obliging to at least $\kappa$ blocks for this set of rounds suffices to guarantee for Equation (4).
 
+We conclude to the following upper bound for the value of security parameter:
+\begin{equation}
+m = 2\kappa + 1 
+\end{equation}
+ 
 
 \section{The Chainsewing Attack}
 We  will now describe an explicit attack against the NIPoPoW suffix proof construction under a velvet fork. Note that since the protocol is implemented under a velvet fork, any adversarial block that is mined in the proper way except containing false interlink data structure will be accepted as valid. A false interlink may contain invalid pointers, for example pointers to superblocks of a fork chain, as shown in Figure \ref{fig:false_interlink}.
