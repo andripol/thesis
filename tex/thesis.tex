@@ -257,6 +257,53 @@ We describe a protocol patch that operates as follows. The NIPoPoW protocol unde
 
 
 \section{Security Proof}
+Our security proof is based on the security proof of NIPoPoWs Suffix Security Proof under a soft or hard fork. Consequently, most of the Definitions and Lemmas presented in Section \ref{proof_under_hard_fork} will be referenced and applied for the security proof under velvet fork conditions.
+
+Our working hypothesis is that we operate under honest majority considering only the updated players. This is formally described in the following definition.\\
+
+\textbf{Honest Majority Assumption under Velvet Fork Conditions.} A number of $t'$ out of $n'$ upgraded parties are corrupted such that $t' \leq (1 - \delta)(n' - t')$, where parameter $\delta$ is as defined in the Bitcoin Backbone paper \cite{Backbone}.\\
+
+
+\textbf{Theorem 3. (Security under velvet fork)} \textit{Assuming honest majority under velvet fork conditions, the non-interactive proofs-of-proof-of-work construction for computable $\kappa$-stable monotonic suffix-sensitive predicates under velvet fork conditions is secure with overwhelming probability in $\kappa$.}\\
+
+By contradiction. We follow the construction of Theorem 2 proof and extend it. Let $Q$ be a $\kappa-$stable monotonic suffix-sensitive chain predicate. Assume NIPoPoWs under velvet fork on $Q$ is insecure. Then, during an execution at some round  $r_3$, $Q(C)$ is defined and the verifier $V$ disagrees with some honest participant. Assume the execution is typical. $V$ communicates with adversary $A$ and honest prover $B$. The verifier receives proofs $\pi_A, \pi_B$. Because $B$ is honest, $\pi_B$ is a proof constructed based on underlying blockchain $C_B$ (with $\pi_B \subseteq C_B$), which $B$ has adopted during round $r_3$ at which $\pi_B$ was generated. Consider $C_A$ the chain containing at least some of the blocks in $\pi_A$, while the remaining blocks $\pi_A$ must belong in the $C_B$. 
+
+The verifier outputs $\neg Q(C_B)$. Thus it is necessary that $\pi_A \geq \pi_B$. We show that $\pi_A \geq \pi_B$ is a negligible event. 
+
+Let $b = LCA(\pi_A, \pi_B)$. Let the levels of comparison decided by the verifier be $\mu_A$ and $\mu_B$ respectively. Let $\mu'_B$ be the adequate level of proof $\pi_B$  with respect to block $b$. Call $\alpha_A = \pi_A \uparrow^{\mu_A}\{b:\}$, 
+$\alpha'_B = \pi_B \uparrow^{\mu'_B}\{b:\}$.\\
+
+The above are illustrated in Parts I, II of Figure \ref{fig:proof_velvet}.
+
+\begin{figure}[h!]
+	\begin{center}
+		\includegraphics[scale=0.5]{figures/proof_velvet.png}
+	\end{center}
+	\caption{\textit{ Wavy lines imply one or more blocks. Dashed lines and arrows imply interlink pointers to superblocks. \textbf{I}: the three round sets in two competing proofs at different levels, \textbf{II}: the corresponding 0-level chains, \textbf{III}: the reformed chains $C_B$, $C_A$ so that adversarially generated blocks with false interlink participating in cyclic dependency with $C_A$ are removed from $C_B$ and added to $C_A$.}}
+	\label{fig:proof_velvet}
+\end{figure}
+
+In the following we consider the reformed chains $C_A, C_B$ from block $b_2$ and after. This reforming suggests the following: All adversarially generated blocks with false interlink in subchain $C_B\{b_2:\}$ which participate in cyclic dependency with fork chain $C_A$, are removed from $C_B$ and added in $C_A$ just as the interlink pointers forming the cyclic dependency point out. This reforming is helpful for the purposes of our proof construction and does not change the facts of the problem, or put it in another way, gives us an equivalent problem to solve. This is true, because of Remark 1, that such blocks cannot be included in an honest NIPoPoW proof while can be included in the proof constructed by the adversary, thus from the NIPoPoW suffix proofs perspective these block can be perceived as belonging in the adversary's fork chain. This remark is considered in all Claims.\\
+
+We will now show the three successive claims under velvet fork conditions: First, $\alpha_A$ and $\alpha'_B \downarrow$ are mostly disjoint. Second, $a_A$ contains mostly adversarially generated blocks. And third, the adversary is able to produce this $a_A$ with negligible probability.
+
+Let $\alpha_A = k_1 + k_2 + k_3$ and let $k_1, k_2, k_3$ be as defined in the following Claims.
+
+\textbf{Claim 1:} $\alpha_A, \alpha'_B\downarrow$ are mostly disjoint. We show this by taking the two possible cases for the relation of $\mu_A$, $\mu'_B$ and the cases of $\alpha_A$ containing blocks with corect or incorrect interlinks up until block $b_2 = LCA(C_B, \alpha_A)$.\\
+\textit{\underline{Claim 1a}:} If $\mu'_B \leq \mu_A$ and $\alpha_A$ contains blocks with correct interlinks, then they are completely disjoint. In such a case of inequality, every block in $\alpha_A$ would also be of lower level $\mu'_B$. Applying Lemma 2 to $C_B\{b:\}\uparrow^{\mu'_B}$  we see that all blocks containing correct interlinks and included in $\alpha_A$ would also be included in $\alpha'_B$, but $b=LCA(\pi_A, \pi_B)$ so there can be no succeeding block common in $\alpha_A, \alpha'_B$. \\
+\textit{\underline{Claim 1b}:} If  $\mu'_B > \mu_A$ and $\alpha_A$ contains blocks with correct interlinks, then $\vert \alpha_A[1:] \cap \alpha'_B\downarrow[1:] \vert = k_{1a} \leq 2^{\mu'_B - \mu_A}$.\\
+First observe that because the adversary is winning $2^{\mu_A} \vert \alpha_A \vert > 2^{\mu'_B} \vert \alpha'_B \vert \geq 2^{\mu'_B} m \Rightarrow \vert \alpha_A \vert > 2^{\mu'_B - \mu_A}m$.  Let's call $b_1$ the first block in $\alpha'_B$ after block b.
+Suppose for contradiction that $k_1 > 2^{\mu'_B - \mu_A}$.  Since $C_B^{\mu'_B}$ is of good chain quality, this would mean that block $b_1$, of level $\mu'_B$, also exists in $\alpha_A$ since it is of level $\mu_A$ too. But $b_1$ cannot exist in both $\alpha_A, \alpha'_B$ since $\alpha_A \cap \alpha'_B = \emptyset$ by definition.  \\
+\textit{\underline{Claim 1c}:} In case of blocks containing incorrect interlink, by the time such a block is included in $\alpha_A$, then no other honestly generated block of chain $C_B$ will be included in $\alpha_A$ because of Remark 1(no honestly generated block included in proof can point to a superblock containing false interlink). Thus, in that case it is equivalent to consider two different chains, the one of the adversary and the other of the honest players, that compete each other. This case may appear after $k_{1a}$ blocks in the $\alpha_A$ as described in the above Claims. Let $b_1 = \{GCA(C_B, \alpha_A) \cap b_1 \textit{ contains false interlink}\}$ and block $b_2 = LCA(C_B, \alpha_A)$. Thus we have 
+$\vert \alpha_A[1:] \cap \alpha'_B\downarrow[1:] \vert = k_{1a} + k_{1b}$, where $k_{1b} \leq C_B\{b_1:b_2\}\uparrow^{\mu_A}$.\\
+
+
+From Claim $1a$ and Claim $1b$, we conclude that there are $\vert \alpha_A \vert - (k_{1a} + k_{1b})$ blocks after block $b$ in $\alpha_A$ which do not exist in $\alpha_B\downarrow$. We now set $b_2 = LCA(C_B, \alpha_A)$. This makes $b_2$ the last block before the fork point at the 0-level chain included in the adversary's proof.\\
+
+\textbf{Claim 2.} After reforming $C_B, C_A$ this Claims is exactly the same as that of Theorem 2.
+
+\textbf{Claim 3.} After reforming $C_B, C_A$ this Claims is exactly the same as that of Theorem 2.
+
 
 
 \section{Infix Proofs}
