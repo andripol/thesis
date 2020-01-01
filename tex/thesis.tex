@@ -35,7 +35,7 @@ NIPoPoWs suffix proofs are used to prove predicates that pertain to the suffix o
  
 %\section{Model Definition and Notation}
 
-\section{Security of NIPoPoWs Suffix Proofs}
+\section{Security of NIPoPoWs Suffix Proofs} \label{proof_under_hard_fork}
 
 In this section we provide the full security proof for the NIPoPoWs suffix proof protocol\cite{NIPoPoWs}. Apart from the proof itself (Theorem 2), we describe the definitions and lemmas being used. We try to give intuition for arguments and conclusions in each step.
 
@@ -102,7 +102,7 @@ Intuitively the above Lemma says: the comparison level chosen by the Verifier ca
 
 By contradiction. Let $Q$ be a $\kappa-$stable monotonic suffix-sensitive chain predicate. Assume NIPoPoWs on $Q$ is insecure. Then, during an execution at some round  $r_3$, $Q(C)$ is defined and the verifier $V$ disagrees with some honest participant. Assume the execution is typical. $V$ communicates with adversary $A$ and honest prover $B$. The verifier receives proofs $\pi_A, \pi_B$. Because $B$ is honest, $\pi_B$ is a proof constructed based on underlying blockchain $C_B$ (with $\pi_B \subseteq C_B$), which $B$ has adopted during round $r_3$ at which $\pi_B$ was generated. Furthermore, $\pi_A$ was generated at round $r'_3 \leq r_3$.
 
-The verifier outputs $\neg Q(C_B)$. We show that $\pi_A \geq \pi_B$ is a negligible event. 
+The verifier outputs $\neg Q(C_B)$. Thus it is necessary that $\pi_A \geq \pi_B$. We show that $\pi_A \geq \pi_B$ is a negligible event. 
 
 Let $b = LCA(\pi_A, \pi_B)$. Let $b^\star$ be the most recently honestly generated block in $C_B$ preceding $b$. Note that $b^\star$ necessarily exists because Genesis is honestly generated. Let the levels of comparison decided by the verifier be $\mu_A$ and $\mu_B$ respectively. Let $\mu'_B$ be the adequate level of proof $\pi_B$  with respect to block $b$. Call $\alpha_A = \pi_A \uparrow^{\mu_A}\{b:\}$, 
 $\alpha'_B = \pi_B \uparrow^{\mu'_B}\{b:\}$.
@@ -158,28 +158,28 @@ $\alpha_B^{k_1}$, $\alpha_B^{k_2}$, $\alpha_B^{k_3}$ the parts of $\alpha_B$ con
 	\begin{center}
 		\includegraphics[scale=0.5]{figures/claim3.png}
 	\end{center}
-	\caption{\textit{The three round sets in two competing proofs at different levels. The vertical dashed lines denote the area of interest corresponding to each round set. At the bottom the corresponding 0-level chains are represented.}}
+	\caption{\textit{The three round sets in two competing proofs at different levels. The vertical dashed lines denote the area of interest, across proofs and chains, corresponding to each round set. At the bottom the corresponding 0-level chains are represented.}}
 	\label{fig:claim3}
 \end{figure}
 
-Subsequently to the above Claims we have that
+Subsequently to the above Claims we have that:
 
 because of the common underlying chain in the first round set:
-\begin{equation}
+\begin{equation} \label{eq_round_set_1}
 2^{\mu_A} \vert \alpha_A^{k_1} \vert = 2^{\mu'_B} \vert \alpha'{_B^{k_1}} \vert
 \end{equation}
 
-because of the adoption by an honest party of chain $C_B$ at a later round $r_3$:
-\begin{equation}
+because of the adoption by an honest party of chain $C_B$ at a later round $r_3$, we have for the second round set:
+\begin{equation} \label{eq_round_set_2}
 2^{\mu_A} \vert \alpha_A^{k_2} \vert \leq 2^{\mu'_B} \vert \alpha'{_B^{k_2}} \vert
 \end{equation}
 
-because of Equation (1):
-\begin{equation}
+because of Equation (1), we have for the third round set:
+\begin{equation} \label{eq_round_set_3}
 2^{\mu_A} \vert \alpha_A^{k_3} \vert < 2^{\mu'_B} \vert \alpha'{_B^{k_3}} \vert
 \end{equation}
 
-So we have 
+So we have
 
 \begin{equation*}
 2^{\mu_A} ( \vert \alpha_A^{k_1} \vert + \vert \alpha_A^{k_2} \vert + \vert \alpha_A^{k_3} \vert ) < 2^{\mu'_B} ( \vert \alpha'{_B^{k_1}} \vert + \vert \alpha'{_B^{k_2}} \vert + \vert \alpha'{_B^{k_3}} \vert)
@@ -197,14 +197,18 @@ Therefore we have proven that $2^{\mu'_B} \vert \pi_B \uparrow^{\mu'_B} \vert > 
 $\square$
 \end{flushright}
 
-It remains to compute the security parameter $m$ that guarantee that all the above hold true in every implementation.
-In the first set of rounds, for the first $k_1$ blocks in $\alpha_A$, we only need 1 block included in $\alpha_B$ for the part of the proof described in Equation (2). In the second set of rounds we need $2^{-\mu_B}\kappa$ blocks for the part of the proof described in Equation (3), as it directly results from the Common Prefix property. In order to make $m$ independent of any specific level it suffices to consider the upper bound of $\kappa$ blocks for this set of rounds. In the last set of rounds we need at least $\kappa$ adversarially generated blocks in $\alpha_A^{k_3}$ so that Lemma 1 is applicable. Since we assume honest majority, obliging to at least $\kappa$ blocks for this set of rounds suffices to guarantee for Equation (4).
+It remains to compute the security parameter $m$ that guarantee that all the above hold true in every implementation. It suffices to compute the security parameter values for each set of rounds $k_1, k_2, k_3$, so that the proof equations \ref{eq_round_set_1}, \ref{eq_round_set_2}, \ref{eq_round_set_3} hold and then sum these values to obtain parameter $m$.
 
-We conclude to the following upper bound for the value of security parameter:
+In the first set of rounds, for the first $k_1$ blocks in $\alpha_A$, we only need 1 block included in $\alpha_B$ for the part of the proof described in Equation \ref{eq_round_set_1}. In the second set of rounds we need $2^{-\mu_B}\kappa$ blocks for the part of the proof described in Equation \ref{eq_round_set_2}, just as it directly results from the Common Prefix property. In order to make $m$ independent of any specific level it suffices to consider the upper bound of $\kappa$ blocks for this set of rounds. In the last set of rounds we need at least $\kappa$ adversarially generated blocks in $\alpha_A^{k_3}$ so that Lemma 1 is applicable. Since we assume honest majority, obliging to at least $\kappa$ blocks for this set of rounds suffices to guarantee for Equation \ref{eq_round_set_3}.
+
+So, we finally conclude to the following upper bound for the value of security parameter:
 \begin{equation}
 m = 2\kappa + 1 
 \end{equation}
  
+{\large TO BE DISCUSSED: however it seems like this parameter value covers only the $\alpha_a, \alpha_B$ parts of the proofs. What about the rest of it? From Genesis block up to block $b$? }
+ 
+\section{NIPoPoWs under Velvet Fork}
 
 \section{The Chainsewing Attack}
 We  will now describe an explicit attack against the NIPoPoW suffix proof construction under a velvet fork. Note that since the protocol is implemented under a velvet fork, any adversarial block that is mined in the proper way except containing false interlink data structure will be accepted as valid. A false interlink may contain invalid pointers, for example pointers to superblocks of a fork chain, as shown in Figure \ref{fig:false_interlink}.
