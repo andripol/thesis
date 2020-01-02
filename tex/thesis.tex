@@ -166,7 +166,7 @@ Subsequently to the above Claims we have that:
 
 because of the common underlying chain in the first round set:
 \begin{equation} \label{eq_round_set_1}
-2^{\mu_A} \vert \alpha_A^{k_1} \vert = 2^{\mu'_B} \vert \alpha'{_B^{k_1}} \vert
+2^{\mu_A} \vert \alpha_A^{k_1} \vert \leq 2^{\mu'_B} \vert \alpha'{_B^{k_1}} \vert
 \end{equation}
 
 because of the adoption by an honest party of chain $C_B$ at a later round $r_3$, we have for the second round set:
@@ -283,26 +283,32 @@ The above are illustrated in Parts I, II of Figure \ref{fig:proof_velvet}.
 	\label{fig:proof_velvet}
 \end{figure}
 
-In the following we consider the reformed chains $C_A, C_B$ from block $b_2$ and after. This reforming suggests the following: All adversarially generated blocks with false interlink in subchain $C_B\{b_2:\}$ which participate in cyclic dependency with fork chain $C_A$, are removed from $C_B$ and added in $C_A$ just as the interlink pointers forming the cyclic dependency point out. This reforming is helpful for the purposes of our proof construction and does not change the facts of the problem, or put it in another way, gives us an equivalent problem to solve. This is true, because of Remark 1, that such blocks cannot be included in an honest NIPoPoW proof while can be included in the proof constructed by the adversary, thus from the NIPoPoW suffix proofs perspective these block can be perceived as belonging in the adversary's fork chain. This remark is considered in all Claims.\\
-
 We will now show the three successive claims under velvet fork conditions: First, $\alpha_A$ and $\alpha'_B \downarrow$ are mostly disjoint. Second, $a_A$ contains mostly adversarially generated blocks. And third, the adversary is able to produce this $a_A$ with negligible probability.
 
-Let $\alpha_A = k_1 + k_2 + k_3$ and let $k_1, k_2, k_3$ be as defined in the following Claims.
+Let $\alpha_A = k_1 + k_2 + k_3$ and let $k_1, k_2, k_3$ be as defined in the following Claims.\\
 
-\textbf{Claim 1:} $\alpha_A, \alpha'_B\downarrow$ are mostly disjoint. We show this by taking the two possible cases for the relation of $\mu_A$, $\mu'_B$ and the cases of $\alpha_A$ containing blocks with corect or incorrect interlinks up until block $b_2 = LCA(C_B, \alpha_A)$.\\
-\textit{\underline{Claim 1a}:} If $\mu'_B \leq \mu_A$ and $\alpha_A$ contains blocks with correct interlinks, then they are completely disjoint. In such a case of inequality, every block in $\alpha_A$ would also be of lower level $\mu'_B$. Applying Lemma 2 to $C_B\{b:\}\uparrow^{\mu'_B}$  we see that all blocks containing correct interlinks and included in $\alpha_A$ would also be included in $\alpha'_B$, but $b=LCA(\pi_A, \pi_B)$ so there can be no succeeding block common in $\alpha_A, \alpha'_B$. \\
-\textit{\underline{Claim 1b}:} If  $\mu'_B > \mu_A$ and $\alpha_A$ contains blocks with correct interlinks, then $\vert \alpha_A[1:] \cap \alpha'_B\downarrow[1:] \vert = k_{1a} \leq 2^{\mu'_B - \mu_A}$.\\
+\textbf{Claim 1:} $\alpha_A, \alpha'_B\downarrow$ are mostly disjoint. We show this by taking the two possible cases for the relation of $\mu_A$, $\mu'_B$ and the cases of $\alpha_A$ containing blocks with correct or incorrect interlinks up until block $b_2 = LCA(\alpha'_B\downarrow, \alpha_A)$.\\
+Claims 1a, 1b calculate an upper bound of the honestly generated blocks that $\alpha_A, \alpha'_B\downarrow$ may have in common. 
+
+\textit{\underline{Claim 1a}:} If $\mu'_B \leq \mu_A$ and considering only the blocks with correct interlinks, then $\alpha_A, \alpha_B$ have no honestly generated block in common. In such a case of inequality, every block in $\alpha_A$ would also be of lower level $\mu'_B$. Applying Lemma 2 to $C_B\{b:\}\uparrow^{\mu'_B}$  we see that all blocks containing correct interlinks and included in $\alpha_A$ would also be included in $\alpha'_B$, but $b=LCA(\pi_A, \pi_B)$ so there can be no succeeding block common in $\alpha_A, \alpha'_B$. 
+
+\textit{\underline{Claim 1b}:} If  $\mu'_B > \mu_A$ and considering only the blocks with correct interlinks, then $\vert \alpha_A[1:] \cap \alpha'_B\downarrow[1:] \vert = k_{1a} \leq 2^{\mu'_B - \mu_A}$.\\
 First observe that because the adversary is winning $2^{\mu_A} \vert \alpha_A \vert > 2^{\mu'_B} \vert \alpha'_B \vert \geq 2^{\mu'_B} m \Rightarrow \vert \alpha_A \vert > 2^{\mu'_B - \mu_A}m$.  Let's call $b_1$ the first block in $\alpha'_B$ after block b.
-Suppose for contradiction that $k_1 > 2^{\mu'_B - \mu_A}$.  Since $C_B^{\mu'_B}$ is of good chain quality, this would mean that block $b_1$, of level $\mu'_B$, also exists in $\alpha_A$ since it is of level $\mu_A$ too. But $b_1$ cannot exist in both $\alpha_A, \alpha'_B$ since $\alpha_A \cap \alpha'_B = \emptyset$ by definition.  \\
-\textit{\underline{Claim 1c}:} In case of blocks containing incorrect interlink, by the time such a block is included in $\alpha_A$, then no other honestly generated block of chain $C_B$ will be included in $\alpha_A$ because of Remark 1(no honestly generated block included in proof can point to a superblock containing false interlink). Thus, in that case it is equivalent to consider two different chains, the one of the adversary and the other of the honest players, that compete each other. This case may appear after $k_{1a}$ blocks in the $\alpha_A$ as described in the above Claims. Let $b_1 = \{GCA(C_B, \alpha_A) \cap b_1 \textit{ contains false interlink}\}$ and block $b_2 = LCA(C_B, \alpha_A)$. Thus we have 
-$\vert \alpha_A[1:] \cap \alpha'_B\downarrow[1:] \vert = k_{1a} + k_{1b}$, where $k_{1b} \leq C_B\{b_1:b_2\}\uparrow^{\mu_A}$.\\
+Suppose for contradiction that $k_{1a} > 2^{\mu'_B - \mu_A}$.  Since $C_B^{\mu'_B}$ is of good chain quality, this would mean that block $b_1$, of level $\mu'_B$, also exists in $\alpha_A$ since it is of level $\mu_A$ too. But $b_1$ cannot exist in both $\alpha_A, \alpha'_B$ since $\alpha_A \cap \alpha'_B = \emptyset$ by definition.  
+
+From Claim $1a$ and Claim $1b$, we conclude that there are $\vert \alpha_A \vert - k_1$ blocks after block $b$ in $\alpha_A$ which are not honestly generated blocks existing in $\alpha_B\downarrow$. We now set $b_2 = LCA(C_B, \alpha_A)$. This makes $b_2$ the last block before the 0-level fork point included in the adversary's proof.\\
+
+\textbf{Claim 2.} To be constructed.\\
+
+%
+%Claim * calculates an upper bound of the adversarially generated blocks that $\alpha_A, \alpha'_B\downarrow$ may have in common.\\
+%\textit{\underline{Claim *}:} Now consider the blocks containing incorrect interlink. By the time such a block is included in $\alpha_A$, then no other honestly generated block of chain $C_B$ will be included in $\alpha_A$ because of Remark 1 (no honestly generated block included in proof can point to a superblock containing false interlink). Thus, in that case it is equivalent to consider two different chains, the one of the adversary and the other of the honest players, that compete each other. This case may appear after $k_{1a}$ blocks in the $\alpha_A$ as described in the above Claims. Let $b_1 = \{GCA(C_B, \alpha_A) \cap b_1 \textit{ contains false interlink}\}$ and block $b_2 = LCA(C_B, \alpha_A)$. Thus we have 
+%$\vert \alpha_A[1:] \cap \alpha'_B\downarrow[1:] \vert = k_{1a} + k_{1b}$, where $k_{1b} \leq C_B\{b_1:b_2\}\uparrow^{\mu_A}$.\\
+
+In the following we consider the reformed chains $C_A, C_B$ for blocks in the $k_3$ region of the proofs. This reforming suggests the following: all adversarially generated blocks with false interlink in subchain $C_B\{b_2:\}$ which participate in cyclic dependency with fork chain $C_A$, are removed from $C_B$ and added in $C_A$ just as the interlink pointers forming the cyclic dependency point out. This reforming is helpful for the purposes of our proof construction and does not change the facts of the problem, or put it in another way, gives us an equivalent problem to solve. This is true, because of Remark 1, that such blocks cannot be included in an honest NIPoPoW proof while can be included in the proof constructed by the adversary, thus from the NIPoPoW suffix proofs perspective these block can be perceived as belonging in the adversary's fork chain. This remark is considered in the following Claim.\\
 
 
-From Claim $1a$ and Claim $1b$, we conclude that there are $\vert \alpha_A \vert - (k_{1a} + k_{1b})$ blocks after block $b$ in $\alpha_A$ which do not exist in $\alpha_B\downarrow$. We now set $b_2 = LCA(C_B, \alpha_A)$. This makes $b_2$ the last block before the fork point at the 0-level chain included in the adversary's proof.\\
-
-\textbf{Claim 2.} After reforming $C_B, C_A$ this Claims is exactly the same as that of Theorem 2.
-
-\textbf{Claim 3.} After reforming $C_B, C_A$ this Claims is exactly the same as that of Theorem 2.
+\textbf{Claim 3.} After reforming $C_B, C_A$ this Claim is exactly the same as that of Theorem 2.
 
 
 
