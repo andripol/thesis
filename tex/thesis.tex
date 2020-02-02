@@ -118,7 +118,10 @@ Let $\alpha_A = k_1 + k_2 + k_3$ and let $k_1, k_2, k_3$ be as defined in the fo
 \textit{\underline{Claim 1a}:} If $\mu'_B \leq \mu_A$ then they are completely disjoint. In such a case of inequality, every block in $\alpha_A$ would also be of lower level $\mu'_B$. Applying Lemma 2 to $C\{b:\}\uparrow^{\mu'_B}$  we see that $C\{b:\}\uparrow^{\mu'_B} = \pi\{b:\}\uparrow^{\mu'_B}$. Subsequently, any block in $\pi_A\uparrow^{\mu_A}\{b:\}[1:]$ would also be included in proof $\alpha'_B$, but $b=LCA(\pi_A, \pi_B)$ so there can be no succeeding block common in $\alpha_A, \alpha'_B$. \\
 \\
 \textit{\underline{Claim 1b}:} If  $\mu'_B > \mu_A$ then $\vert \alpha_A[1:] \cap \alpha'_B\downarrow[1:] \vert = k_1 \leq 2^{\mu'_B - \mu_A}$.\\
-First observe that because the adversary is winning $2^{\mu_A} \vert \alpha_A \vert > 2^{\mu'_B} \vert \alpha'_B \vert \geq 2^{\mu'_B} m \Rightarrow \vert \alpha_A \vert > 2^{\mu'_B - \mu_A}m$.  Let's call $b_1$ the first block in $\alpha'_B$ after block b.
+%% possibly unnecessary sentence%%%%%
+First observe that because the adversary is winning $2^{\mu_A} \vert \alpha_A \vert > 2^{\mu'_B} \vert \alpha'_B \vert \geq 2^{\mu'_B} m \Rightarrow \vert \alpha_A \vert > 2^{\mu'_B - \mu_A}m$.
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+Let's call $b_1$ the first block in $\alpha'_B$ after block b.
 Suppose for contradiction that $k_1 > 2^{\mu'_B - \mu_A}$.  Since $C_B^{\mu'_B}$ is of good chain quality, this would mean that block $b_1$, of level $\mu'_B$, also exists in $\alpha_A$ since it is of level $\mu_A$ too. But $b_1$ cannot exist in both $\alpha_A, \alpha'_B$ since $\alpha_A \cap \alpha'_B = \emptyset$ by definition.  \\
 
 
@@ -136,13 +139,13 @@ Intuition: in this case the common blocks of $\alpha_A, \alpha'_B\downarrow$ may
 	\label{fig:proof}
 \end{figure}
 
-Intuitively: Because of Common Prefix on $k_{2\downarrow}$ parameter, where $k_{2\downarrow} = \vert \alpha_A[j:j+k_2]\downarrow\vert$, where $E[k_{2\downarrow}] = 2^{-\mu_A}k_2$, there can be no honest party adopting $C_A$ at any round $i \geq k_1 + k_2 + 1$. \\
+Intuitively: Because of Common Prefix on $k_{2\downarrow}$ parameter, where $k_{2\downarrow} = \vert \alpha_A[j:j+k_2]\downarrow\vert$, where $E[k_{2\downarrow}] = 2^{\mu_A}k_2$, there can be no honest party adopting $C_A$ at any round $i \geq k_1 + k_2 + 1$. \\
 
 From these two Claims we have that $k_1$ blocks in $\alpha_A$ are blocks of the common zero-level chain, while $k_2$ blocks are blocks after the fork point at the zero-level chain. Subsequently, $k_2$ is subject to the Common Prefix $\kappa-$parameter limitations as described in the Backbone paper\cite{Backbone}.\\
 
 \textbf{Claim 3:} Adversary $A$ is able to produce $\alpha_A$ that wins against $\alpha_B$ with negligible probability.
 
-Let $b'$ be the latest honestly generated block in $a_A$, or $b' = b^*$ if no such block exists in $a_A$. Let $r_1$ be the round when $b'$ was generated. Consider the set $S$ of consecutive rounds $r_1..r_3$. Every block in $\alpha_A[-k_3:]$ has been adversarially generated during $S$ and $\vert \alpha_A[-k_3:] \vert = \vert \alpha_A\{b':\} \vert = k_3$. $C_B$ is a chain adopted by an honest party at round $r_3$ and filtering the blocks by the rounds during which they were generated to obtain $C_B^S$, we see that if $b''$ is the most recent honestly generated block in a round $r \leq r_1$, then $C_B^S = C_B\{ b'': \}$. But $C_B^S \uparrow^{\mu'_B}$ is good with respect to $C_B^S$. Applying Lemma 1, we obtain that with overwhelming probability  $2^{\mu_A} \vert \alpha_A\{b':\} \vert < 2^{\mu'_B} \vert C_B^S \uparrow^{\mu'_B} \vert$, which is equal to
+Let $b'$ be the latest honestly generated block in $a_A$, or $b' = b^*$ if no such block exists in $a_A$. Let $r_1$ be the round when $b'$ was generated. Consider the set $S$ of consecutive rounds $r_1..r_3$. Every block in $\alpha_A[-k_3:]$ has been adversarially generated during $S$ and $\vert \alpha_A[-k_3:] \vert = \vert \alpha_A\{b':\} \vert = k_3$. $C_B$ is a chain adopted by an honest party at round $r_3$ and filtering the blocks by the rounds during which they were generated to obtain $C_B^S$, we see that if $b''$ is the most recently generated block in $\alpha_B$ in a round $r \leq r_1$, then $C_B^S = C_B\{ b'': \}$. But $C_B^S \uparrow^{\mu'_B}$ is good with respect to $C_B^S$. Applying Lemma 1, we obtain that with overwhelming probability  $2^{\mu_A} \vert \alpha_A\{b':\} \vert < 2^{\mu'_B} \vert C_B^S \uparrow^{\mu'_B} \vert$, which is equal to
 
 \begin{equation}
 2^{\mu_A} \vert \alpha_A\{b':\} \vert < 2^{\mu'_B} \vert \alpha'_B\{b'':\} \vert
@@ -164,17 +167,17 @@ $\alpha_B^{k_1}$, $\alpha_B^{k_2}$, $\alpha_B^{k_3}$ the parts of $\alpha_B$ con
 
 Subsequently to the above Claims we have that:
 
-because of the common underlying chain in the first round set:
+Because of the common underlying chain in the first round set:
 \begin{equation} \label{eq_round_set_1}
 2^{\mu_A} \vert \alpha_A^{k_1} \vert \leq 2^{\mu'_B} \vert \alpha'{_B^{k_1}} \vert
 \end{equation}
 
-because of the adoption by an honest party of chain $C_B$ at a later round $r_3$, we have for the second round set:
+Because of the adoption by an honest party of chain $C_B$ at a later round $r_3$, we have for the second round set:
 \begin{equation} \label{eq_round_set_2}
 2^{\mu_A} \vert \alpha_A^{k_2} \vert \leq 2^{\mu'_B} \vert \alpha'{_B^{k_2}} \vert
 \end{equation}
 
-because of Equation (1), we have for the third round set:
+Because of Equation (1), we have for the third round set:
 \begin{equation} \label{eq_round_set_3}
 2^{\mu_A} \vert \alpha_A^{k_3} \vert < 2^{\mu'_B} \vert \alpha'{_B^{k_3}} \vert
 \end{equation}
@@ -206,7 +209,7 @@ So, we finally conclude to the following upper bound for the value of security p
 m = 2\kappa + 1 
 \end{equation}
  
-{\large TO BE DISCUSSED: however it seems like this parameter value covers only the $\alpha_a, \alpha_B$ parts of the proofs. What about the rest of it? From Genesis block up to block $b$? }
+{\large TO BE DISCUSSED: however it seems like this parameter value covers only the $\alpha_a, \alpha_B$ parts of the proofs. What about the rest of it? From Genesis block up to block $b$? The prover does not know the index of last common block $b$ in order to assure that his sends a proof of valid length. }
  
 \section{NIPoPoWs under Velvet Fork}
 
@@ -242,10 +245,10 @@ Note that in order to make this attack successful, the adversary has to produce 
 
 Needs proof via simulation. It is not probable that the attacker will succeed in high probability, since the most important adversarially generated blocks , $a$ and $a'$, set a limit to the adversarial blocks produced in parallel to the honest blocks of subchain $C\{ab\} \cup C\{b:a'\} \cup C\{a':b'\}$ and can take part in the suffix proof.
 
-
+23
 \section{Protocol Update}
 
-In order to eliminate the Chainsewing Attack we propose an update to the NIPoPoWs protocol under velvet fork. The core problem is that in her suffix proof the adversary claims not only blocks of the fork chain,  which are in majority adversarially generated because of Common Prefix property, but also an arbitrarily large number of blocks generated by honest miners. The vulnerability that makes this attack possible is the acceptance of blocks containing false interlink pointers. Since we operate under a velvet fork we cannot eliminate blocks containing false interlinks, we need, however, to restrict the adversary from being able to claim portion of another chain as part of her fork chain. 
+In order to eliminate the Chainsewing Attack we propose an update to the NIPoPoWs protocol under velvet fork. The core problem is that in her suffix proof the adversary is able to claim not only blocks of the fork chain,  which are in majority adversarially generated because of Common Prefix property, but also an arbitrarily large number of blocks generated by honest miners. The vulnerability that makes this attack possible is the acceptance of blocks containing false interlink pointers. Since we operate under a velvet fork we cannot eliminate blocks containing false interlinks, we need, however, to restrict the adversary from being able to claim portion of another chain as part of her fork chain. 
 
 The key observation on the Chainsewing Attack is that the adversary needs at least two adversarially generated blocks, one in the fork (block $a$) and one in the honest player's chain (block $a'$), which are connected in a superblock path formed by interlink pointers. This path may contain both honest or adversarial blocks. 
 
@@ -301,19 +304,21 @@ The above are illustrated in Parts I, II of Figure \ref{fig:proof_velvet}.
 	\label{fig:proof_velvet}
 \end{figure}
 
-We will now show three successive claims under velvet fork conditions: First, $\alpha_A \downarrow \uparrow^{\mu_A}$ and $\alpha'_B \downarrow$ are mostly disjoint. Second, $a_A$ contains mostly adversarially generated blocks. And third, the adversary is able to produce this $a_A$ with negligible probability.
+We will now show three successive claims under velvet fork conditions: First, $\alpha_A \downarrow \uparrow^{\mu_A}$ and $\alpha'_B \downarrow$ are mostly disjoint. Second, $a_A$ contains mostly adversarially generated blocks. And third, the adversary is able to produce this $a_A$ with negligible probability. Note that the notation $\alpha_A \downarrow \uparrow^{\mu_A}$ denotes that blocks of $\alpha_A$ which belong in the 0-level chain $C_A$ and are not sewed in the adversary's proof by chain $C_B$.
 
 Let $\alpha_A = k_1 + k_2 + k_3$ and let $k_1, k_2, k_3$ be as defined in the following Claims.\\
 
-Let round $r_1$ the round when block $b$ is generated and round $r_2$ when block $b_2 = LCA(\alpha_A \downarrow \uparrow^{\mu_A}, \alpha'_B\downarrow)$ is generated.
+Let round $r_1$ be the round when block $b$ is generated and round $r_2$ when block $b_2 = LCA(\alpha_A \downarrow \uparrow^{\mu_A}, \alpha'_B\downarrow)$ is generated.
 
 \textbf{Claim 1:} $\alpha_A \downarrow \uparrow^{\mu_A}, \alpha'_B\downarrow$ are mostly disjoint. We show this by taking the two possible cases for the relation of $\mu_A$, $\mu'_B$ and the cases of $\alpha_A$ containing blocks with correct or incorrect interlinks up until block $b_2 = LCA(\alpha_A \downarrow \uparrow^{\mu_A}, \alpha'_B\downarrow)$.\\
+This means that $b_2$ is the LCA block of adversary's proof and honest player's 0-level chain, without considering any (adversarial) blocks belonging in $\alpha'_B \downarrow$ sewed in the adversary's proof.
 
 
+\textit{\underline{Claim 1a}:} If no adversarially generated block of chain $C_B$ with incorrect interlink is sewed in $\alpha_A$ then the claim's proof is the same to that of Theorem 2, thus $k_1 \leq 2^{\mu'_B - \mu_A}$.
 
-\textit{\underline{Claim 1a}:} If no adversarially generated block with incorrect interlink is included in $\alpha_A$ then the proof is the same to that of Theorem 2, thus $k_1 \leq 2^{\mu'_B - \mu_A}$.
-
-\textit{\underline{Claim 1b}:} If a block $b' = \{b' \in C_B\{b:b_2\} \cap \textit{ } b' \textit{ contains incorrect interlink} \}$ is included in $\alpha_A$ then no more honestly generated block of the common subchain $C_B\{b:b_2\}$ is included in $\alpha_A$ because of Remark 2. \\ In that case, blocks in $\alpha_A\{b:b'\}$ are subject to the constraints of Claim 1a, thus we have $k_{1a} \leq 2^{\mu'_B - \mu_A}$. Blocks in $\alpha_A\{b':b_2\}$ are adversarially generated and contain incorrect interlinks thus from that point on it is equivalent considering two disjoint chains competing each other. Let these blocks count to $k_{1b}$. \textit{(Consider the rounds when these blocks were generated and apply Lemma 1 to get the inequality)}\\
+\textit{\underline{Claim 1b}:} If a block $b' = \{b' \in C_B\{b:b_2\} \cap \textit{ } b' \textit{ contains incorrect interlink} \}$ is included in $\alpha_A$ then no more honestly generated block of the common subchain $C_B\{b':b_2\}$ is included in $\alpha_A$ because of Remark 2. 
+In that case, blocks in $\alpha_A\{b:b'\}$ are subject to the constraints of Claim 1a, thus we have $k_{1a} \leq 2^{\mu'_B - \mu_A}$. 
+Blocks in $\alpha_A\{b':b_2\}$ are adversarially generated either directly in $C_A$ either sewed from $C_B$. Thus from that point on it is equivalent considering two disjoint chains competing each other. Let these blocks count to $k_{1b}$. \textit{(Consider the rounds when these blocks were generated and apply Lemma 1 to get a desirable inequality)}\\
 
 Finally we have 
 $\vert \alpha_A\downarrow\uparrow^{\mu_A}[1:] \cap \alpha'_B\downarrow[1:] \vert = k_{1a} + k_{1b} = k_1$, where $k_{1b} \leq C_B\{b':b_2\}\uparrow^{\mu_A}$.\\
