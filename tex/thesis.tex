@@ -1,4 +1,4 @@
-\documentclass[9pt,a4paper]{article}
+\documentclass[11pt,a4paper]{article}
 \usepackage[utf8]{inputenc}
 \usepackage{amsmath}
 \usepackage{amsfonts}
@@ -19,12 +19,13 @@
 \section{Introduction}
 Since the release of Bitcoin about a decade ago, the interest in cryptocurrencies has increased tremendously, while a number of other ``altcoins'' have been constructed in the meantime. Given that cryptocurrencies are starting to be considered a generally accepted means of payment and are used for everyday transactions, the issue of efficiently handling cryptocurrencies by light clients, such as smartphones, has become of great importance.
 
-In this work, we consider the problem of optimizing light clients, or ``SPV clients'' as described in the original Bitcoin paper\cite{Nakamoto}. As blockchains are ever growing, the main setback for efficient light client applications is the processing of data amount linear to the size of the blockchain, e.g. for syncrhronization purposes. 
+In this work, we consider the problem of optimizing light clients, or ``SPV clients'' as described in the original Bitcoin paper\cite{Nakamoto}. As blockchains are ever growing, the main setback for efficient light client applications is the processing of data amount linear to the size of the blockchain, e.g. for synchronization purposes. 
 
 Our work is based on the construction of Non-Interactive Proofs of Proof of Work\cite{NIPoPoWs} that achieves SPV proofs of polylogarithmic portion of the blockchain size. The NIPoPoWs construction suggests a protocol update, that could be possibly implemented by a soft or a hard fork. Given the reluctancy of the community to proceed to such forks, we consider the case of a velvet fork\cite{NIPoPoWs}\cite{Zamyatin}.
 
 Under this scope, our contributions come as follows:
 \begin{itemize}
+	\item We revise the security proof for NIPoPoWs suffix proof protocol and compute a concrete value for the security parameter $m$
 	\item We describe an attack, that we name \textit{Chainsewing Attack}, against NIPoPoWs suffix proof construction, which is used for the light client's synchronization
 	\item We suggest a patch to the NIPoPoWs protocol that eliminates the \textit{Chainsewing Attack} and prove its security
 \end{itemize}
@@ -61,11 +62,11 @@ We define the boolean random variables $X_r^{\mu}$, $Y_r^{\mu}$, $Z_r^{\mu}$. Fi
 
 \textbf{Round count.} First, observe that for a specific round $r$ we have $Z_{rjk} \sim Bern(p)$, so for the $\mu$-level superblocks $Z_{rjk}^\mu \sim Bern(2^{-\mu}p)$ and these are jointly independent. Therefore, since for $\vert S \vert$ rounds we have $tq\vert S \vert$ adversarial RO queries, we have that $Z_S^\mu \sim \text{Bin}(tq \vert S \vert, 2^{-\mu}p)$. So $tq \vert S \vert \sim \text{NB}(Z_S^\mu, 2^{-\mu}p)$. Negative Binomial distribution is defined as $\text{NB}(r, p')$ and, for our purposes, expresses the number of trials in a sequence of independent and identically distributed Bernoulli trials before a specified $(r)$ number of successes occurs. The expected total number of trials of a negative binomial distribution with parameters $(r, p')$ is $r/p'$. To see this, imagine an experiment simulating the negative binomial performed many times, that is a set of trials is performed until $r$ successes occur. Consider you perform $n$ experiments of total $N$ trials. Now we would expect $Np' = nr$, so $N/n = r/p'$. See that $N/n$ is just the average number of trials per experiment. So we have $E[tq \vert S \vert] = \frac{Z^\mu_S}{2^{-\mu}p} \Rightarrow E[\vert S \vert] = 2^\mu \frac{Z^\mu_S}{tqp}$. So if $Z^\mu(S) \geq k$ then $E[\vert S \vert] \geq 2^\mu \frac{k}{tqp}$. Applying a tail bound to the negative binomial distribution, we obtain that $\text{Pr}[\vert S \vert < (1 - \epsilon)E(\vert S \vert)] \in \Omega(\epsilon^{2}m)$.  \\
 
-\textbf{Lemma 1.} \textit{Suppose S is a set of consecutive rounds $r_1 ... r_2$ and $C_B$ is a chain adopted by an honest party at round $r_2$ of a typical execution. Let $C^{B}_{S} = \{$ b $\in C_B:$ b was generated during $S\}$. Let $\mu_A, \mu_B \in \mathbb{N}$. Suppose $C^{B}_{S}\uparrow^{\mu_B}$ is good. Suppose $C'_A$ is a $\mu_A$-superchain containing only adversarially generated blocks generated during S and suppose that $\vert C'_A \vert \geq k$. Then $2^{\mu_A} \vert C'_A \vert <  2^\mu_B \vert    C^{B}_{S}\uparrow^{\mu_B}\vert $. }\\
+\textbf{Lemma 1.} \textit{Suppose S is a set of consecutive rounds $r_1 ... r_2$ and $C_B$ is a chain adopted by an honest party at round $r_2$ of a typical execution. Let $C^{B}_{S} = \{$ b $\in C_B:$ b was generated during $S\}$. Let $\mu_A, \mu_B \in \mathbb{N}$. Suppose $C^{B}_{S}\uparrow^{\mu_B}$ is good. Suppose $C'_A$ is a $\mu_A$-superchain containing only adversarially generated blocks generated during S and suppose that $\vert C'_A \vert \geq k$. Then $2^{\mu_A} \vert C'_A \vert <  2^{\mu_B} \vert    C^{B}_{S}\uparrow^{\mu_B}\vert $. }\\
 
 \textit{Proof.} From $\vert C'_A \vert \geq k$ we have that $\vert Z^{\mu_A}_S \vert \geq k$. Applying Theorem 1, we conclude that $\vert S \vert \geq (1-\epsilon')2^{\mu_A} \frac{\vert C'_A \vert}{pqt}$. Applying the Chain Growth theorem \cite{Backbone} we obtain $\vert C_{B}^S \vert \geq (1 - \epsilon)f \vert S \vert$. But from the goodness of $C_{B}^S \uparrow^{\mu_B}$, we know that $\vert C_{B}^S\uparrow^{\mu_B} \vert \geq (1 - \delta)2^{-\mu_B} \vert C_{B}^S \vert $. So we have $\vert C_{B}^S\uparrow^{\mu_B} \vert \geq (1 - \delta)2^{-\mu_B} (1 - \epsilon)f \vert S \vert $ and follows that $\vert C_{B}^S\uparrow^{\mu_B} \vert \geq (1 - \delta)2^{-\mu_B} (1 - \epsilon)f (1-\epsilon')2^{\mu_A} \frac{\vert C'_A \vert}{pqt} $. Consequently we have that $2^{\mu_A} \vert C'_A \vert \leq \frac{pqt}{(1- \delta)(1-\epsilon)(1-\epsilon')f} 2^{\mu_B} \vert C_{B}^S\uparrow^{\mu_B} \vert $.   \\
 
-So, according to the above equation we have that $2^{\mu_A} \vert C'_A \vert <  2^\mu_B \vert    C^{B}_{S}\uparrow^{\mu_B}\vert $ considering that honest  majority assumption holds, specifically considering that $ \frac{pqt}{f} \approx \frac{t}{n-t} \leq 1 $ .\\
+So, according to the above equation we have that $2^{\mu_A} \vert C'_A \vert <  2^{\mu_B} \vert    C^{B}_{S}\uparrow^{\mu_B}\vert $ considering that honest  majority assumption holds, specifically considering that $ \frac{pqt}{f} \approx \frac{t}{n-t} \leq 1 $ .\\
 
 \textbf{Definition 2 (Adequate level of honest proof).} \textit{Let $\pi$ be an honestly generated proof constructed upon some adopted chain $C$ and let $b \in \pi $. Then $\mu'$ is defined as $\mu' = \max \{ \mu: \vert \pi\{b:\}\uparrow^{\mu} \vert \geq \max( m+1, (1-\delta)2^{-\mu} \vert \pi\{b:\}\uparrow^{\mu}\downarrow \vert )   \}$}.
 \textit{We call $\mu'$ the adequate level of proof $\pi$ with respect to block b with security parameters $\delta$ and m. Note that the adequate level of a proof is a function of both the proof $\pi$ and the chosen block b.}\\
@@ -83,7 +84,7 @@ Suppose $\mu = \mu^*$ is the first \emph{for} iteration during which the propert
 
 Hence, this property cannot hold for $\mu^* > \mu$ and therefore $\vert \pi\{b:\}\uparrow^{\mu} \vert < m$ or $\neg$local-good$_\delta(\pi\{b: \}\uparrow \mu^*[1:], C, \mu^*)$.
 
-In case local-good is violated, variable $B$ remains unmodified and the induction step holds. If local-good is not violated, then $ \vert \pi\{b:\} \uparrow^{\mu^*}[1:] \vert < m$ and so $\pi\uparrow^{\mu^*}[-m]$, which is the updated value of $B$ at the end of $\mu^*$ iteration, precedes $b$.
+In case local-good is violated, variable $B$ remains unmodified and the induction step holds. If local-good is not violated, then $ \vert \pi\{b:\} \uparrow^{\mu^*}[1:] \vert < m$ and so $\pi\uparrow^{\mu^*}[-m]$, which is the updated value of $B$ at the end of $\mu^*$ iteration, precedes $b$.\\
 
 \textbf{Lemma 3.} \textit{Suppose the verifier evaluates $\pi_A \geq \pi_B$ in a protocol interaction where B is honest and assume during the comparison that the compared level of the honest party is $\mu_B$. Let $b = LCA(\pi_A, \pi_B)$ and let ${\mu}'_B$ be the adequate level of $\pi_B$ with respect to b. Then ${\mu}'_B \geq \mu_B$.}\\
 
@@ -108,7 +109,7 @@ Let $b = LCA(\pi_A, \pi_B)$. Let $b^\star$ be the most recently honestly generat
 $\alpha'_B = \pi_B \uparrow^{\mu'_B}\{b:\}$.
 
 %%ANDRI:
-Note that we consider the parts of the proofs succeeding block $b$ the decisive ones for the verifier's choice. This is to adversary's advantage, since the parts preceding this block demonstrate the proof-of-work contained in common (sub)chain of $A$ and $B$. Thus, considering good chain quality for the proof of any honest player, the adversary could only include equal or less proof-of-work in her proof for this part of the chain.
+Note that we consider the parts of the proofs succeeding block $b$ the decisive ones for the verifier's choice. This is to adversary's advantage, since the parts preceding this block demonstrate the proof-of-work contained in the common (sub)chain, thus the adversary could only include equal or less proof-of-work in her proof for this part of the chain.
 
 We will now show three successive claims: First, $\alpha_A$ and $\alpha'_B \downarrow$ are mostly disjoint. Second, $a_A$ contains mostly adversarially generated blocks. And third, the adversary is able to produce this $a_A$ with negligible probability.
 
@@ -246,11 +247,10 @@ Needs proof via simulation. It is not probable that the attacker will succeed in
 
 \subsection{Protocol Update}
 
+In order to eliminate Chainsewing Attack we propose a patch to the NIPoPoWs protocol for the case of velvet fork. The problem is that due to the velvet fork conditions the adversary is able to claim in her suffix proof not only blocks of the fork chain but also an arbitrarily long subchain of the chain adopted by an honest player. Since blocks containing false interlink pointers are accepted as valid, the verifier 
+cannot distinguish blocks that actually belong in a chain from blocks that only seem to belong in the same chain because they are pointed to via a false interlink pointer. 
 
 \subsection{Security Proof}
-
-
-
 
 
 \subsection{Infix Proofs}
