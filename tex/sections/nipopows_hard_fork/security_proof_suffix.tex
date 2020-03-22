@@ -83,7 +83,7 @@ Let $\alpha_A = k_1 + k_2 + k_3$ and let $k_1, k_2, k_3$ be as defined in the fo
 First observe that because the adversary is winning $2^{\mu_A} \vert \alpha_A \vert > 2^{\mu'_B} \vert \alpha'_B \vert \geq 2^{\mu'_B} m \Rightarrow \vert \alpha_A \vert > 2^{\mu'_B - \mu_A}m$.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 Let's call $b_1$ the first block in $\alpha'_B$ after block b.
-Suppose for contradiction that $k_1 > 2^{\mu'_B - \mu_A}$.  Since $C_B^{\mu'_B}$ is of good chain quality, this would mean that block $b_1$, of level $\mu'_B$, also exists in $\alpha_A$ since it is of level $\mu_A$ too. But $b_1$ cannot exist in both $\alpha_A, \alpha'_B$ since $\alpha_A \cap \alpha'_B = \emptyset$ by definition.  \\
+Suppose for contradiction that $k_1 > 2^{\mu'_B - \mu_A}$.  Since $C_B^{\mu'_B}$ is of good chain quality, this would mean that block $b_1$, of level $\mu'_B$ is also of level $\mu_A$. Since it is of level $\mu_A$ the adversary could include it in the proof but $b_1$ cannot exist in both $\alpha_A, \alpha'_B$ since $\alpha_A \cap \alpha'_B = \emptyset$ by definition. In case that the adversary chooses not to include $b_1$ in the proof than she can include no other blocks of $C_B$ in her proof, since it would not consist a valid chain.  \\
 
 
 From Claim $1a$ and Claim $1b$, we conclude that there are $\vert \alpha_A \vert - k_1$ blocks after block $b$ in $\alpha_A$ which do not exist in $\alpha_B\downarrow$. We now set $b_2 = LCA(C_B, \alpha_A)$. This makes $b_2$ the last block before the fork point at the 0-level chain included in the adversary's proof.\\
