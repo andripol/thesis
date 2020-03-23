@@ -44,7 +44,7 @@ The above are illustrated, among other, in Parts I, II of Figure \ref{fig:proof_
 	\begin{center}
 		\includegraphics[scale=0.5]{figures/proof_velvet.png}
 	\end{center}
-	\caption{\textit{ Wavy lines imply one or more blocks. Dashed lines and arrows imply interlink pointers to superblocks. \textbf{I}: the three round sets in two competing proofs at different levels, \textbf{II}: the corresponding 0-level chains, \textbf{III}: the reformed chains $C_B$, $C_A$ so that adversarially generated blocks with false interlink participating in cyclic dependency with $C_A$ are removed from $C_B$ and added to $C_A$.}}
+	\caption{\textit{ Wavy lines imply one or more blocks. Dashed lines and arrows imply interlink pointers to superblocks. \textbf{I}: the three round sets in two competing proofs at different levels, \textbf{II}: the corresponding 0-level chains, \textbf{III}: blocks participating in chains $C_B$, $C_A$ as conceived by the verifier's perspective.}}
 	\label{fig:proof_velvet}
 \end{figure}
 We will now show three successive claims under velvet fork conditions: First, $\alpha_A \downarrow \uparrow^{\mu_A}$ and $\alpha'_B \downarrow$ are mostly disjoint. Second, $a_A$ contains mostly adversarially generated blocks. And third, the adversary is able to produce this $a_A$ with negligible probability. Note that the notation $\alpha_A \downarrow \uparrow^{\mu_A}$ denotes the blocks of $\alpha_A$ which belong in the 0-level chain $C_A$, thus are not sewed in the adversary's proof by $C_B$.\\
