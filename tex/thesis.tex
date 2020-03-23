@@ -70,22 +70,16 @@ Let round $r_1$ be the round when block $b$ is generated and round $r_2$ when bl
 So we conclude that there are at least $\vert \alpha_A \vert - k_1$ blocks after block $b$ in $\alpha_A$ which are not honestly generated blocks existing in $\alpha'_B\downarrow$. In other words, there are $\vert \alpha_A \vert - k_1$ blocks after block $b$ in $\alpha_A$, which are either adversarially generated existing in $\alpha_B\downarrow$ either don't belong in $\alpha_B\downarrow$. This makes $b_2$ the last block before the 0-level fork point included in the adversary's proof.\\
 
 \textbf{Claim 2.} 
-At least $k_3$ superblocks of $\alpha_A$ are adversarially generated. Just as the proof of Theorem 2 and using a similar notation, because of the Common Prefix property on parameter $k_{2a\downarrow}$, $\alpha_A \downarrow \uparrow [k_{1a}+k_{2a}:]$ could contain no honestly generated blocks. In case there are no sewed blocks, the above holds for $\alpha_A$ too. In order to generalize to velvet fork conditions, let the sewed blocks count to $k_{2b}$ and the sum $k_2 = k_{2a} + k_{2b}$. We conclude that $\alpha_A [k_{1}+k_{2}:]$ could contain no honestly generated blocks. \\ 
-Note that for every sewed subchain the adversary includes in her proof, it may be that some other blocks generated in the adversary's chain are left out of the proof. This is due to the way blocks are generated in order to form a valid chain. So, in a case where a number of $C_B$ blocks are sewed in $C_A$ between blocks $b_{s_1}$ and $b_{s_2}$, say at rounds $s_1, s_2$ accordingly, any block generated in $C_A$ in the round set $s_1..s_2$ would be left out of the proof. This is illustrated in Figure \ref{fig:exclude}.\\
-\begin{figure}[h!]
-	\begin{center}
-		\includegraphics[scale=0.5]{figures/exclude.png}
-	\end{center}
-	\caption{\textit{ Wavy lines imply one or more blocks. Dashed arrows imply interlink pointers to superblocks. Adversarially generated blocks are colored black. Grey colored blocks may be honestly or adversarially generated. \textbf{I}: the 0-level chains, \textbf{II}: the corresponding proof chains; some blocks generated in $C_A$ are excluded from proof $\pi_A$ in favor of the sewed blocks from $C_B$.}}
-	\label{fig:exclude}
-\end{figure}
-%
-%Claim * calculates an upper bound of the adversarially generated blocks that $\alpha_A, \alpha'_B\downarrow$ may have in common.\\
-%\textit{\underline{Claim *}:} Now consider the blocks containing incorrect interlink. By the time such a block is included in $\alpha_A$, then no other honestly generated block of chain $C_B$ will be included in $\alpha_A$ because of Remark 1 (no honestly generated block included in proof can point to a superblock containing false interlink). Thus, in that case it is equivalent to consider two different chains, the one of the adversary and the other of the honest players, that compete each other. This case may appear after $k_{1a}$ blocks in the $\alpha_A$ as described in the above Claims. Let $b_1 = \{GCA(C_B, \alpha_A) \cap b_1 \textit{ contains false interlink}\}$ and block $b_2 = LCA(C_B, \alpha_A)$. Thus we have 
-%$\vert \alpha_A[1:] \cap \alpha'_B\downarrow[1:] \vert = k_{1a} + k_{1b}$, where $k_{1b} \leq C_B\{b_1:b_2\}\uparrow^{\mu_A}$.\\
-In the following we consider the reformed chains $C_A, C_B$ for blocks in the $k_3$ region of the proofs. This reforming suggests the following: all adversarially generated blocks with false interlink in subchain $C_B\{b_2:\}$ which participate in cyclic dependency with fork chain $C_A$, are removed from $C_B$ and added in $C_A$ just as the interlink pointers forming the cyclic dependency point out. This reforming is helpful for the purposes of our proof construction and does not change the facts of the problem, or put it in another way, gives us an equivalent problem to solve. This is true, because of Remark 1, that such blocks cannot be included in an honest NIPoPoW proof while can be included in the proof constructed by the adversary, thus from the NIPoPoW suffix proofs perspective these block can be perceived as belonging in the adversary's fork chain. This remark is considered in the following Claim.\\
-\textbf{Claim 3.} We reform the chains $C_A, C_B$ as illustrated in Figure 5 (I, II) and Figure \ref{fig:claim3} (II, III). After this reforming we conclude to an equivalent set of compared subchains. Note that the problems before and after the reforming are equivalent because of Remarks 1 and 2. Then this Claim is exactly the same as that of Theorem 2.
-In order to complete the proof we work in the same way as in Theorem 2, by considering the three parts of $\alpha_A$ proof ....
+At least $k_3$ superblocks of $\alpha_A$ are adversarially generated. Just as the proof of Theorem 2 and using a similar notation, because of the Common Prefix property on parameter $k_{2\downarrow}$, $\alpha_A[k_{1}+k_{2}:]$ could contain no honestly generated blocks. In order to see this for the velvet fork conditions let's again consider the case that the adversary behaves honestly for the first $(k_1 + k_2)$ blocks of her proof in which case Claim 2 of Theorem 2 is immediately applied. In the opposite case, consider that the adversary includes in her proof a block with invalid interlink at some earlier point. Again, because of Lemma 5 no more honestly generated blocks can be included in $\alpha_A$ and we can proceed to Claim 3 of this proof.
+
+%\begin{figure}[h!]
+%	\begin{center}
+%		\includegraphics[scale=0.5]{figures/exclude.png}
+%	\end{center}
+%	\caption{\textit{ Wavy lines imply one or more blocks. Dashed arrows imply interlink pointers to superblocks. Adversarially generated blocks are colored black. Grey colored blocks may be honestly or adversarially generated. \textbf{I}: the 0-level chains, \textbf{II}: the corresponding proof chains; some blocks generated in $C_A$ are excluded from proof $\pi_A$ in favor of the sewed blocks from $C_B$.}}
+%	\label{fig:exclude}
+%\end{figure}
+
 From all the above Claims we have that:\\
 In the first round set, because of the common underlying chain:
 \begin{equation*}
