@@ -80,24 +80,28 @@ At least $k_3$ superblocks of $\alpha_A$ are adversarially generated. Just as th
 %	\label{fig:exclude}
 %\end{figure}
 
+\textbf{Claim 3.} Adversary can submit a suffix proof such that $\alpha_A >= \alpha_B$ with negligible probability.
+%%% @TODO: make formal arguments
+The last $k_3$ blocks included in $\alpha_A$ may belong either in $C_A$ either in $C_B$ but are all adversarially generated. In the worst case  all $k_3 $ blocks are sewed from $C_B$. This is the worst case scenario since each adversarially generated block in $C_B$ may have dropped one honest block out of the chain because of selfish mining. Considering this scenario, because of the strengthened Honest Majority Assumption for $(1/3)$-bounded adversary, Theorem 3 for Chain Quality guarantees that the majority of the blocks in $C_B$ was computed by honest parties, thus the honestly generated blocks in $C_B$ for the same round set sum to more amount of hashing power.\\
+
 From all the above Claims we have that:\\
 In the first round set, because of the common underlying chain:
-\begin{equation*}
-2^{\mu_A} \vert \alpha_A^{k_{1a}} \vert \leq 2^{\mu'_B} \vert \alpha'{_B^{k_{1a}}} \vert
-\end{equation*}
-and because of Lemma 1 we obtain with high probability:
-\begin{equation*} 
-2^{\mu_A} \vert \alpha_A^{k_{1b}} \vert \leq 2^{\mu'_B} \vert \alpha'{_B^{k_{1b}}} \vert
-\end{equation*}
-So finally:
 \begin{equation} \label{eq_v_round_set_1}
 2^{\mu_A} \vert \alpha_A^{k_1} \vert \leq 2^{\mu'_B} \vert \alpha'{_B^{k_1}} \vert
 \end{equation}
-In the second round set:\\
-(To be completed.)\\
-In the third round set, considering the equivalent problem after reforming the chains because of Honest Majority Assumption under Velvet Fork and Lemma 1 we have:
+Because of the adoption by an honest party of chain $C_B$ at a later round $r_3$, we have for the second round set:
+\begin{equation} \label{eq_v_round_set_2}
+2^{\mu_A} \vert \alpha_A^{k_2} \vert \leq 2^{\mu'_B} \vert \alpha'{_B^{k_2}} \vert
+\end{equation}
+In the third round set, because of good Chain Quality under the strengthened Honest Majority Assumption and Theorem 3 we have:
 \begin{equation} \label{eq_v_round_set_3}
 2^{\mu_A} \vert \alpha_A^{k_3} \vert < 2^{\mu'_B} \vert \alpha'{_B^{k_3}} \vert
+\end{equation}
+
+Consequently we have:
+
+\begin{equation} \label{eq_v_all_round_sets}
+2^{\mu_A} \vert \alpha_A \vert < 2^{\mu'_B} \vert \alpha'{_B} \vert
 \end{equation}
 
 \subsection{Infix Proofs}
