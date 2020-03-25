@@ -31,16 +31,26 @@
 
 
 \subsubsection{Security of Suffix Proofs}
-Our security proof is based on the security proof of NIPoPoWs Suffix Security Proof under a soft or hard fork. Consequently, most of the Definitions and Lemmas presented in Section \ref{proof_under_hard_fork} will be referenced and applied for the security proof under velvet fork conditions. Keep in mind that we operate under the condition of (1/3)-bounded adversary.\\
+Our security proof is based on the security proof of NIPoPoWs Suffix Security Proof under a soft or hard fork. Keep in mind that we operate under the condition of (1/3)-bounded adversary.\\
 
 The notion of Chain Quality is decisive for the operation of NIPoPoWs under a velvet fork. Before stepping into the security proof we provide the formal definition of this notion and the basic Theorem where its basic metric is computed.\\
 
-\textbf{Definition 3 }(Chain Quality Property)\cite{Backbone}.The chain quality property $Q_{cq}$ with parameters $\mu \in \mathbb{R}$ and $l \in \mathbb{N}$ states that for any honest party $P$ with chain $C$ it holds that for any $l $ consecutive blocks of $C$ the ration of honest blocks is at least $\mu$.\\
+\textbf{Definition 3 }(Chain Quality Property)\cite{Backbone}. The chain quality property $Q_{cq}$ with parameters $\mu \in \mathbb{R}$ and $l \in \mathbb{N}$ states that for any honest party $P$ with chain $C$ it holds that for any $l $ consecutive blocks of $C$ the ratio of honest blocks is at least $\mu$.\\
 
 \textbf{Theorem 3 }(Chain Quality)\cite{Backbone}. \textit{In a typical execution the chain quality property holds with parameter $\mu > 1 - (1 + \frac{\delta}{2}) \cdot \frac{t}{n-t} - \frac{\delta}{2}$.}\\
 \textit{Proof.} See \cite{Backbone}.\\
 
-%As a consequence from the protocol patch suggested, adversarially generated blocks with incorrect interlinks can only be included in the adversary's suffix proofs. For an honest player constructing a suffix proof these blocks are as if not existing in his chain, whereas the adversary may use the most of them in her suffix proof in the worst case. It follows that from the perspective of suffix proofs these blocks can be conceived as participating in the adversary's chain since this would be the perception of the verifier. The adversary may or may not use the most of these blocks, so considering them in advance as part of the adversary's chain could only make our proof stronger for the main case. 
+Our interest lies in keeping $\mu \geq \dfrac{1}{2}$.
+From Theorem 3 we have:
+\begin{equation*}
+1 - (1 + \frac{\delta}{2}) \cdot \frac{t}{n-t} - \frac{\delta}{2} \geq \dfrac{1}{2} \Rightarrow 
+\frac{\delta}{2} \cdot \frac{t}{n-t} \leq \frac{1-\delta}{2}
+\end{equation*}
+
+Thus we have:
+\begin{center}
+$  \dfrac{t}{n-t} \leq \dfrac{1-\delta}{2} $
+\end{center}
 
 \textbf{Theorem 4. (Security under velvet fork)} \textit{Assuming honest majority under velvet fork conditions such that $\dfrac{t}{n-t} \leq \dfrac{1-\delta}{2}$, the non-interactive proofs-of-proof-of-work construction for computable $\kappa$-stable monotonic suffix-sensitive predicates under velvet fork conditions is secure with overwhelming probability in $\kappa$.}\\
 
@@ -65,12 +75,12 @@ We will now show three successive claims under velvet fork conditions: First, $\
 Let $\alpha_A = k_1 + k_2 + k_3$ and let $k_1, k_2, k_3$ be as defined in the following Claims.\\
 Let round $r_1$ be the round when block $b$ is generated and round $r_2$ when block $b_2 = LCA(\alpha_A, \alpha'_B\downarrow)$ is generated.\\
 
-\textbf{Claim 1:} As for honestly generated blocks, $\alpha_A$ and $ \alpha'_B\downarrow$ are mostly disjoint. Following the proof of Theorem 2 we conclude that $\vert \alpha_A\downarrow\uparrow^{\mu_A}[1:] \cap \alpha'_B\downarrow[1:] \vert \leq k_{1} = 2^{\mu'_B - \mu_A}$. In order to see this under the velvet fork conditions consider that the adversary behaves honestly for blocks in her proof between $b$ and $b_2$, where Claim1 of Theorem 2 applies directly. In the opposite case, the adversary includes a block with false interlink after block $b$ and before block $b_2$ and because of Lemma 5 no more honestly generated blocks can be included in $\alpha_A$ and we can immediately proceed to Claim 3 of this proof.
+\textbf{Claim 1:} As for honestly generated blocks, $\alpha_A$ and $ \alpha'_B\downarrow$ are mostly disjoint. Following the proof of Theorem 2 we conclude that $\vert \alpha_A\downarrow\uparrow^{\mu_A}[1:] \cap \alpha'_B\downarrow[1:] \vert \leq k_{1} = 2^{\mu'_B - \mu_A}$. In order to see this under the velvet fork conditions, first consider that the adversary behaves honestly for blocks in her proof between $b$ and $b_2$. In this case Claim 1 of Theorem 2 applies directly. In the opposite case, the adversary includes a block with false interlink after block $b$ and before block $b_2$, thus the inequality holds and because of Lemma 5 no more honestly generated blocks can be included in $\alpha_A$ and we can immediately proceed to Claim 3 of this proof.
 
 So we conclude that there are at least $\vert \alpha_A \vert - k_1$ blocks after block $b$ in $\alpha_A$ which are not honestly generated blocks existing in $\alpha'_B\downarrow$. In other words, there are $\vert \alpha_A \vert - k_1$ blocks after block $b$ in $\alpha_A$, which are either adversarially generated existing in $\alpha_B\downarrow$ either don't belong in $\alpha_B\downarrow$. This makes $b_2$ the last block before the 0-level fork point included in the adversary's proof.\\
 
 \textbf{Claim 2.} 
-At least $k_3$ superblocks of $\alpha_A$ are adversarially generated. Just as the proof of Theorem 2 and using a similar notation, because of the Common Prefix property on parameter $k_{2\downarrow}$, $\alpha_A[k_{1}+k_{2}:]$ could contain no honestly generated blocks. In order to see this for the velvet fork conditions let's again consider the case that the adversary behaves honestly for the first $(k_1 + k_2)$ blocks of her proof in which case Claim 2 of Theorem 2 is immediately applied. In the opposite case, consider that the adversary includes in her proof a block with invalid interlink at some earlier point. Again, because of Lemma 5 no more honestly generated blocks can be included in $\alpha_A$ and we can proceed to Claim 3 of this proof.
+At least $k_3$ superblocks of $\alpha_A$ are adversarially generated. Just as the proof of Theorem 2 and using a similar notation, because of the Common Prefix property on parameter $k_{2\downarrow}$, $\alpha_A[k_{1}+k_{2}:]$ could contain no honestly generated blocks. In order to see this for the velvet fork conditions let's again consider the case that the adversary behaves honestly for the first $(k_1 + k_2)$ blocks of her proof in which case Claim 2 of Theorem 2 is immediately applied. In the opposite case, consider that the adversary includes in her proof a block with invalid interlink at some earlier point. Again, because of Lemma 5 no more honestly generated blocks can be included in $\alpha_A$ and we can proceed to Claim 3 of this proof.\\
 
 %\begin{figure}[h!]
 %	\begin{center}
@@ -83,7 +93,6 @@ At least $k_3$ superblocks of $\alpha_A$ are adversarially generated. Just as th
 \textbf{Claim 3.} Adversary can submit a suffix proof such that $\alpha_A >= \alpha_B$ with negligible probability.
 %%% @TODO: make formal arguments
 The last $k_3$ blocks included in $\alpha_A$ may belong either in $C_A$ either in $C_B$ but are all adversarially generated. In the worst case  all $k_3 $ blocks are sewed from $C_B$. This is the worst case scenario since each adversarially generated block in $C_B$ may have dropped one honest block out of the chain because of selfish mining. Considering this scenario, because of the strengthened Honest Majority Assumption for $(1/3)$-bounded adversary, Theorem 3 for Chain Quality guarantees that the majority of the blocks in $C_B$ was computed by honest parties, thus the honestly generated blocks in $C_B$ for the same round set sum to more amount of hashing power.\\
-
 From all the above Claims we have that:\\
 In the first round set, because of the common underlying chain:
 \begin{equation} \label{eq_v_round_set_1}
@@ -97,7 +106,6 @@ In the third round set, because of good Chain Quality under the strengthened Hon
 \begin{equation} \label{eq_v_round_set_3}
 2^{\mu_A} \vert \alpha_A^{k_3} \vert < 2^{\mu'_B} \vert \alpha'{_B^{k_3}} \vert
 \end{equation}
-
 Consequently we have:
 
 \begin{equation} \label{eq_v_all_round_sets}
