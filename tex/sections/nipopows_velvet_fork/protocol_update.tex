@@ -58,12 +58,60 @@ At the same time, adversarially generated blocks cannot participate in an honest
 The protocol patch we suggest can be summarized as follows:\\
 
 
-\textbf{Protocol Patch for NIPoPows under velvet fork.} In order to make NIPoPoWs safe under velvet fork conditions we suggest:
+\textbf{Protocol Patch for NIPoPows suffix proofs under velvet fork.} In order to make NIPoPoWs safe under velvet fork conditions we suggest:
 \begin{enumerate}
 \item Strengthen the Honest Majority Assumption so that $\dfrac{t}{n-t} \leq \dfrac{1-\delta}{2} \cdot (n-t)$
 %%% TODO: also provide short algorithm for the intrlink construction after the patch  
-\item The NIPoPoW protocol under velvet fork works as usual but a miner constructs a block's interlink without considering the blocks with false interlink except for pointers of level $\mu = 0$.
+\item The NIPoPoW protocol under velvet fork works as usual but a miner constructs a block's interlink without pointers to blocks with false interlink except for pointers of level $\mu = 0$.
 \end{enumerate}
+
+Algorithm \ref{alg:updateInterlink} describes the interlink update procedure after the suggested protocol patch. An honest miner has to first find the most recent block that contains an interlink of only valid pointers and then add pointers so as to include this block as well.
+\vspace{4mm}
+
+\begin{algorithm}[H]
+\SetAlgoNoLine
+\DontPrintSemicolon
+\SetKwProg{Fn}{function}{:}{\text{end function}}
+\Fn{updateInterlink-velvet(C)}{
+ $k \leftarrow -1$\;
+ $B\leftarrow C[-k]$\;
+ \While{!has-correct-interlink(B)}{
+   $k \leftarrow k - 1$\;
+   $B \leftarrow C[-k]$\;
+ }
+ $B \leftarrow C[-k]$\;
+ interlink$\leftarrow$B.interlink\;
+ \For{$\mu = 0$ to level(B)}{
+ 	interlink$[\mu]\leftarrow id(B)$
+ }
+ \Return interlink\;
+}
+\vspace{4mm}
+\Fn{has-correct-interlink(B)}{
+ \For{p in B.interlink} {
+     \If{!valid-interlink-pointer(B, p)}{
+     	\Return false\;
+     }
+ }
+ \Return true\;
+}
+
+\vspace{4mm}
+\Fn{valid-interlink-pointer(B, p)}{
+$b \leftarrow Block(B.prevId)$\;
+ \While{b.id != p.id} {
+     \If{$level[b] \geq level[p]$}{
+     	\Return false\;
+     }
+     $b \leftarrow Block(b.prevId)$
+ }
+ \Return true\;
+}
+ \caption{velvet updateInterlink}
+ \label{alg:updateInterlink}
+\end{algorithm}
+
+\vspace{4mm}
 
 The following two Lemmas come as immediate results from the suggested protocol update.\\
 
