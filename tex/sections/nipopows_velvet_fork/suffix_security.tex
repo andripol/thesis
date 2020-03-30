@@ -1,41 +1,8 @@
-\documentclass[11pt,a4paper]{article}
-\usepackage[utf8]{inputenc}
-\usepackage{amsmath}
-\usepackage{amsfonts}
-\usepackage{amssymb}
+Our security proof is based on the security proof of NIPoPoWs Suffix Security Proof under a soft or hard fork. Keep in mind that we operate under the condition of (1/3)-bounded adversary.\\
 
-\usepackage{import}
+The notion of Chain Quality is decisive for the operation of NIPoPoWs under a velvet fork. Before stepping into the security proof we provide the formal definition of this notion and the basic Theorem where its basic metric is computed.\\
 
-\usepackage{graphicx}
-\usepackage[colorlinks=true,citecolor=magenta,linkcolor=blue]{hyperref}
-
-\usepackage[ruled,vlined]{algorithm2e}
-
-\begin{document}
-
-\begin{center}
-\begin{Large}
-\textbf{NIPoPoWs under Velvet Fork\\}
-\end{Large}
-
-\end{center}
-
-\section{Introduction}
-\import{sections/introduction}{intro.tex}
-
-\section{Model Definition and Notation}
-
-\section{NIPoPoWs under Soft or Hard Fork}
-\import{sections/nipopows_hard_fork/}{nipopows_hard_fork.tex}
-
-\section{NIPoPoWs under Velvet Fork}
-\import{sections/nipopows_velvet_fork/}{nipopows_velvet_fork.tex}
-
-
-\subsubsection{Security of Suffix Proofs}
-\import{sections/nipopows_velvet_fork/}{suffix_security.tex}
-
-
+\textbf{Definition 3 }(Chain Quality Property)\cite{Backbone}. The chain quality property $Q_{cq}$ with parameters $\mu \in \mathbb{R}$ and $l \in \mathbb{N}$ states that for any honest party $P$ with chain $C$ it holds that for any $l $ consecutive blocks of $C$ the ratio of honest blocks is at least $\mu$.\\
 
 \textbf{Theorem 3 }(Chain Quality)\cite{Backbone}. \textit{In a typical execution the chain quality property holds with parameter $\mu > 1 - (1 + \frac{\delta}{2}) \cdot \frac{t}{n-t} - \frac{\delta}{2}$.}\\
 \textit{Proof.} See \cite{Backbone}.\\
@@ -111,10 +78,3 @@ Consequently we have:
 \begin{equation} \label{eq_v_all_round_sets}
 2^{\mu_A} \vert \alpha_A \vert < 2^{\mu'_B} \vert \alpha'{_B} \vert
 \end{equation}
-
-\subsection{Infix Proofs}
-
-\bibliographystyle{plain} % We choose the "plain" reference style
-\bibliography{refs} % Entries are in the "refs.bib" file
-
-\end{document}
