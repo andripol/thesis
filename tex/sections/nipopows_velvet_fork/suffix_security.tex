@@ -7,16 +7,16 @@ velvet fork. Before stepping into the security proof we provide the formal
 definition of this notion and the basic Theorem where its basic metric is computed.\\
 
 \textbf{Definition 3 }(Chain Quality Property)\cite{Backbone}. The chain quality
-property $Q_{cq}$ with parameters $\mu \in \mathbb{R}$ and $l \in \mathbb{N}$
+property $Q_{cq}$ with parameters $\mu_{cq} \in \mathbb{R}$ and $l \in \mathbb{N}$
 states that for any honest party $P$ with chain $C$ it holds that for any
-$l $ consecutive blocks of $C$ the ratio of honest blocks is at least $\mu$.\\
+$l $ consecutive blocks of $C$ the ratio of honest blocks is at least $\mu_{cq}$.\\
 
 \textbf{Theorem 3 }(Chain Quality)\cite{Backbone}. \textit{In a typical execution
-the chain quality property holds with parameter $\mu > 1 - (1 + \frac{\delta}{2})
+the chain quality property holds with parameter $\mu_{cq} > 1 - (1 + \frac{\delta}{2})
 \cdot \frac{t}{n-t} - \frac{\delta}{2}$.}\\
 \textit{Proof.} See \cite{Backbone}.\\
 
-Our interest lies in keeping $\mu \geq \dfrac{1}{2}$.
+Our interest lies in keeping $\mu_{cq} \geq \dfrac{1}{2}$.
 From Theorem 3 we have:
 \begin{equation*}
 1 - (1 + \frac{\delta}{2}) \cdot \frac{t}{n-t} - \frac{\delta}{2} \geq \dfrac{1}{2} \Rightarrow 
