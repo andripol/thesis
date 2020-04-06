@@ -196,10 +196,16 @@ a block's interlink without pointers to blocks with false interlink except for
 pointers of level $\mu = 0$.
 \end{enumerate}
 
-Algorithm \ref{alg:updateInterlink} describes the interlink update procedure a
-fter the suggested protocol patch. An honest miner has to first find the most
-recent block that contains an interlink of only valid pointers and then add
-pointers so as to include this block as well.
+Algorithm \ref{alg:updateInterlink} describes the interlink update procedure for the
+honest miner after the suggested protocol patch. An honest miner has to first find the
+most recent \emph{smooth velvet} and then add pointers so as to consider this block in
+the interlink as well. Function \textit{has-correct-interlink(B)} checks whether a
+block \textit{B} is a smooth velvet by calling \textit{valid-interlink-pointer(B,p)}
+for every pointer \textit{p} in \textit{B}'s interlink. Function
+\textit{valid-interlink-pointer(B,p)} returns \emph{true} if $p$ is a valid 
+pointer, in essence a pointer to the most recent \emph{smooth velvet}
+for the level denoted by the pointer itself. 
+
 \vspace{4mm}
 
 \begin{algorithm}[H]
@@ -261,8 +267,9 @@ pointers so as to include this block as well.
 
 The following two Lemmas come as immediate results from the suggested protocol update.\\
 
-\textit{\textbf{Lemma 4.} A velvet suffix proof constructed by an honest player
-cannot contain any block with incorrect interlink.}\\
+\textit{\textbf{Lemma 4.} Consider a velvet suffix proof $(\pi, \chi)$ constructed 
+by an honest player. The proof subchain $\pi$ cannot contain any block with 
+incorrect interlink.}\\
 
 \textit{\textbf{Lemma 5.} Consider $C_B, C_A$ the 0-level chains adopted respectively
 by an honest player and the adversary at some round $r'$. Let $\pi_A$ be a velvet
