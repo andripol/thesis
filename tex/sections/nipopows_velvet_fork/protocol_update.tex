@@ -203,46 +203,58 @@ pointers so as to include this block as well.
 \vspace{4mm}
 
 \begin{algorithm}[H]
-\SetAlgoNoLine
-\DontPrintSemicolon
-\SetKwProg{Fn}{function}{:}{\text{end function}}
-\Fn{updateInterlinkVelvet(C)}{
- $k \leftarrow -1$\;
- $B\leftarrow C[-k]$\;
- \While{!has-correct-interlink(B)}{
-   $k \leftarrow k - 1$\;
-   $B \leftarrow C[-k]$\;
- }
- $B \leftarrow C[-k]$\;
- interlink$\leftarrow$B.interlink\;
- \For{$\mu = 0$ to level(B)}{
- 	interlink$[\mu]\leftarrow id(B)$
- }
- \Return interlink\;
-}
-\vspace{4mm}
-\Fn{has-correct-interlink(B)}{
- \For{p in B.interlink} {
-     \If{!valid-interlink-pointer(B, p)}{
-     	\Return false\;
-     }
- }
- \Return true\;
-}
+	%\begin{algorithmic}[1]
+		\SetAlgoNoLine
+		\DontPrintSemicolon
+		\SetKwProg{Fn}{function}{:}{\text{end function}}
+		\Fn{updateInterlinkVelvet(C)}{
+ 			$k \leftarrow 1$\;
+ 			$B\leftarrow C[-k]$\;
+ 			\While{has-correct-interlink(B) $=$ false}{
+   				$k \leftarrow k + 1$\;
+   				$B \leftarrow C[-k]$\;
+ 			}
+ 			$B \leftarrow C[-k]$\;
+ 			interlink$\leftarrow$B.interlink\;
+ 			\For{$\mu = 0$ to level(B)}{
+ 				interlink$[\mu]\leftarrow id(B)$
+ 			}
+ 			\Return interlink\;
+		}
+	\vspace{4mm}
+	\Fn{has-correct-interlink(B)}{
+		\If{B.id $=$ Genesis.id}{
+			\Return true\;
+		}
+ 		\For{p $\in$ B.interlink} {
+     		\If{valid-interlink-pointer(B, p) $=$ false}{
+     			\Return false\;
+     		}
+ 		}
+ 		\Return true\;
+	}
 
-\vspace{4mm}
-\Fn{valid-interlink-pointer(B, p)}{
-$b \leftarrow Block(B.prevId)$\;
- \While{b.id != p.id} {
-     \If{$level[b] \geq level[p]$}{
-     	\Return false\;
-     }
-     $b \leftarrow Block(b.prevId)$
- }
- \Return true\;
-}
- \caption{velvet updateInterlink}
- \label{alg:updateInterlink}
+	\vspace{4mm}
+	\Fn{valid-interlink-pointer(B, p)}{
+		$b \leftarrow Block(B.prevId)$\;
+ 		\While{b.id $\not =$ p.id} {
+     		\If{$ level(b) \geq level(p) \wedge
+     			\text{has-correct-interlink(b)} $}{
+     			\Return false\;
+     		}
+     		\If{b.id = Genesis.id}{
+     			\Return false\;
+     		}
+     		$b \leftarrow Block(b.prevId)$
+ 		}
+ 		\If{$\text{has-correct-interlink(b)}$}{
+ 			\Return true\;
+ 		}
+ 		\Return false\;
+	}
+	%\end{algorithmic}
+ 	\caption{velvet updateInterlink}
+ 	\label{alg:updateInterlink}
 \end{algorithm}
 
 \vspace{4mm}
