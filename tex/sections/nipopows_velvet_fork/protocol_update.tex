@@ -1,16 +1,17 @@
 In order to eliminate the Chainsewing Attack we propose an update to the NIPoPoWs
 protocol under velvet fork. The core problem is that in her suffix proof the adversary
-is able to claim not only blocks of the fork chain,  which are in majority adversarially
+is able to claim not only blocks of a forked chain,  which are in majority adversarially
 generated due to the Common Prefix property, but also an arbitrarily long part of the
-chain adopted by an honest player. Since blocks containing false interlink pointers
-are accepted as valid, the verifier cannot distinguish blocks that actually belong
-in a chain from blocks that only seem to belong in the same chain because they are
-pointed to via a false interlink pointer. \\
+chain adopted by an honest player. Since thorny blocks are accepted as valid,
+the verifier cannot distinguish blocks that actually belong in a chain from
+blocks that only seem to belong in the same chain because they are pointed to
+via a non-smooth pointer. \\
 
 %% first reference to 1/3 adversary
 These facts make it possible to provide a secure solution for the velvet fork
 conditions only under the assumption of adversary of $1/3$ of the total hashing
-power. This claim is described and discussed in the following.
+power of the updated honest miners. This claim is described and discussed in
+the following.
 
 \subsubsection*{Impossibility of a secure protocol for (1/2)-bounded adversary}
 During our study on the problem we failed to prove the security of several protocol
