@@ -1,5 +1,5 @@
-In order to eliminate the Chainsewing Attack we propose an update to the NIPoPoWs
-protocol under velvet fork. The core problem is that in her suffix proof the adversary
+In order to eliminate the Chainsewing Attack we propose an update to the velvet
+NIPoPoW protocol. The core problem is that in her suffix proof the adversary
 is able to claim not only blocks of a forked chain,  which are in majority adversarially
 generated due to the Common Prefix property, but also an arbitrarily long part of the
 chain adopted by an honest player. Since thorny blocks are accepted as valid,
@@ -7,13 +7,32 @@ the verifier cannot distinguish blocks that actually belong in a chain from
 blocks that only seem to belong in the same chain because they are pointed to
 via a non-smooth pointer. \\
 
-%% first reference to 1/3 adversary
-These facts make it possible to provide a secure solution for the velvet fork
-conditions only under the assumption of adversary of $1/3$ of the total hashing
-power of the updated honest miners. This claim is described and discussed in
-the following.
+We will first define our security assumptions and then discuss some solution
+approaches for the problem. This discussion will result to the proposed protocol
+upgrade suggestion.
 
-\subsubsection*{Impossibility of a secure protocol for (1/2)-bounded adversary}
+%% first reference to 1/3 adversary
+\subsubsection{Honest Majority Assumption}
+Compared to the typical setting of $1/2$-bounded adversary, the protocol we
+propose requires stronger honest majority assumptions to be provably secure. 
+In particular, our protocol is secure for adversary of total hashing power 
+less than $1/3$ of the upgraded honest miners. Therefore we define the Velvet
+Honest Majority assumption, which will be used in our security proof.
+
+\begin{defn}{\textbf{Velvet Honest Majority}}
+	\textit{Let $g$ denote the percentage of miners that have upgraded and $n_v = g
+	\cdot n$ is the total number of upgraded parties. Then $t$ out of total $n_v$
+	parties are corrupted such that $2t < (1 - \delta)(n_v-t)$. }
+	\label{defn:smooth_pointer}
+\end{defn}
+We believe that if we waive this requirement it is impossible to have a provably 
+secure NIPoPoW protocol under velvet fork conditions.
+This claim is described and discussed in the following.
+Note that any reference to adversarial party bound is respect to the number of
+upgraded parties $n_v$. Therefore, ``(1/2)-bounded adversary" holds for
+$t < (1 - \delta)(n_v - t)$, while ``(1/3)-bounded adversary" holds for
+$2t < (1 - \delta)(n_v - t)$.
+
 During our study on the problem we failed to prove the security of several protocol
 constructions under $(\frac{1}{2})$-bounded adversary. We finally concluded that
 such a secure NIPoPoWs construction is impossible under velvet fork conditions.
