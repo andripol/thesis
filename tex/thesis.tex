@@ -175,17 +175,28 @@ within a single round. If a suitable \textit{ctr} is found, an honest party quit
 remaining and announces the new born block to the network.
 
 We can now define the three desired properties of the backbone protocol.\\
-\textbf{Definition (Common Prefix Property).} The common prefix property $Q_{cp}$ with parameter
+\begin{defn}{\textbf{Common Prefix Property}}
+	\textit{The common prefix property $Q_{cp}$ with parameter
 $k \in \mathbb{N}$ states that for any pair of honest players $P_1, P_2$ adopting the chains
-$C_1, C_2$ at rounds $r_1 \leq r_2$ respectively, it holds that $C_1^{\lceil k} \preceq C_2$.\\
-\textbf{Definition (Chain Quality Property).} The chain quality property $Q_{cq}$ with
+$C_1, C_2$ at rounds $r_1 \leq r_2$ respectively, it holds that $C_1^{\lceil k} \preceq C_2$.}
+	\label{defn:common_prefix}
+\end{defn}
+
+\begin{defn}{\textbf{Chain Quality Property}}
+	\textit{The chain quality property $Q_{cq}$ with
 parameters $\mu_{cq} \in \mathbb{R}$ and $l \in \mathbb{N}$ states that for any honest
 party \textit{P} with chain \textit{C}, it holds that for any $l$ consecutive
-blocks of \textit{C} the ratio of honest blocks is at least $\mu_{cq}$.\\
-\textbf{Definition (Chain Growth Property).} The chain growth property $Q_{cg}$ with
+blocks of \textit{C} the ratio of honest blocks is at least $\mu_{cq}$.}
+	\label{defn:chain_quality}
+\end{defn}
+
+\begin{defn}{\textbf{Chain Growth Property}}
+	\textit{The chain growth property $Q_{cg}$ with
 parameters $\tau \in \mathbb{R}$ and $s \in \mathbb{N}$ states that for any honest party
 \textit{P} with chain \textit{C}, it holds that for any $s$ rounds there are at least 
-$\tau \cdot s$ blocks added to the chain of \textit{P}.
+$\tau \cdot s$ blocks added to the chain of \textit{P}}
+	\label{defn:chain_growth}
+\end{defn}
 
 \subsection{NIPoPoWs Preliminaries}
 
