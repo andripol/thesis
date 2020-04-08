@@ -237,6 +237,31 @@ for every pointer \textit{p} in \textit{B}'s interlink. Function
 pointer, in essence a pointer to the most recent \emph{smooth velvet}
 for the level denoted by the pointer itself. 
 
+The following two Lemmas come as immediate results from the suggested protocol
+update.\\
+
+\textit{\textbf{Lemma 4.} A velvet suffix proof constructed by an honest player
+cannot contain any thorny block.}\\
+
+\textit{\textbf{Lemma 5.} Let $(\pi_A, \chi_A)$ be a velvet suffix proof
+constructed by adversary and $b_s$ generated at round $r_s$ the most recent
+smooth block in the proof. Then $\forall r: r \leq r_s$ no thorny blocks
+generated at round $r$ can be included in $(\pi_A, \chi_A)$.} \\ 
+\textit{Proof.} By contradiction. Let $b_t$ be a thorny block generated at
+some sound $r_t \leq r_s$. Consider $b_t$ is included in proof. Then, because
+$(\pi_A, \chi_A)$ is a valid chain as for interlink pointers, there exist a
+block $b'$ generated at some round $r'$ such that $r_t \leq r' \leq r_s$,
+which has an interlink pointer to $b_t$. If $b'$ is a smooth block we have
+reached contradiction, since than there can be no interlink pointer to $b_t$
+as it contains only smooth pointers. Now take the case that $b'$ is a thorny
+block. Then because $b'$ was generated in round $r' \leq r_s$, by induction
+there should be a thorny block pointed by $b_s$ which is not possible because
+$b_s$ is a smooth block.
+
+\begin{flushright}
+$\square$
+\end{flushright}
+
 \vspace{4mm}
 
 \begin{algorithm}[H]
@@ -296,17 +321,4 @@ for the level denoted by the pointer itself.
 
 \vspace{4mm}
 
-The following two Lemmas come as immediate results from the suggested protocol update.\\
-
-\textit{\textbf{Lemma 4.} Consider a velvet suffix proof $(\pi, \chi)$ constructed 
-by an honest player. The proof subchain $\pi$ cannot contain any block with 
-incorrect interlink.}\\
-
-\textit{\textbf{Lemma 5.} Consider $C_B, C_A$ the 0-level chains adopted respectively
-by an honest player and the adversary at some round $r'$. Let $\pi_A$ be a velvet
-suffix proof constructed by the adversary. If there exist blocks with incorrect
-interlinks in $\pi_A$, consider block $b_A$ which was produced at some round
-$r_A$ and is the first block in $\pi_A$ that has incorrect interlink. Then
-$\forall r: r \geq r_A$ no honest blocks generated at round $r$ can be included in $\pi_A$.} \\
-
-In conclusion the Prove and Verify algorithm for the NIPoPoW suffix protocol remain the same.
+In conclusion Verify algorithm for the NIPoPoW suffix protocol remains the same.
