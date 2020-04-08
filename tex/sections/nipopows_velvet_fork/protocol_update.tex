@@ -272,7 +272,7 @@ $\square$
 		\Fn{updateInterlinkVelvet(C)}{
  			$k \leftarrow 1$\;
  			$B\leftarrow C[-k]$\;
- 			\While{has-correct-interlink(B) $=$ false}{
+ 			\While{is-smooth-block(B) $=$ false}{
    				$k \leftarrow k + 1$\;
    				$B \leftarrow C[-k]$\;
  			}
@@ -284,12 +284,12 @@ $\square$
  			\Return interlink\;
 		}
 	\vspace{4mm}
-	\Fn{has-correct-interlink(B)}{
+	\Fn{is-smooth-block(B)}{
 		\If{B.id $=$ Genesis.id}{
 			\Return true\;
 		}
  		\For{p $\in$ B.interlink} {
-     		\If{valid-interlink-pointer(B, p) $=$ false}{
+     		\If{is-smooth-pointer(B, p) $=$ false}{
      			\Return false\;
      		}
  		}
@@ -297,11 +297,11 @@ $\square$
 	}
 
 	\vspace{4mm}
-	\Fn{valid-interlink-pointer(B, p)}{
+	\Fn{is-smooth-pointer(B, p)}{
 		$b \leftarrow Block(B.prevId)$\;
  		\While{b.id $\not =$ p.id} {
      		\If{$ level(b) \geq level(p) \wedge
-     			\text{has-correct-interlink(b)} $}{
+     			\text{is-smooth-block(b)} $}{
      			\Return false\;
      		}
      		\If{b.id = Genesis.id}{
@@ -309,7 +309,7 @@ $\square$
      		}
      		$b \leftarrow Block(b.prevId)$
  		}
- 		\If{$\text{has-correct-interlink(b)}$}{
+ 		\If{$\text{is-smooth-block(b)}$}{
  			\Return true\;
  		}
  		\Return false\;
