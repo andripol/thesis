@@ -18,27 +18,29 @@ $Z_{rjk}^{\mu} = 1$, otherwise $Z_{rjk}^{\mu} = 0$. Let $Z_r^{\mu} =
 \sum_{k=1}^t\sum_{j=1}^qZ_{rjk}^{\mu}$. For a set of rounds $S$, let
 $X^\mu(S) = \sum_{r \in S}X^{\mu}_r$ and similarly define $Y_S^{\mu}$, $Z_S^{\mu}$.\\
 
-\textbf{Definition 1 (Typical Execution).} \textit{An execution of the protocol
-is $(\epsilon, \eta)$-typical if:}
-
-\textbf{Block counts don't deviate.} \textit{For all $\mu \geq 0$ and any set
-$S$ of consecutive rounds with $\vert S \vert \geq 2^\mu \eta k$, we have:}
-\begin{itemize}
-\item[-] $(1-\epsilon)E[X^\mu(S)] < X^\mu(S) < (1+\epsilon)E[X^\mu(S)] $ and
-$(1-\epsilon)E[Y^\mu(S)] < Y^\mu(S)$
-\item[-] $Z^\mu(S) < (1+\epsilon)E[Z^\mu(S)]$
+\begin{defn}{\textbf{Typical Execution.}}
+	An execution of the protocol is $(\epsilon, \eta)$-typical if:
+	
+	\textbf{Block counts don't deviate.} For all $\mu \geq 0$ and any set
+	$S$ of consecutive rounds with $\vert S \vert \geq 2^\mu \eta k$, we have:
+	\begin{itemize}
+		\item[-] $(1-\epsilon)E[X^\mu(S)] < X^\mu(S) < (1+\epsilon)E[X^\mu(S)] $ and
+			$(1-\epsilon)E[Y^\mu(S)] < Y^\mu(S)$
+		\item[-] $Z^\mu(S) < (1+\epsilon)E[Z^\mu(S)]$
 \end{itemize}
 
-\textbf{Round count doesn't deviate.} \textit{Let $S$ be a set of consecutive rounds
-such that $Z^\mu(S) \geq k$ for some security parameter $k$. Then $\vert S \vert
-\geq (1-\epsilon)2^\mu \frac{k}{pqt}$ with overwhelming probability.}
+	\textbf{Round count doesn't deviate.} Let $S$ be a set of consecutive rounds
+	such that $Z^\mu(S) \geq k$ for some security parameter $k$. Then $\vert S \vert
+	\geq (1-\epsilon)2^\mu \frac{k}{pqt}$ with overwhelming probability.
+	
+	\textbf{Chain regularity.} No insertions, no copies and no predictions
+	\cite{Backbone} have occurred.
+	\label{defn:typical_execution}
+\end{defn}
 
-\textbf{Chain regularity.} \textit{No insertions, no copies and no predictions
-\cite{Backbone} have occurred.}\\
-
-\textbf{Theorem 1 (Typicality).} \textit{Executions are $(\epsilon, \eta)$-typical 
-with overwhelming probability in $k$.}\\
-
+\begin{thm}{\textbf{Typicality}}
+	Executions are $(\epsilon, \eta)$-typical with overwhelming probability in $k$.
+\end{thm}
 \textit{Proof.} \textbf{Block counts and regularity.} We refer to \cite{Backbone} for
 the full proof.
 
@@ -62,14 +64,16 @@ then $E[\vert S \vert] \geq 2^\mu \frac{k}{tqp}$. Applying a tail bound to the
 negative binomial distribution, we obtain that $\text{Pr}[\vert S \vert < (1 -
 \epsilon)E(\vert S \vert)] \in \Omega(\epsilon^{2}m)$.  \\
 
-\textbf{Lemma 1.} \textit{Suppose S is a set of consecutive rounds $r_1 ... r_2$
-and $C_B$ is a chain adopted by an honest party at round $r_2$ of a typical
-execution. Let $C^{B}_{S} = \{$ b $\in C_B:$ b was generated during $S\}$. Let
-$\mu_A, \mu_B \in \mathbb{N}$. Suppose $C^{B}_{S}\uparrow^{\mu_B}$ is good.
-Suppose $C'_A$ is a $\mu_A$-superchain containing only adversarially generated
-blocks generated during S and suppose that $\vert C'_A \vert \geq k$. Then
-$2^{\mu_A} \vert C'_A \vert <  2^{\mu_B} \vert    C^{B}_{S}\uparrow^{\mu_B}\vert $. }\\
-
+\begin{lemma}
+	\textit{Suppose S is a set of consecutive rounds $r_1 ... r_2$
+	and $C_B$ is a chain adopted by an honest party at round $r_2$ of a typical
+	execution. Let $C^{B}_{S} = \{$ b $\in C_B:$ b was generated during $S\}$. Let
+	$\mu_A, \mu_B \in \mathbb{N}$. Suppose $C^{B}_{S}\uparrow^{\mu_B}$ is good.
+	Suppose $C'_A$ is a $\mu_A$-superchain containing only adversarially generated
+	blocks generated during S and suppose that $\vert C'_A \vert \geq k$. Then
+	$2^{\mu_A} \vert C'_A \vert <  2^{\mu_B} \vert    C^{B}_{S}\uparrow^{\mu_B}\vert $. }\\
+	\label{lemma:honest_vs_pure_adversarial_subchain}
+\end{lemma}
 \textit{Proof.} From $\vert C'_A \vert \geq k$ we have that $\vert Z^{\mu_A}_S
 \vert \geq k$. Applying Theorem 1, we conclude that $\vert S \vert \geq
 (1-\epsilon')2^{\mu_A} \frac{\vert C'_A \vert}{pqt}$. Applying the Chain Growth
@@ -88,25 +92,29 @@ So, according to the above equation we have that $2^{\mu_A} \vert C'_A \vert
 majority assumption holds, specifically considering that $ \frac{pqt}{f} \approx
 \frac{t}{n-t} \leq 1 $ .\\
 
-\textbf{Definition 2 (Adequate level of honest proof).} \textit{Let $\pi$ be an
-honestly generated proof constructed upon some adopted chain $C$ and let $b \in 
-\pi $. Then $\mu'$ is defined as $\mu' = \max \{ \mu: \vert \pi\{b:\}\uparrow^{mu}
-\vert \geq \max( m+1, (1-\delta)2^{-\mu} \vert \pi\{b:\}\uparrow^{\mu}\downarrow \vert )\}$}.
-\textit{We call $\mu'$ the adequate level of proof $\pi$ with respect to block b with
-security parameters $\delta$ and m. Note that the adequate level of a proof is a
-function of both the proof $\pi$ and the chosen block b.}\\
+\begin{defn}{\textbf{Adequate level of honest proof}}
+	\textit{Let $\pi$ be an
+	honestly generated proof constructed upon some adopted chain $C$ and let $b \in 
+	\pi $. Then $\mu'$ is defined as $\mu' = \max \{ \mu: \vert \pi\{b:\}\uparrow^{mu}
+	\vert \geq \max( m+1, (1-\delta)2^{-\mu} \vert \pi\{b:\}\uparrow^{\mu}\downarrow \vert )\}$}.
+	\textit{We call $\mu'$ the adequate level of proof $\pi$ with respect to block b with
+	security parameters $\delta$ and m. Note that the adequate level of a proof is a
+	function of both the proof $\pi$ and the chosen block b.}
+\end{defn}
 
-\textit{Intuitively, adequate is the level $\mu'$ of a proof $\pi$ for a block b
+Intuitively, adequate is the level $\mu'$ of a proof $\pi$ for a block b
 if there are at least $m$ blocks after b in $\pi$ under the condition that there
 is good chain quality for this level, meaning that there are at least so many blocks
 at this level as expected considering the number of 0-level blocks.\\
-NOTE: adequate level is mostly useful for Claim 1a of the Security Proof (Theorem 2).}\\
+NOTE: adequate level is mostly useful for Claim 1a of the Security Proof (Theorem 2).\\
 
-\textbf{Lemma 2.} \textit{Let $\pi$ be some honest proof generated with security
-parameters $\delta$, m. Let C be the underlying chain, $b \in C$ be any block
-and $\mu'$ be the adequate level of the proof with respect to b and the same
-security parameters.\\Then $C\{b:\}\uparrow^{\mu'} = \pi\{b:\}\uparrow^{\mu'}$.}\\
-
+\begin{lemma}
+	\textit{Let $\pi$ be some honest proof generated with security
+	parameters $\delta$, m. Let C be the underlying chain, $b \in C$ be any block
+	and $\mu'$ be the adequate level of the proof with respect to b and the same
+	security parameters.\\Then $C\{b:\}\uparrow^{\mu'} = \pi\{b:\}\uparrow^{\mu'}$.}
+	\label{lemm:complete_adequate}
+\end{lemma}
 \textit{Proof.} $ \pi\{b:\}\uparrow^{\mu'} \subseteq C\{b:\}\uparrow^{\mu'}$ is
 trivial. For the converse, we have that in the iteration of the \emph{Prove for
 loop}\cite{NIPoPoWs} with $\mu = \mu^*$, the block stored in variable $B$
@@ -131,12 +139,14 @@ step holds. If local-good is not violated, then $ \vert \pi\{b:\} \uparrow^{\mu^
 \vert < m$ and so $\pi\uparrow^{\mu^*}[-m]$, which is the updated value of $B$ at the
 end of $\mu^*$ iteration, precedes $b$.\\
 
-\textbf{Lemma 3.} \textit{Suppose the verifier evaluates $\pi_A \geq \pi_B$ in a
-protocol interaction where B is honest and assume during the comparison that the
-compared level of the honest party is $\mu_B$. Let $b = LCA(\pi_A, \pi_B)$ and
-let ${\mu}'_B$ be the adequate level of $\pi_B$ with respect to b. Then ${\mu}'_B
-\geq \mu_B$.}\\
-
+\begin{lemma}
+	\textit{Suppose the verifier evaluates $\pi_A \geq \pi_B$ in a
+	protocol interaction where B is honest and assume during the comparison that the
+	compared level of the honest party is $\mu_B$. Let $b = LCA(\pi_A, \pi_B)$ and
+	let ${\mu}'_B$ be the adequate level of $\pi_B$ with respect to b. Then ${\mu}'_B
+	\geq \mu_B$.}
+	\label{lemm:greatest_adequate}
+\end{lemma}
 \textit{Proof.} Because $\mu_B$ is the compared level of the honest party, from
 the definition of the $\geq_m$ operator, we have $2^{\mu_B} \vert \pi\{b:\}\uparrow^{\mu_B}
 \vert > 2^{{\mu}'_B} \vert \pi\{b:\}\uparrow^{{\mu}'_B} \vert $. This is true,
@@ -161,11 +171,12 @@ any other choice would be a level of non-good quality, because of the definition
 the adequate level. A level of non-good quality would contain less PoW than that of
 the adequate level for the range of interest $C\{b:\}$. \\
 
-
-\textbf{Theorem 2. (Security)}\textit{Assuming honest majority, the non-interactive
-proofs-of-proof-of-work construction for computable $\kappa$-stable monotonic
-suffix-sensitive predicates is secure with overwhelming probability in $\kappa$.}\\
-
+\begin{thm}{\textbf{Security of suffix proofs}}
+	\textit{Assuming honest majority, the non-interactive
+	proofs-of-proof-of-work construction for computable $\kappa$-stable monotonic
+	suffix-sensitive predicates is secure with overwhelming probability in $\kappa$.}
+	\label{thm:original_suffix_security}
+\end{thm}
 \textit{Proof.} By contradiction. Let $Q$ be a $\kappa-$stable monotonic
 suffix-sensitive chain predicate. Assume NIPoPoWs on $Q$ is insecure. Then,
 during an execution at some round  $r_3$, $Q(C)$ is defined and the verifier

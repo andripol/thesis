@@ -240,13 +240,19 @@ for the level denoted by the pointer itself.
 The following two Lemmas come as immediate results from the suggested protocol
 update.\\
 
-\textit{\textbf{Lemma 4.} A velvet suffix proof constructed by an honest player
-cannot contain any thorny block.}\\
+\begin{lemma}
+	\textit{A velvet suffix proof constructed by an honest player cannot contain
+	any thorny block.}
+	\label{lemm:smooth_honest_suffix}
+\end{lemma}
 
-\textit{\textbf{Lemma 5.} Let $\mathcal{P_A} = (\pi_\mathcal{A}, \chi_\mathcal{A})$
-be a velvet suffix proof constructed by the adversary and block $b_s$, generate
-at round $r_s$, be the most recent smooth block in the proof. Then $\forall r:r < r_s$
-no thorny blocks generated at round $r$ can be included in $\mathcal{P_A}$.}\\
+\begin{lemma} 
+	\textit{Let $\mathcal{P_A} = (\pi_\mathcal{A}, \chi_\mathcal{A})$
+	be a velvet suffix proof constructed by the adversary and block $b_s$, generate
+	at round $r_s$, be the most recent smooth block in the proof. Then $\forall r:r < r_s$
+	no thorny blocks generated at round $r$ can be included in $\mathcal{P_A}$.}
+	\label{lemm:smooths_before_smooth}
+\end{lemma}
 \textit{Proof.} By contradiction. Let $b_t$ be a thorny block generated at
 some round $r_t < r_s$. Suppose for contradiction that $b_t$ is included in
 the proof. Then, because $\mathcal{P_A}$ is a valid chain as for interlink
