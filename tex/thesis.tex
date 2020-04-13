@@ -372,7 +372,7 @@ of inclusion for $b'$ and a suffix proof.
 \DontPrintSemicolon
 \SetKwProg{Fn}{function}{:}{\text{end function}}
 \Fn{ProveInfixVelvet(C, b')}{
-	$(\pi , \chi) \leftarrow Prove_{m,k}(C)$\;
+	$(\pi , \chi) \leftarrow ProveVelvet_{m,k}(\mathcal{C}_S)$\;
 	$tip = \pi [-1]$\;
 	$\pi_{b'} \leftarrow \text{ConstrMTInclProof}(tip, b'.id )$\;
  
@@ -389,7 +389,7 @@ of inclusion for $b'$ and a suffix proof.
 The infix proof verification algorithm is described in Algorithm \ref{alg:verifyInfixVelvet}.
 Supposing that the verifier has already concluded to the longest valid chain $C$ after accepting
 and comparing constesting suffix proofs, the infix verification algorithm only has to confirm
-the Merkle-Tree inclusion proof for the block of interest $b'$.
+the Merkle-Tree inclusion proof $\pi_{b'}$ for the block of interest $b'$.
 
 \vspace{4mm}
 
@@ -398,7 +398,6 @@ the Merkle-Tree inclusion proof for the block of interest $b'$.
 \DontPrintSemicolon
 \SetKwProg{Fn}{function}{:}{\text{end function}}
 \Fn{VerifyInfixVelvet($\pi_b', (\pi, \chi)$)}{
-	$(\pi , \chi) \leftarrow Prove_{m,k}(C)$\;
 	$tip = \pi [-1]$\;
 	\Return $\text{VerMTInclProof}(tip.MTR_{blocks}, \pi_{b'}, b'.id )$\;
 }
