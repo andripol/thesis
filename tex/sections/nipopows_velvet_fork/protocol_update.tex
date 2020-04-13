@@ -11,6 +11,14 @@ We will first define our security assumptions and then discuss some solution
 approaches for the problem. This discussion will result to the proposed protocol
 upgrade suggestion.
 
+\subsubsection{Velvet fork parameter}
+Under stable conditions a velvet fork suggest that only a minority of upgraded parties needs to support the protocol update. Let $g$ express the percentage of honest upgraded parties to the total number of miners. We will refer to $g$ as the ``velvet parameter".
+
+\begin{defn}{\textbf{Velvet Parameter}}
+	\textit{Let $g$ be the velvet parameter for NIPoPoW protocols.  Then if $n_h$ the upgraded honest miners and $n$ the total number of miners it holds that $n_h = g \cdot n$.}
+	\label{defn:velvet_honest_majority}
+\end{defn}
+
 %% first reference to 1/3 adversary
 \subsubsection{Honest Majority Assumption}
 Compared to the typical setting of $1/2$-bounded adversary, the protocol we
