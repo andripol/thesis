@@ -282,63 +282,90 @@ $\square$
 	be part of $\chi_{\mathcal{A}}$ with high probability in $k$.}
 \end{lemma}
 
-\vspace{4mm}
+We now describe the algorithms needed by the upgraded miner, prover and verifier. The upgraded miner acts as usual except for including the interlink of the newborn block in the coinbase transaction. In order to construct an interlink containing only the smooth blocks, the miner keeps a copy of the ``smooth chain'' ($\mathcal{C}_S$) which consists of the smooth blocks existing in the original chain $\mathcal{C}$. The algorithm for extracting the smooth chain out of $\mathcal{C}$ is given in Algorithm '\ref{alg:smooth_chain}. The \textit{updateInterlink} algorithm is given in Algorithm \ref{alg:updateInterlink}, which is essentially the same as in the case of a hard/soft fork, except for working on the smooth chain $\mathcal{C}_S$ instead of $\mathcal{C}$.
 
-\begin{algorithm}[H]
-	%\begin{algorithmic}[1]
-		\SetAlgoNoLine
-		\DontPrintSemicolon
-		\SetKwProg{Fn}{function}{:}{\text{end function}}
-		\Fn{updateInterlinkVelvet(C)}{
- 			$k \leftarrow 1$\;
- 			$B\leftarrow C[-k]$\;
- 			\While{is-smooth-block(B) $=$ false}{
-   				$k \leftarrow k + 1$\;
-   				$B \leftarrow C[-k]$\;
- 			}
- 			$B \leftarrow C[-k]$\;
- 			interlink$\leftarrow$B.interlink\;
- 			\For{$\mu = 0$ to level(B)}{
- 				interlink$[\mu]\leftarrow id(B)$
- 			}
- 			\Return interlink\;
+\begin{algorithm}[h!]
+	\SetAlgoNoLine
+	\DontPrintSemicolon
+	\SetKwProg{Fn}{function}{:}{\text{end function}}
+	\Fn{smoothChain($\mathcal{C}$)}{
+		$\mathcal{C}_S = \{ \mathcal{G} \}$\;
+		$k \leftarrow 1$ \;
+		\While{$\mathcal{C}[-k] \neq \mathcal{G}$}{
+			\If{isSmoothBlock($\mathcal{C}[-k]$)}{
+				$\mathcal{C}_S \leftarrow \mathcal{C}_S \cup \mathcal{C}[-k]$\;
+			}
+			$k \leftarrow k + 1$\;
 		}
+		return $\mathcal{C}_S$
+	}
 	\vspace{4mm}
-	\Fn{is-smooth-block(B)}{
-		\If{B.id $=$ Genesis.id}{
+	\Fn{isSmoothBlock(B)}{
+		\If{$B = \mathcal{G}$}{
 			\Return true\;
 		}
  		\For{p $\in$ B.interlink} {
-     		\If{is-smooth-pointer(B, p) $=$ false}{
+     		\If{$\neg$isSmoothPointer(B, p)}{
      			\Return false\;
      		}
  		}
  		\Return true\;
 	}
-
 	\vspace{4mm}
-	\Fn{is-smooth-pointer(B, p)}{
+	\Fn{isSmoothPointer(B, p)}{
 		$b \leftarrow Block(B.prevId)$\;
- 		\While{b.id $\not =$ p.id} {
+ 		\While{b $\not =$ p} {
      		\If{$ level(b) \geq level(p) \wedge
-     			\text{is-smooth-block(b)} $}{
+     			\text{isSmoothBlock(b)} $}{
      			\Return false\;
      		}
-     		\If{b.id = Genesis.id}{
+     		\If{$b = \mathcal{G}$}{
      			\Return false\;
      		}
      		$b \leftarrow Block(b.prevId)$
  		}
- 		\If{$\text{is-smooth-block(b)}$}{
- 			\Return true\;
- 		}
- 		\Return false\;
+		 \Return $\textit{isSmoothBlock(b)}$ \;
 	}
-	%\end{algorithmic}
- 	\caption{velvet updateInterlink}
+ 	\caption{Compute smooth chain}
+ 	\label{alg:smooth_chain}
+\end{algorithm}
+
+\begin{algorithm}[h!]
+	\SetAlgoNoLine
+	\DontPrintSemicolon
+	\SetKwProg{Fn}{function}{:}{\text{end function}}
+	\Fn{updateInterlinkVelvet($\mathcal{C}_S$)}{
+		B' $\leftarrow \mathcal{C}_S[-1]$\;
+		interlink $\leftarrow$ B'.interlink\;
+ 		\For{$\mu = 0$ to level(B')}{
+ 			interlink$[\mu]\leftarrow id(B')$
+		 }
+ 		\Return interlink\;
+	}
+ 	\caption{Velvet updateInterlink}
  	\label{alg:updateInterlink}
+\end{algorithm}
+
+The construction of the velvet suffix prover is given in Algorithm \ref{alg:velvet_suffix_prover}, which is essentially the same to that of a hard/soft fork except for working on smooth chain $\mathcal{C}_S$ instead of $\mathcal{C}$.
+
+\begin{algorithm}[h!]
+	\SetAlgoNoLine
+	\DontPrintSemicolon
+	\SetKwProg{Fn}{function}{:}{\text{end function}}
+	\Fn{$ProveVelvet_{m,k}(\mathcal{C}_S$)}{
+		$B \leftarrow \mathcal{C}_S[0]$\;
+		\For{$\mu = \vert \mathcal{C}_S[-k].interlink \vert$ down to 0}{
+			$\alpha \leftarrow \mathcal{C}_S[:-k] \{ B: \} \uparrow^\mu$\;
+			$\pi \leftarrow \pi \cup \alpha$\;
+			$B \leftarrow \alpha[-m]$\;
+		}
+		$\chi \leftarrow \mathcal{C}_S[-k:]$\;
+		\Return $\pi\chi$
+	}
+ 	\caption{Velvet Suffix Prover}
+ 	\label{alg:velvet_suffix_prover}
 \end{algorithm}
 
 \vspace{4mm}
 
-In conclusion Verify algorithm for the NIPoPoW suffix protocol remains the same.
+In conclusion the Verify algorithm for the NIPoPoW suffix protocol remains the same as in the case of hard or soft fork.
