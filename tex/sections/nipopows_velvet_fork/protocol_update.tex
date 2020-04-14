@@ -274,15 +274,30 @@ $b_t$, so we have reached a contradiction.
 $\square$
 \end{flushright}
 
-%%%to be proved!
 \begin{lemma}
 	\textit{Let $\mathcal{P_A} = (\pi_\mathcal{A}, \chi_\mathcal{A})$
-	be a velvet suffix proof constructed by the adversary and $k$ the size of
-	$\chi_{\mathcal{A}}$. Then any thorny block included in $\mathcal{P_A}$ will
-	be part of $\chi_{\mathcal{A}}$ with high probability in $k$.}
+	be a velvet suffix proof constructed by the adversary. Let $b_t$ be the oldest
+	thorny bock included in $\mathcal{P_A}$ which is generated at round $r_t$. Then any block $b = \{b: b \in \mathcal{P_A} \wedge \text{b generated at }r \geq r_t \}$ is thorny.}
+	\label{lemm:thorny_after_thorny}
 \end{lemma}
+\textit{Proof.} By contradiction. Suppose for contradiciton that $b_s$ is a smooth block generated at round $r_s > r_t$. Then from Lemma \ref{lemm:smooths_before_smooth} any block generated at round $r < r_s$ is smooth. But $b_t$ is generated at round $r_t < r_s$ and is thorny, thus we have reached a contradiction.
+\begin{flushright}
+$\square$
+\end{flushright}
 
-We now describe the algorithms needed by the upgraded miner, prover and verifier. The upgraded miner acts as usual except for including the interlink of the newborn block in the coinbase transaction. In order to construct an interlink containing only the smooth blocks, the miner keeps a copy of the ``smooth chain'' ($\mathcal{C}_S$) which consists of the smooth blocks existing in the original chain $\mathcal{C}$. The algorithm for extracting the smooth chain out of $\mathcal{C}$ is given in Algorithm '\ref{alg:smooth_chain}. The \textit{updateInterlink} algorithm is given in Algorithm \ref{alg:updateInterlink}, which is essentially the same as in the case of a hard/soft fork, except for working on the smooth chain $\mathcal{C}_S$ instead of $\mathcal{C}$.
+The following corollary emerges immediately from Lemmas \ref{lemm:smooths_before_smooth}, \ref{lemm:thorny_after_thorny}.
+
+\begin{corollary}
+	\textit{Any adversarial proof $\mathcal{P_A} = (\pi_\mathcal{A}, \chi_\mathcal{A})$, containing both smooth and thorny blocks, consists of a prefix smooth subchain followed by a suffix thorny subchain.}
+	\label{cor:adversarial_proof_scheme}
+\end{corollary}
+
+We now describe the algorithms needed by the upgraded miner, prover and verifier. The upgraded miner acts as usual except for including the interlink of the newborn block in the coinbase transaction. In order to construct an interlink containing only the smooth blocks, the miner keeps a copy of the ``smooth chain'' ($\mathcal{C}_S$) which consists of the smooth blocks existing in the original chain $\mathcal{C}$. The algorithm for extracting the smooth chain out of $\mathcal{C}$ is given in Algorithm \ref{alg:smooth_chain}. Function \textit{isSmoothBlock(B)} checks whether a
+block \textit{B} is a smooth velvet by calling \textit{isSmoothPointer(B,p)}
+for every pointer \textit{p} in \textit{B}'s interlink. Function
+\textit{isSmoothPointer(B,p)} returns \emph{true} if $p$ is a valid 
+pointer, in essence a pointer to the most recent \emph{smooth velvet}
+for the level denoted by the pointer itself. The \textit{updateInterlink} algorithm is given in Algorithm \ref{alg:updateInterlink}, which is essentially the same as in the case of a hard/soft fork, except for working on the smooth chain $\mathcal{C}_S$ instead of $\mathcal{C}$.
 
 \begin{algorithm}[h!]
 	\SetAlgoNoLine
