@@ -22,25 +22,25 @@ From Theorem 3 we have:
 Thus we have:
 \begin{center}
 \begin{equation}
-	t \leq \dfrac{1 - \delta}{3}\cdot n
+	t \leq (1 - \delta)\dfrac{n}{3}
 \end{equation}
 \end{center}
 
 
 \begin{thm}{\textbf{Suffix Proofs Security under velvet fork}}
-	Assuming honest majority under velvet fork conditions such that $t \leq \dfrac{1 - \delta}{3}\cdot n_v$, the non-interactive proofs-of-proof-of-work construction for computable $\kappa$-stable monotonic suffix-sensitive predicates under velvet fork conditions is secure with overwhelming probability in $\kappa$.
+	Assuming honest majority under velvet fork conditions (\ref{defn:velvet_honest_majority}) such that $t \leq (1 - \delta) \dfrac{n_v}{3}$, the non-interactive proofs-of-proof-of-work construction for computable k-stable monotonic suffix-sensitive predicates under velvet fork conditions is secure with overwhelming probability in k.
 \end{thm}
 \textit{Proof.} By contradiction. We follow the proof construction of Theorem 2
-and extend it. Let $Q$ be a $\kappa-$stable monotonic suffix-sensitive chain
+and extend it. Let $Q$ be a k-stable monotonic suffix-sensitive chain
 predicate. Assume NIPoPoWs under velvet fork on $Q$ is insecure. Then, during
 an execution at some round  $r_3$, $Q(C)$ is defined and the verifier $V$
 disagrees with some honest participant. Assume the execution is typical. $V$
 communicates with adversary $A$ and honest prover $B$. The verifier receives
 proofs $\pi_A, \pi_B$. Because $B$ is honest, $\pi_B$ is a proof constructed
 based on underlying blockchain $C_B$ (with $\pi_B \subseteq C_B$), which $B$
-has adopted during round $r_3$ at which $\pi_B$ was generated. Consider $C_A$
-the chain containing at least some of the blocks in $\pi_A$, while the remaining
-blocks $\pi_A$ must belong in $C_B$.
+has adopted during round $r_3$ at which $\pi_B$ was generated. Consider $\widetilde{C}_A$ the set of blocks defined as $\widetilde{C}_A = \pi_A \cup \{ (\forall b_A \in \pi_A, \exists h,r : b_A \in \mathcal{C}_{h}^{r}): C_h^r\{:b_A\} \}$, where $\mathcal{C}_h^r$ a chain that an honest player $p$ has adopted at some round $r$. Note that $\widetilde{\mathcal{C}}_A$ forms a chain considering the interlink pointers.
+%Consider $\widetilde{C}_A$ the chain containing at least some of the blocks in $\pi_A$, while the remaining blocks $\pi_A$ must belong in $C_B$.
+
 The verifier outputs $\neg Q(C_B)$. Thus it is necessary that $\pi_A \geq \pi_B$.
 We show that $\pi_A \geq \pi_B$ is a negligible event.
 Let $b = LCA(\pi_A, \pi_B)$. Let the levels of comparison decided by the verifier
@@ -51,13 +51,12 @@ $\alpha'_B = \pi_B \uparrow^{\mu'_B}\{b:\}$.
 %%%%%%%%   reconsider this paragraph
 Our proof construction is based on the following scheme: we show that the competing
 suffix proofs can be conceived as consisting of three distinct parts. Each part
-denotes a specific round set and is called after the number of blocks existing
-in $\pi_A$ for that round set. Part $k_1$ lies for the first part of the proofs
-between blocks $b = LCA(\pi_A, \pi_B)$ and $b_2 = LCA(C_A, C_B)$ meaning for the
-common 0-level part of $\alpha_A,  \alpha_B$. Part $k_2$ lies for the second part
-of the proofs considering the rounds from block $b_2 = LCA(C_A, C_B)$ up until
-the Common Prefix is established at the 0-level chains for that fork point.
-The third and last part, $k_3$ lies for the rest blocks in the proofs.\\
+denotes a specific round set and is named after the number of blocks existing
+in $\pi_A$ for that round set. Part $k_1$ stands for the first part of each proof
+between blocks $b = LCA(\pi_A, \pi_B)$ and $b_2 = LCA(\widetilde{\mathcal{C}}_A, C_B)$. Part $k_2$ stands for the second part
+of the proofs considering the rounds from block $b_2$ and until
+the Common Prefix is established at $\mathcal{C}_B$ for that fork point.
+The third and last part, $k_3$ stands for the rest of the blocks in each proof.\\
 The above are illustrated, among other, in Parts I, II of Figure \ref{fig:proof_velvet}.
 
 \begin{figure}[h!]
@@ -66,14 +65,16 @@ The above are illustrated, among other, in Parts I, II of Figure \ref{fig:proof_
 	\end{center}
 	\caption{\textit{ Wavy lines imply one or more blocks. Dashed lines and arrows imply
 	interlink pointers to superblocks. \textbf{I}: the three round sets in two competing
-	proofs at different levels, \textbf{II}: the corresponding 0-level chains,
-	\textbf{III}: blocks participating in chains $C_B$, $C_A$ as conceived by 
-    the verifier's perspective.}}	
+	proofs at different levels, \textbf{II}: the corresponding 0-level blocks implied by the two proofs,
+	\textbf{III}: blocks participating in chain $\mathcal{C}_B$ and block set $\widetilde{\mathcal{C}}_A$ as conceived by the verifier's perspective.}}	
     \label{fig:proof_velvet}
 \end{figure}
 
+From Corollary \ref{cor:adversarial_proof_scheme} we have that the adversarial proof 
+consists of a smooth interlink subchain followed by a thorny interlink subchain. We will refer to the smooth part of $\alpha_\mathcal{A}$ as $\alpha^{\mathcal{S}}_\mathcal{A}$ and to the thorny part as $\alpha^{\mathcal{T}}_\mathcal{A}$.   
+
 We will now show three successive claims under velvet fork conditions: First,
-$\alpha_A \downarrow \uparrow^{\mu_A}$ and $\alpha'_B \downarrow$ are mostly
+$\alpha^{\mathcal{S}}_\mathcal{A}$ and $\alpha'_B \downarrow$ are mostly
 disjoint. Second, $a_A$ contains mostly adversarially generated blocks. And third,
 the adversary is able to produce this $a_A$ with negligible probability.\\
 Let $\alpha_A = k_1 + k_2 + k_3$ and let $k_1, k_2, k_3$ be as defined in the
@@ -81,35 +82,33 @@ following Claims.\\
 Let round $r_1$ be the round when block $b$ is generated and round $r_2$ when block
 $b_2 = LCA(\alpha_A, \alpha'_B\downarrow)$ is generated.\\
 
-\textbf{Claim 1:} As for honestly generated blocks, $\alpha_A$ and
-$\alpha'_B\downarrow$ are mostly disjoint. Following the proof of Theorem 2
-we conclude that $\vert \alpha_A\downarrow\uparrow^{\mu_A}[1:] \cap
-\alpha'_B\downarrow[1:] \vert \leq k_{1} = 2^{\mu'_B - \mu_A}$. In order to see
-this under the velvet fork conditions, first consider that the adversary behaves
-honestly for blocks in her proof between $b$ and $b_2$. In this case Claim 1 of
-Theorem 2 applies directly. In the opposite case, the adversary includes a block
-with false interlink after block $b$ and before block $b_2$, thus the inequality
-holds and because of Lemma 5 no more honestly generated blocks can be included
-in $\alpha_A$ and we can immediately proceed to Claim 3 of this proof.
+\textbf{Claim 1:} $\alpha^{\mathcal{S}}_\mathcal{A}$ and
+$\alpha'_B\downarrow$ are mostly disjoint. Following the proof of Theorem 
+\ref{thm:original_suffix_security} we conclude that 
+$\vert \alpha^{\mathcal{S}}_\mathcal{A} \cap \alpha'_B\downarrow[1:] \vert \leq k_{1} = 2^{\mu'_B - \mu_A}$. 
+In order to see this under the velvet fork conditions, first consider that the adversary behaves honestly for blocks in her proof generated between $b$ and $b_2$. This means that if $b_2$ was generated at round $r_{b_2}$ and $\alpha^{\mathcal{S}}_\mathcal{A}[-1]$ in round $r$, then $r \geq r_{b_2}$. In this case Claim 1 of
+Theorem \ref{thm:original_suffix_security} applies directly. In the opposite case, the adversary includes a thorny block $b_t = \alpha^{\mathcal{T}}_{\mathcal{A}}[0]$ after $b$ and before $b_2$, thus the inequality still
+holds and because of Lemma \ref{lemm:thorny_after_thorny} no more honestly generated blocks can be included
+in $\alpha_A$ after $b_t$ and we can immediately proceed to Claim 3 of this proof.
 
-So we conclude that there are at least $\vert \alpha_A \vert - k_1$ blocks after
+We conclude that there are at least $\vert \alpha_A \vert - k_1$ blocks after
 block $b$ in $\alpha_A$ which are not honestly generated blocks existing in
 $\alpha'_B\downarrow$. In other words, there are $\vert \alpha_A \vert - k_1$
 blocks after block $b$ in $\alpha_A$, which are either adversarially generated
-existing in $\alpha_B\downarrow$ either don't belong in $\alpha_B\downarrow$.
-This makes $b_2$ the last block before the 0-level fork point included in the
-adversary's proof.\\
+existing in $\alpha_B\downarrow$ either don't belong in $\alpha_B\downarrow$.\\
 
 \textbf{Claim 2.} 
 At least $k_3$ superblocks of $\alpha_A$ are adversarially generated. Just as
-the proof of Theorem 2 and using a similar notation, because of the Common Prefix
+the proof of Theorem \ref{thm:original_suffix_security} and using a similar notation, because of the Common Prefix
 property on parameter $k_{2\downarrow}$, $\alpha_A[k_{1}+k_{2}:]$ could contain
 no honestly generated blocks. In order to see this for the velvet fork conditions
 let's again consider the case that the adversary behaves honestly for the first
-$(k_1 + k_2)$ blocks of her proof in which case Claim 2 of Theorem 2 is immediately
-applied. In the opposite case, consider that the adversary includes in her proof a
-block with invalid interlink at some earlier point. Again, because of Lemma 5 no more
-honestly generated blocks can be included in $\alpha_A$ and we can proceed to Claim 3
+$(k_1 + k_2)$ blocks of her proof in which case Claim 2 of Theorem 
+\ref{thm:original_suffix_security} is immediately applied. In the opposite case,
+the adversary includes in her proof a
+thorny block at some earlier point. Again, because of Lemma 
+\ref{lemm:thorny_after_thorny} the inequality still holds and no more
+honestly generated blocks can be included in $\alpha_A$, so we can proceed to Claim 3
 of this proof.\\
 
 %\begin{figure}[h!]
@@ -124,11 +123,10 @@ of this proof.\\
 %	\label{fig:exclude}
 %\end{figure}
 
-\textbf{Claim 3.} Adversary can submit a suffix proof such that $\alpha_A >= \alpha_B$
+\textbf{Claim 3.} The adversary may submit a suffix proof such that $\alpha_A \geq \alpha_B$
 with negligible probability.
 %%% @TODO: make formal arguments
-The last $k_3$ blocks included in $\alpha_A$ may belong either in $C_A$ either in
-$C_B$ but are all adversarially generated. In the worst case  all $k_3 $ blocks
+As argued aerlier the last $k_3$ blocks included in $\alpha_A$ are all adversarially generated. In the worst case  all $k_3 $ blocks
 are sewed from $C_B$. This is the worst case scenario since each adversarially
 generated block in $C_B$ may have dropped one honest block out of the chain
 because of selfish mining. Considering this scenario, because of the strengthened
