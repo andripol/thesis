@@ -274,12 +274,20 @@ $\square$
 $\square$
 \end{flushright}
 
-The following corollary emerges immediately from Lemmas \ref{lemm:smooths_before_smooth}, \ref{lemm:thorny_after_thorny}.
+The following corollary emerges immediately from Lemmas \ref{lemm:smooths_before_smooth}, \ref{lemm:thorny_after_thorny}. This result is illustrated in Figure \ref{fig:adversarial_velvet_proof}.
 
 \begin{corollary}
 	\textit{Any adversarial proof $\mathcal{P_A} = (\pi_\mathcal{A}, \chi_\mathcal{A})$, containing both smooth and thorny blocks, consists of a prefix smooth subchain followed by a suffix thorny subchain.}
 	\label{cor:adversarial_proof_scheme}
 \end{corollary}
+
+\begin{figure}[h!]
+	\begin{center}
+		\includegraphics[scale=0.75]{figures/adversarial_velvet_proof.pdf}
+	\end{center}
+	\caption{\textit{In the general case the adversarial velvet suffix proof $\mathcal{P_A} = (\pi_\mathcal{A}, \chi_\mathcal{A})$ consists of an initial part of smooth blocks followed by  of thorny blocks.}}
+	\label{fig:adversarial_velvet_proof}
+\end{figure}
 
 We now describe the algorithms needed by the upgraded miner, prover and verifier. The upgraded miner acts as usual except for including the interlink of the newborn block in the coinbase transaction. In order to construct an interlink containing only the smooth blocks, the miner keeps a copy of the ``smooth chain'' ($\mathcal{C}_S$) which consists of the smooth blocks existing in the original chain $\mathcal{C}$. The algorithm for extracting the smooth chain out of $\mathcal{C}$ is given in Algorithm \ref{alg:smooth_chain}. Function \textit{isSmoothBlock(B)} checks whether a
 block \textit{B} is a smooth velvet by calling \textit{isSmoothPointer(B,p)}
