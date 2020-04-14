@@ -234,16 +234,6 @@ where $n_v$ is the number of upgraded players.
 a block's interlink without pointers to thorny blocks.
 \end{enumerate}
 
-Algorithm \ref{alg:updateInterlink} describes the interlink update procedure for the
-honest miner after the suggested protocol patch. An honest miner has to first find the
-most recent \emph{smooth velvet} and then add pointers so as to consider this block in
-the interlink as well. Function \textit{has-correct-interlink(B)} checks whether a
-block \textit{B} is a smooth velvet by calling \textit{valid-interlink-pointer(B,p)}
-for every pointer \textit{p} in \textit{B}'s interlink. Function
-\textit{valid-interlink-pointer(B,p)} returns \emph{true} if $p$ is a valid 
-pointer, in essence a pointer to the most recent \emph{smooth velvet}
-for the level denoted by the pointer itself. 
-
 The following Lemmas come as immediate results from the suggested protocol
 update.\\
 
@@ -255,9 +245,8 @@ update.\\
 
 \begin{lemma} 
 	\textit{Let $\mathcal{P_A} = (\pi_\mathcal{A}, \chi_\mathcal{A})$
-	be a velvet suffix proof constructed by the adversary and block $b_s$, generate
-	at round $r_s$, be the most recent smooth block in the proof. Then $\forall r:r < r_s$
-	no thorny blocks generated at round $r$ can be included in $\mathcal{P_A}$.}
+	be a velvet suffix proof constructed by the adversary and block $b_s$, generated
+	at round $r_s$, be the most recent smooth block in the proof. Then $\forall r:r < r_s$ no thorny blocks generated at round $r$ can be included in $\mathcal{P_A}$.}
 	\label{lemm:smooths_before_smooth}
 \end{lemma}
 \textit{Proof.} By contradiction. Let $b_t$ be a thorny block generated at
@@ -269,7 +258,7 @@ after $b_t$ and before $b_s$ included in $\mathcal{P_A}$.
 Then $b'$ has been generated at a round $r'$ such that $r_t \leq r' < r_s$. Then
 the block right after block $b'$ in $\mathcal{P_A}$ must be a thorny block since
 it points to $b'$ which is thorny. But $b'$ is the most recent thorny block after
-$b_t$, so we have reached a contradiction.
+$b_t$, thus we have reached a contradiction.
 \begin{flushright}
 $\square$
 \end{flushright}
