@@ -22,13 +22,12 @@ From Theorem 3 we have:
 Thus we have:
 \begin{center}
 \begin{equation}
-	t \leq (1 - \delta)\dfrac{n}{3}
+	t \leq \dfrac{(1-\delta)}{2}(n - t)
 \end{equation}
 \end{center}
 
-
 \begin{thm}{\textbf{Suffix Proofs Security under velvet fork}}
-	Assuming honest majority under velvet fork conditions (\ref{defn:velvet_honest_majority}) such that $t \leq (1 - \delta) \dfrac{n_v}{3}$, the non-interactive proofs-of-proof-of-work construction for computable k-stable monotonic suffix-sensitive predicates under velvet fork conditions is secure with overwhelming probability in k.
+	Assuming honest majority under velvet fork conditions (\ref{defn:velvet_honest_majority}) such that $t \leq (1 - \delta) \dfrac{n_h}{2}$ where $n_h$ the number of upgraded honest players, the non-interactive proofs-of-proof-of-work construction for computable k-stable monotonic suffix-sensitive predicates under velvet fork conditions in a typical execution is secure.
 \end{thm}
 \textit{Proof.} By contradiction. We follow the proof construction of Theorem 2
 and extend it. Let $Q$ be a k-stable monotonic suffix-sensitive chain

@@ -24,21 +24,20 @@ Under stable conditions a velvet fork suggest that only a minority of upgraded p
 Compared to the typical setting of $1/2$-bounded adversary, the protocol we
 propose requires stronger honest majority assumptions to be provably secure. 
 In particular, our protocol is secure for adversary of total hashing power 
-less than $1/3$ of the upgraded honest miners. Therefore we define the Velvet
-Honest Majority assumption, which will be used in our security proof.
+less than $1/2$ of the upgraded honest miners, meaning less than $1/3$ of the total number of miners generating blocks with interlinks. Therefore we define the Velvet Honest Majority assumption, which will be used in our security proof.
 
 \begin{defn}{\textbf{Velvet Honest Majority}}
-	\textit{Let $n_v$ be the number of upgraded miners. Then $t$ out of total $n_v$
-	parties are corrupted such that $\dfrac{t}{n_v} < \dfrac{1 - \delta}{3} $. }
+	\textit{Let $n_h$ be the number of upgraded honest miners. Then $t$ out of total $n$
+	parties are corrupted such that $\dfrac{t}{n_h} < \dfrac{1 - \delta}{2} $. }
 	\label{defn:velvet_honest_majority}
 \end{defn}
 We believe that if we waive this requirement it is impossible to have a provably 
 secure NIPoPoW protocol under velvet fork conditions.
-This claim is described and discussed in the following.
+This claim is described and discussed in the following sections.
 Note that any reference to adversarial party bound is respect to the number of
-upgraded parties $n_v$. Therefore, ``(1/2)-bounded adversary" holds for
-$\dfrac{t}{n_v} < \dfrac{1 - \delta}{2} $, while ``(1/3)-bounded adversary" holds for
-$\dfrac{t}{n_v} < \dfrac{1 - \delta}{3} $.
+upgraded parties. Therefore, ``(1/2)-bounded adversary" holds for
+$\dfrac{t}{n_h} < (1 - \delta) $, while ``(1/3)-bounded adversary" holds for
+$\dfrac{t}{n_h} < \dfrac{1 - \delta}{2} $.
 
 \subsubsection{Impossibility of a secure protocol for (1/2)-bounded adversary}
 During our study on the problem we failed to prove the security of several protocol
@@ -47,10 +46,10 @@ such a secure NIPoPoW construction is impossible under velvet fork conditions.
 Though it is hard to provide a typical proof for this claim, as one should consider
 any possible construction, we try to argue for it in this section.
 
-\textbf{Claim:} \textit{Assume $t$ adversarial out of total $n_v$ upgraded parties.
+\textbf{Claim:} \textit{Assume $t$ adversarial out of $n$ total parties and $n_h = g(n-t)$ the number of upgraded honest parties.
 There is no construction for NIPoPoW suffix proofs under velvet fork conditions,
 which is both succinct and secure for every adversary, such that
-$\dfrac{t}{n_v} < \dfrac{1 - \delta}{2} $.}
+$\dfrac{t}{n_h} < (1 - \delta)$.}
 
 \textit{Discussion.} As explained earlier, since the adversary may use the interlink
 structure so as to include pointers to arbitrary blocks,  she may construct her own
@@ -64,7 +63,7 @@ limitations to make it possible to challenge the submitted proofs, so that an ho
 player can contest against an inconsistent proof. However, note that the same power
 to challenge any submitted proof is also provided to the adversary.
 
-Now assume an adversary of $ n_v/3 < t < n_v/2 $. Then, as explained
+Now assume an adversary of $ \dfrac{1-\delta}{2} < \dfrac{t}{n_h} < 1-\delta $. Then, as explained
 in the Backbone and Selfish Mining papers \cite{Backbone}\cite{selfish_mining} it
 is possible for the adversary to maintain the longest valid chain being of less
 than $50\%$ chain quality in favor of adversarially generated blocks. In particular,
@@ -227,8 +226,8 @@ The protocol patch we suggest can be summarized as follows:\\
 \subsubsection*{Protocol Patch for NIPoPows suffix proofs under velvet fork.} In order
 to make NIPoPoWs safe under velvet fork conditions we suggest:
 \begin{enumerate}
-\item Strengthen the Honest Majority Assumption so that $2t < (1 - \delta)(n_v-t)$,
-where $n_v$ is the number of upgraded players.
+\item Strengthen the Honest Majority Assumption so that $t < \dfrac{1 - \delta}{2}n_h$,
+where $n_h$ is the number of upgraded honest players.
 %%% TODO: also provide short algorithm for the intrlink construction after the patch 
 \item The NIPoPoW protocol under velvet fork works as usual but a miner constructs
 a block's interlink without pointers to thorny blocks.
