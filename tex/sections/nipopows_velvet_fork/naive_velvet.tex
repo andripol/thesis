@@ -1,0 +1,75 @@
+\subsection{A na\"ive velvet scheme.}
+In previous work~\cite{nipopows}, it was conjectured that superblock NIPoPoWs
+remain secure under a velvet fork. We call this scheme the \emph{Na\"ive Velvet
+NIPoPoW} protocol, because it is not dissimilar from the NIPoPoW protocol in the
+soft fork case. In particular, the na\"ive velvet NIPoPoW protocol that was put
+forth works as follows. Each upgraded honest miner attempts to mine a block $b$
+that includes interlink pointers in the form of a Merkle Tree included in its
+coinbase transaction. For each level $\mu$, the interlink contains a pointer to
+the most recent among all the ancestors of $b$ that have achieved at least
+level $\mu$, regardless of whether the referenced block is upgraded or not and
+regardless of whether its interlinks are valid. Unupgraded honest nodes will
+keep mining blocks on the chain as usual; because the status of a block as
+superblock does not require it to be mined by an upgraded miner, the unupgraded
+miners contribute mining power to the creation of superblocks as desired.
+
+The prover in the na\"ive velvet NIPoPoWs then worked as follows. The honest
+prover constructed the NIPoPoW proof $\pi \chi$ as usual by selecting certain
+superblocks from his chain $\chain$ as representatives in $\pi$ and by setting
+$\chi = \chain[-k{:}]$. The outstanding issue in this case, however, is that
+these blocks in $\pi$ do not form a chain because, while superblocks, some of
+them may not be upgraded and they may not contain any pointers (or they may
+contain invalid pointers). The honest prover needs to provide a connection
+between two consecutive blocks $\pi[i + 1]$ and $\pi[i]$ in the superchain, and
+suppose $\pi[i]$ is the most recent $\mu$-superblock preceding $\pi[i + 1]$. The
+block $\pi[i + 1]$ is a superblock and exists at some position $j$ in the
+underlying chain $\chain$ of the prover, i.e., at $\pi[i + 1] = \chain[j]$. If
+$\chain[j]$ is a smooth block, then the interlink pointer at level $\mu$ within
+it can be used directly. Otherwise, the prover used the \emph{previd} pointer of
+$\pi[i + 1] = \chain[j]$ to repeatedly reach the parents of $\chain[j]$, namely
+$\chain[j - 1], \chain[j - 2], \cdots$ until a smooth block $b$ between $\pi[i]$
+and $\pi[i + 1]$ was found in $\chain$. The block $b$ then contains a pointer to
+$\pi[i]$, as $\pi[i]$ is also the most recent $\mu$-superblock ancestor of $b$.
+The blocks $\chain[j - 1], \chain[j - 2], \cdots, b$ are then included in the
+proof to illustrate that $\pi[i]$ is an ancestor of $\pi[i + 1]$.
+
+The argument for why the above scheme work is as follows. First of all, the
+scheme does not add many new blocks to the proof. In expectation, if a fully
+honestly generated chain is processed, after in expectation $\frac{1}{g}$ blocks
+have been traversed, a smooth block will be found and the connection to $\pi[i]$
+will be made. Thus, the number of blocks needed in the proof increases by a
+factor of $\frac{1}{g}$. Security was argued as follows: An honest party
+includes in their proof as many blocks as in a soft forked NIPoPoW, albeit by
+using an indirect connection. The crucial feature is that it is not missing any
+superblocks. Even if the adversary creates interlinks that skip over some honest
+superblocks, the honest prover will not utilize these interlinks, but will use
+the ``slow route'' of level $0$ instead. The adversarial prover, on the other
+hand, can only use honest interlinks as before, but may also use false
+interlinks in blocks mined by the adversary. However, these false
+interlinks cannot point to blocks that are of incorrect level. The reason is
+that the verifier can look at the hash of each block to verify its level and
+therefore cannot be lied to. The only problem a fake interlink can cause is that
+it can point to a $\mu$-superblock which is not \emph{the most recent ancestor},
+but some other block. It was then argued that the only other possibility was
+to point to blocks that are older $\mu$-superblock ancestors in the same chain,
+as illustrated in Figure~\ref{fig:skip_ancestor}. However, the adversarial
+prover can only harm herself by making use of these pointers, as the result will
+simply by a superchain with fewer blocks.
+
+\begin{figure}[h]
+	\begin{center}
+		\includegraphics[width=0.9\columnwidth]{figures/simple_thorny.pdf}
+	\end{center}
+    \caption{A thorny pointer of an adversarial block, colored black, in an honest party's chain. The thorny block points to a $1$-superboock which is an ancestor
+		$1$-superblock, but not \emph{the most recent ancestor} $1$-superblock.}
+	\label{fig:skip_ancestor}
+\end{figure}
+
+As such, we conclude that the honest verifier comparing the honest superchain
+against the adversarial superchain will reach the same conclusion in the velvet
+case as he would have reached in the soft fork case: Because the honest
+superchain in the velvet case contains the same amount of blocks as the honest
+superchain in the soft fork case, but the adversarial superchain in the velvet
+case contains fewer blocks than in the soft fork case, the comparison will
+remain in favor of the honest party. As we will see in the next section, this
+conclusion is far from straightforward.

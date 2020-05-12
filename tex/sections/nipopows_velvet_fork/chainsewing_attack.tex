@@ -1,84 +1,84 @@
-We  will now describe an explicit attack against the NIPoPoW suffix proof construction 
-under velvet fork. As already argued, since the protocol is implemented under
-velvet fork, any adversarial block that is mined in the proper way except
-containing false interlink data will be accepted as valid. Taking advantage 
-of such thorny blocks in the chain, the adversary maintaining one or more forked 
-chains could produce suffix proofs containing blocks of any chain.
-The attack is described in detail in the following.
-
-Assume that chain $C_B$ was adopted by an honest player B and chain $C_A$, 
-a fork of $C_B$ at some point, maintained by adversary A. Assume that the
-adversary wants to produce a suffix  proof in order to attack a light client 
-to have him adopt a chain which contains blocks of $C_A$. In order to achieve
-this, the adversary needs to include a greater amount of total proof-of-work
-in her suffix proof, $\pi_A$, in comparison to that included in the honest
-player's proof, $\pi_B$, so as to achieve $\pi_A \geq_m \pi_B$. For this she
-produces some thorny blocks in chains $C_A$ and $C_B$ which will allow her to
-claim blocks of chain $C_B$ as if they were of chain $C_A$ in her suffix proof.
-
-The general form of this attack for an adversary sewing blocks to one forked
-chain is illustrated in Figure \ref{fig:generic_attack}. Dashed arrows
-represent interlink pointers of some level $\mu_A$. Starting from a thorny
-block in the adversary's forked chain and following the interlink pointers,
-a chain is formed which consists the adversary's suffix proof. Blocks of 
-both chains are included in this proof and a verifier could not distinguish 
-the non-smooth pointers participating in this proof chain and, as a result,
-would consider it a valid proof.
+\subsection{The Chainsewing Attack}
+We now make the critical observation that a thorny block can include interlink
+pointers to blocks that are not its own ancestors in the $0$-level chain.
+Because it must contain a pointer to the hash of the block it points to, they
+must be blocks that have been generated previously, but they may belong to a
+different $0$-level chain. This is shown in Figure~\ref{fig:false_interlink}.
 
 \begin{figure}[h]
 	\begin{center}
-		\includegraphics[scale=0.75]{figures/generic_chainsewing_attack.pdf}
+		\includegraphics[width=0.8\columnwidth]{figures/false_interlink.pdf}
 	\end{center}
-	\caption{\textit{Generic Chainsewing Attack. $C_B$ is the chain of an honest
-	player and $C_A$ the adversary's chain. Adversarially generated blocks are
-	colored black. Dashed arrows represent interlink pointers included in the 
-	adversary's suffix proof. Wavy lines imply one or more blocks.}}
+    \caption{A thorny block, colored black, in an honest party's chain, uses its interlink to point to a fork chain.}
+	\label{fig:false_interlink}
+\end{figure}
+
+In fact, as the interlink vector contains multiple pointers, each pointer may
+belong to a different fork. This is illustrated in
+Figure~\ref{fig:thorny_block}. The interlink pointing to arbitrary directions
+resembles a thorny bush.
+
+\begin{figure}[h]
+	\begin{center}
+		\includegraphics[width=0.8\columnwidth]{figures/thorny_block.pdf}
+	\end{center}
+	\caption{A thorny block appended to an honest party's chain.
+	The dashed arrows are interlink pointers.}
+	\label{fig:thorny_block}
+\end{figure}
+
+We now present the \emph{chain-sewing attack} against the na\"ive velvet NIPoPoW
+protocol. The attack leverages thorny blocks in order to enable the adversary to
+\emph{usurp} blocks belonging to a different chain and claim it as their own.
+Taking advantage of thorny blocks, the adversary can produce suffix proofs
+containing an arbitrary number of blocks belonging to several fork chains. The
+attack works as follows.
+
+Assume chain $\chain_B$ was adopted by an honest party $B$ and chain $\chain_\mathcal{A}$, a fork of $\chain_B$ at some point, is maintained by the adversary $\mathcal{A}$. After the fork point $b = (\chain_B \cap \chain_\mathcal{A})[-1]$, the honest party produces a block extending $b$ in $\chain_B$ containing a transaction $\tx$. The adversary includes a conflicting (double spending) transaction $\tx'$ in a block extending $b$ in $\chain_\mathcal{A}$.
+The adversary wants to produce a suffix proof convincing a light client that $\chain_\mathcal{A}$ is the longer chain. In order to achieve this, the adversary needs to include a greater amount of total proof-of-work in her suffix proof, $\pi_\mathcal{A}$, in comparison to that included in the honest party's proof, $\pi_B$, so as to achieve $\pi_\mathcal{A} \geq_m \pi_B$. Towards this purpose, she miners intermittently on both $\chain_B$ and $\chain_\mathcal{A}$. She produces some thorny blocks in both chains $\chain_\mathcal{A}$ and $\chain_B$ which will allow her to usurp selected blocks of $\chain_B$ and present them to the light client as if they belonged to $\chain_\mathcal{A}$ in her suffix proof.
+
+The general form of this attack for an adversary sewing blocks to one forked chain is illustrated in Figure~\ref{fig:generic_attack}. Dashed arrows represent interlink pointers of some level $\mu_\mathcal{A}$. Starting from a thorny block in the adversary's forked chain and following the interlink pointers, jumping between $\chain_\mathcal{A}$ and $\chain_B$, a chain of blocks crossing forks is formed, which the adversary claims as part of her suffix proof. Blocks of both chains are included in this proof and a verifier cannot distinguish the non-smooth pointers participating in this proof chain and, as a result, considers it a valid proof. Importantly, the adversary must ensure that any blocks usurped from the honest chain are not included in the honest NIPoPoW to force the NIPoPoW verifier to consider an earlier LCA block $b$; otherwise, the adversary will compete after a later fork point, negating any sewing benefits.
+
+\begin{figure}[h]
+	\begin{center}
+		\includegraphics[width=0.9\columnwidth
+		]{figures/generic_chainsewing_attack.pdf}
+	\end{center}
+	\caption{Generic Chainsewing Attack. $\chain_B$ is the chain of an honest party and $\chain_\mathcal{A}$ the adversary's chain. Adversarially generated blocks are 	colored black. Dashed arrows represent interlink pointers included in the	adversary's suffix proof. Wavy lines imply one or more blocks.}
 	\label{fig:generic_attack}
 \end{figure}
 
-As the generic attack scheme may seem a bit complicated we will now describe a more
-specific attack case. Consider that the adversary acts as described below.
-Assume that the adversary chooses to attack at some level $\mu_A$. As shown in
-Figure \ref{fig:attack} she first generates a superblock $b'$ in her forked chain
-$C_A$ and a thorny block $a'$ in the honest chain $C_B$ which points to $b'$. 
-As argued earlier, block $a'$ will be accepted as valid in the honest chain $C_B$ 
-despite the invalid interlink pointers. After that, the adversary may mine on chain
-$C_A$ or $C_B$, or not mine at all. At some point she produces a thorny block $a$ 
-in $C_A$ pointing to a block $b$ of $C_B$. Because of the way blocks are generated
-by updated honest miners there will be successive interlink pointers leading
-from block $b$ to block $a'$. Thus following the interlink pointers a chain is
-formulated which connects $C_A$ blocks $a$ and $b'$ and contains an arbitrarily
-large part of the honest player's chain $C_B$.
-
-At this point the adversary will produce a suffix proof for chain $C_A$ containing
-the subchain $C\{ab\} \cup C\{b:a'\} \cup C\{a':b'\}$. Notice that following the
-interlink pointers constructed in such a way, a light client perceives $C\{ab\}
-\cup C\{b:a'\} \cup C\{a':b'\}$  as a valid chain.
+This generic attack can be made concrete as follows.
+The adversary chooses to attack at some level $\mu_\mathcal{A} \in \mathbb{N}$ (ideally, if the honest verifier does not impose any succinctness limits, the adversary sets $\mu_A = 0$). As shown in Figure~\ref{fig:attack}, she first generates a block $b'$ in her forked chain $\chain_\mathcal{A}$ containing the double spend, and a block $a'$ in the honest chain $\chain_B$ which thorny-points to $b'$. Block $a'$ will be accepted as valid in the honest chain $\chain_B$ despite the invalid interlink pointers. The adversary also chooses a desired superblock level $\mu_B \in \mathbb{N}$ that she wishes the honest party to attain. Subsequently, the adversary waits for the honest party to mine and sews any blocks mined on the honest chain that are of level below $\mu_B$. However, she must bypass blocks that she thinks the honest party will include in their final NIPoPoW, which are of level $\mu_B$ (the blue block designated $c$ in Figure~\ref{fig:attack}). To bypass a block, the adversary mines her own thorny block $d$ on top of the current honest tip (which could be equal to the block to be bypassed, or have progressed further), containing a thorny pointer to the block preceding the block to be bypassed and hoping that it will not exceed level $\mu_B$ (if it exceeds that level, she discards her $d$ block). Once $m$ blocks of level $\mu_B$ have been bypassed in this manner, the adversary starts bypassing blocks of level $\mu_B - 1$, because the honest NIPoPoW will start including lower-level blocks. The adversary continues descending in levels until a sufficiently low level $\min\mu_B$ has been reached at which point it becomes uneconomical for the adversary to continue bypassing blocks (typically for a $1/4$ adversary, $\min\mu_B = 2$). At this point, the adversary forks off of the last sewed honest block. This last honest block will be used as the last portion of the adversarial $\pi$ part of the NIPoPoW proof. She then independently mines a $k$-long suffix for the $\chi$ portion and creates her NIPoPoW $\pi \chi$. Lastly, she waits for enough time to pass so that the honest party's chain progresses sufficiently to make the previous bypassing guesses correct and so that no blocks in the honest NIPoPoWs coincide with blocks that have not been bypassed. This requires to wait for the following blocks to appear in the honest chain: $2m$ blocks of level $\mu_B$; after the $m^\text{th}$ first $\mu_B$-level block, a further $2m$ blocks of level $\mu_B - 1$; after the $m^\text{th}$ such block, a further $2m$ blocks of the preceding level, and so on until level $0$ is reached.
 
 \begin{figure}[h!]
 	\begin{center}
-		\includegraphics[scale=0.55]{figures/chainsewing_attack.png}
+		\includegraphics[width=0.9\columnwidth]{figures/chainsew-concrete.pdf}
 	\end{center}
-	\caption{\textit{Chainsewing Attack. $C_B$ represents the chain of an honest
-	player. $C_A$ is an adversarial fork. Adversarially generated blocks are colored
-	black. Dashed arrows represent	interlink pointers included in the adversary's
-	suffix proof. Wavy lines imply one or more blocks. Firm lines imply the previousId 
-	relationship between two sequential blocks.}}
+	\caption{A portion of the concrete Chainsewing Attack. The adversary's blocks are shown in black, while the honestly generated blocks are shown in white. Block $b'$ contains a double spend, while block $a'$ sews it in place. The blue block $c$ is a block included in the honest NIPoPoW, but it is bypassed by the adversary by introducing block $d$ which, while part of the honest chain, points to $c$'s parent. After a point, the adversary forks off and creates $k = 3$ of their own blocks.}
 	\label{fig:attack}
 \end{figure}
 
-In this attack the adversary uses thorny blocks to ``sew`` portions of
-the chain adopted by an honest player to her own forked chain. This remark 
-justifies the name given to the attack.
+In this attack the adversary uses thorny blocks to ``sew'' portions of the
+honestly adopted chain to her own forked chain. This justifies the name given to
+the attack.
+Note that in order to make this attack successful, the adversary needs only
+produce few superblocks, but she can arrogate an arbitrarily large number of
+honestly produced blocks. Thus the attack succeeds with non-negligible
+probability.
 
-Note that in order to make this attack successful, the adversary has to produce
-only a few superblocks which let her arrogate an arbitrarily large number of blocks. 
-Thus this attack is expected to succeed with overwhelming probability.
+\subsubsection{Chainsewing Attack Simulation}
 
-%@TODO
+To measure the success rate of the chainsewing attack against the na\"ive NIPoPoW construction, we implemented a simulation to estimate the probability of the adversary generating a winning NIPoPoW against the honest party. Our experimental setting is as follows. We fix $\mu_A = 0$ and $\mu_B = 10$ as well as the required length of the suffix $k = 15$. We fix the adversarial mining power to $t = 1$ and $n = 5$ which gives a $20\%$ adversary. We then vary the NIPoPoW security parameter for the $\pi$ portion from $m = 3$ to $m = 30$. We then run $100$ Monte Carlo simulations and measure whether the adversary was successful in generating a competing NIPoPoW which compares favourably against the adversarial NIPoPoW.
 
-%Needs to be proven. It is not obvious that the attacker will succeed in high
-%probability, since the most important adversarially generated blocks , $a$
-%and $a'$, set a limit to the adversarial blocks produced in parallel to the
-%honest blocks of subchain $C\{ab\} \cup C\{b:a'\} \cup C\{a':b'\}$ and can
-%take part in the suffix proof.
+For performance reasons, our model for the simulation slightly deviates from the Backbone model on which the theoretical analysis of Section~\ref{sec:analysis} is based and instead follows the simpler model of Ren~\cite{nakamoto-simple}. This model favours the honest parties, and so provides a lower bound for probability of adversarial success, strengthening our results. Here, block arrival is modelled as a Poisson process and blocks are deemed to belong to the adversary with probability $t / n$, while they are deemed to belong to the honest parties with probability $(n - t) / n$. Block propagation is assumed instant and every party learns about a block as soon as it is mined. As such, the honest parties are assumed to work on one common chain and the problem of non-uniquely successful rounds does not occur.
+
+\begin{figure}[h!]
+	\begin{center}
+		\includegraphics[width=0.8 \columnwidth]{figures/attack-confidence.pdf}
+	\end{center}
+	\caption{The measured probability of success of the Chainsewing attack mounted under our parameters for varying values of the security parameter $m$. Confidence intervals at $95\%$.}
+	\label{fig:confidence}
+\end{figure}
+
+We consistently find a success rate of approximately $0.26$ which remains more or less constant independent of the security parameter, as expected. We plot our results with $95\%$ confidence intervals in Figure~\ref{fig:confidence}. This is in contrast with the best previously known attack in which, for all examined values of the security parameter, the probability of success remains below $1\%$.

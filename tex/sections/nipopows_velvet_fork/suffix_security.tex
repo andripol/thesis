@@ -1,173 +1,211 @@
-Our security proof is based on the security proof of NIPoPoWs Suffix Security Proof
-under a soft or hard fork. Keep in mind that we operate under the condition of
-(1/3)-bounded adversary.\\
+\subsection{Analysis of Velvet Protocol Patch}
+In this section, we prove the security of our scheme. Before we delve in detail into the formal
+details of the proof, let us first observe why the $1/4$ bound is necessary through a combined attack
+on our construction.
 
-The notion of Chain Quality is decisive for the operation of NIPoPoWs under a
-velvet fork. Before stepping into the security proof we remind its formal
-definition\ref{defn:chain_quality} of this notion and the basic Theorem where its basic metric is computed.\\
+After the suggested protocol update the honest prover cannot include any thorny blocks in his suffix NIPoPoW even if these blocks are part of his chain $\chain_B$. The adversary may exploit this fact as follows. She tries to suppress high-level honestly generated blocks in $\chain_B$, in order to reduce the blocks that can represent the honest chain in a proof. This can be done by mining a \emph{suppressive block} on the parent of an honest superblock on the honest chain and hoping that she will be faster than the honest parties. In parallel, while she mines suppressive thorny blocks on $\chain_B$ she can still use her blocks in her NIPoPoW proofs, by chainsewing them. Consequently, even if a suppression attempt does not succeed, in case for example a second honestly generated block is published soon enough, she does not lose the mining power spent but can still utilize it by including the block in her proof.
 
+In more detail, consider the adversary who wishes to attack a specific block level $\mu_B$ and generates a NIPoPoW proof containing a block $b$ of a fork chain which contains a double spending transaction. Then she acts as follows. She mines on her fork chain $\chain_\mathcal{A}$ but when she observes a $\mu_B$-level block in $\chain_B$ she tries to mine a thorny block on $\chain_B$ in order to suppress this $\mu_B$ block. This thorny block contains an interlink pointer which jumps onto her fork chain, but a previd pointer to the honest chain. If the suppression succeeds she has managed to damage the distribution of $\mu_B$-superblocks within the honest chain, at the same time, to mine a block that she can afterwards use in her proof. If the suppression does not succeed she can still use the thorny block in her proof. The above are illustrated in Figure~\ref{fig:attack_after_update}.
 
-\begin{thm}{\textbf{Chain Quality Parameter}}
-	In a typical execution the chain quality property holds with parameter $\mu_{cq} > 1 - (1 + \frac{\delta}{2}) \cdot \frac{t}{n-t} - \frac{\delta}{2}$.
-\end{thm}
-\textit{Proof.} See \cite{Backbone}.\\
+\begin{figure}[h!]
+    \begin{center}
+		\includegraphics[width=0.8\columnwidth]{figures/attack_after_update-crop.pdf}
+	\end{center}
+	\caption{The adversary suppresses honestly generated blocks and chainsews thorny blocks in $\chain_B$. Blue blocks are honestly generated blocks of some level of attack. The adversary tries to suppress them. If the suppression is not successful, the adversary can still use the block she mined in her proof.}
+	\label{fig:attack_after_update}
+\end{figure}
 
-Our interest lies in keeping $\mu_{cq} \geq \dfrac{1}{2}$.
-From Theorem 3 we have:
+The described attack is a combined attack which combines both superblock suppression and chainsewing. This combined attack forces us to consider the Velvet Honest Majority Assumption of (1/4)-bounded adversary, so as to guarantee that the unsuppressed blocks in $\chain_B$ suffice for constructing winning NIPoPoW proofs against the adversarial ones.
+
+For the analysis, we use the techniques
+developed in the Backbone line of work~\cite{backbone}. Towards that end, we
+follow their definitions and call a round \emph{successful} if at least one
+honest party made a successful random oracle query during the round, i.e., a
+query $b$ such that $H(b) \leq T$. A round in which exactly one honest party
+made a successful query is called \emph{uniquely successful} (the adversary
+could have also made successful queries during a uniquely successful round). Let
+$X_r \in \{0, 1\}$ and $Y_r \in \{0, 1\}$ denote the indicator random variables
+signifying that $r$ was a successful or uniquely successful round respectively,
+and let $Z_r \in \mathbb{N}$ be the random variable counting the number of
+successful queries of the adversary during round $r$. For a set of consecutive
+rounds $U$, we define $Y(U) = \sum_{r \in U} Y_r$ and similarly define $X$ and
+$Z$. We denote $f = \Ex[X_r] < 0.3$ the probability that a round is successful.
+
+Let $\lambda$ denote the security parameter (the output size $\kappa$ of the
+random oracle is taken to be some polynomial of $\lambda$).
+We make use of the following known~\cite{backbone} results.
+It holds that $pq(n-t) < \dfrac{f}{1-f}$. For the Common Prefix
+parameter, it holds that $k \geq 2\lambda f$.
+Additionally, for any set of
+consecutive rounds $U$, it holds that
+$\Ex[Z(U)] < \frac{t}{n-t} \cdot \frac{f}{1 - f}|U|$,
+$\Ex[X(U)] < pq(n - t)|U|$,
+$\Ex[Y(U)] > f(1 - f)|U|$.
+An execution is called \emph{typical}
+if the random variables $X, Y, Z$ do not deviate significantly (more than some
+error term $\epsilon < 0.3$) from their expectations. It is known that
+executions are typical with overwhelming probability in
+$\lambda$. Typicality ensures that for any set of consecutive
+rounds $U$ with $|U| > \lambda$ it holds that
+$Z(U) < \Ex[Z(U)] - \epsilon\Ex[X(U)]$ and
+$Y(U) > (1 - \epsilon)\Ex[Y(U)]$.
+From the above we can conclude to
+$Y(U) > (1 - \epsilon)f(1-f) \lvert U \rvert$ and
+$Z(U) < \dfrac{t}{n-t} \cdot \dfrac{f}{1-f} \lvert U \rvert + \epsilon f \lvert U \rvert $ which will be used in our proofs.
+We consider $f < \dfrac{1}{20}$ a typical bound for parameter $f$. This is because in our (1/4)-bounded adversary assumption we need to reach about 75\% of the network, which requires about 20 seconds~\cite{Wattenhofer}. Considering also that in Bitcoin the block generation time is in expectation 600 seconds, we conclude to an estimate $f = \dfrac{18}{600}$ or $f = 0.03$.
+
+The following definition and lemma are known~\cite{dionyziz} results and will
+allow us to argue that some smooth superblocks will survive in all honestly
+adopted chains. With foresight, we remark that we will take $Q$ to be the
+property of a block being both smooth and having attained some superblock level
+$\mu \in \mathbb{N}$.
+
+\begin{defn}[$Q$-block]
+    A \emph{block property} is a predicate $Q$ defined on a hash output $h \in \{ 0, 1 \}^\kappa$. Given a block property $Q$, a valid block with hash $h$ is called a $Q$-block if $Q(h)$ holds.
+\end{defn}
+
+\begin{lemma}[Unsuppressibility]
+    Consider a collection of polynomially many block properties $\mathcal{Q}$. In a typical execution every set of consecutive rounds $U$ has a subset $S$ of uniquely successful rounds such that
+    \begin{itemize}
+        \item $\lvert S \rvert \geq Y(U) - 2Z(U) - 2 \lambda f (\dfrac{t}{n-t} \cdot \dfrac{1}{1-f} + \epsilon)$
+        \item for any $Q \in \mathcal{Q}$, $Q$-blocks generated during $S$ follow the distribution as in an unsuppressed chain
+        \item after the last round in $S$ the blocks corresponding to $S$ belong
+        to the chain of any honest party.
+    \end{itemize}
+\end{lemma}
+
+We now apply the above lemma to our velvet construction. The following results lie at
+the heart of our security proof and allows us to formally argue that an honestly adopted
+chain will have a better superblock score than an adversarially generated chain.
+
+\begin{lemma}\label{lem:claim3_lemma}
+   Consider Algorithm \ref{alg:update_interlink} under velvet fork with parameter $g$ and (1/4)-bounded velvet honest majority. Let $U$ be a set of consecutive rounds $r_1 \cdots r_2$ and $\chain$ the chain of an honest party at round $r_2$ of a typical execution. Let $\chain^S_U = \{b \in \chain: \text{b is smooth} \land \text{b was generated during U} \}$. Let $\mu, \mu' \in \mathbb{N}$.
+   Let $\chain'$ be a $\mu'$ superchain containing only adversarial blocks generated during $U$ and suppose $\lvert \chain^S_U\upchain^{\mu} \rvert > k$. Then for any $\delta_3 \leq \dfrac{3\lambda f}{5} $ it holds that
+   $2^{\mu'}\lvert \chain' \rvert < 2^{\mu} ( \lvert \chain^S_U\upchain^{\mu} \rvert + \delta_3 )$.
+\end{lemma}
+\begin{proof}
+  From the Unsuppressibility Lemma we have that there is a set of uniquely
+  successful rounds $S \subseteq U$, such that
+  $\lvert S \rvert \geq Y(U) - 2Z(U) - \delta'$, where
+  $\delta' = 2 \lambda f (\dfrac{t}{n-t} \cdot \dfrac{1}{1-f} + \epsilon)$.
+  We also know that $Q$-blocks generated during $S$ are distributed as in an
+  unsuppressed chain. Therefore considering the property $Q$ for blocks of
+  level $\mu$ that contain smooth interlinks we have that
+  $\lvert \chain^S_U\upchain^{\mu} \rvert \geq (1-\epsilon)g2^{-\mu} \lvert S \rvert$.
+  We also know that for the total number of $\mu'$-blocks the adversary
+  generated during $U$ that
+  $\lvert \chain' \rvert \leq (1+\epsilon)2^{-\mu'}Z(U)$.
+  Then we have to show that
+  $(1-\epsilon)g (Y(U) - 2Z(U) - \delta' ) > (1+\epsilon)Z(U)$ or
+  $((1+\epsilon)+2g(1-\epsilon))Z(U) < g(1-\epsilon)(Y(U) + \delta')$.
+  But it holds that $ (1+\epsilon)+2g(1-\epsilon) < 3$, therefore it suffices to show that
+  \begin{equation}\label{eq:lem_claim3_eq_1}
+    3Z(U) < g(1-\epsilon)(Y(U) + \delta') - 2^\mu \delta_3
+  \end{equation}
+
+Substituting in Equation~\ref{eq:lem_claim2_eq_1} the bounds of $X$, $Y$, $Z$ discussed above, it suffices to show that
 \begin{equation*}
-	1 - (1 + \frac{\delta}{2}) \cdot \frac{t}{n-t} - \frac{\delta}{2} \geq \dfrac{1}{2} \Rightarrow 
-	(1 + \delta)t \leq (1-\delta)(n-t)
+    3[\dfrac{t}{n-t} \cdot \dfrac{f}{1-f} \lvert U \rvert + \epsilon f \lvert U \rvert ] < (1- \epsilon)g[ (1-\epsilon)f(1-f) \lvert U \rvert - \delta'] - 2^\mu \delta_3
+\end{equation*} or
+\begin{equation*}
+        3f \lvert U \rvert \dfrac{f}{1-f}\cdot \dfrac{t}{n-t} + 3 \epsilon f \lvert U \rvert < (1- \epsilon)g[ (1-\epsilon)f(1-f) \lvert U \rvert - \delta'] -2^\mu \delta_3
+\end{equation*} or
+\begin{equation*}
+        \dfrac{t}{n-t} < \dfrac{ (1- \epsilon)g[ (1-\epsilon)f(1-f) \lvert U \rvert - \delta' ] - 3\epsilon f \lvert U \rvert -2^\mu \delta_3 }  { 3 \dfrac{f}{1-f} \lvert U \rvert}
+\end{equation*} or
+\begin{equation*}
+    \dfrac{t}{n-t} < \dfrac{  (1- \epsilon)g[ (1-\epsilon)f(1-f) - \dfrac{\delta'}{\lvert U \rvert} ] - 3 \epsilon f - \dfrac{2^\mu \delta_3}{\lvert U \rvert} }  { 3\dfrac{f}{1-f}}
 \end{equation*}
 
-Thus we have:
-\begin{center}
-\begin{equation}
-	t \leq \dfrac{(1-\delta)}{2}(n - t)
+But $\epsilon(1-f) \ll 1$
+thus we have to show that
+\begin{equation*}
+    \dfrac{t}{n-t} < \dfrac{  (1- \epsilon)g[ (1-\epsilon)f(1-f) - \dfrac{\delta'}{\lvert U \rvert} ] - \dfrac{2^\mu \delta_3}{\lvert U \rvert} }  { 3 \dfrac{f}{1-f}} - \epsilon'
+\end{equation*} or
+\begin{equation}\label{eq:lemma_eq1}
+    \dfrac{t}{n-t} < \dfrac{g}{3} \cdot \dfrac{(1-\epsilon)^2 f(1-f) - \dfrac{(1-\epsilon)\delta'}{\lvert U \rvert} - \dfrac{2^\mu \delta_3}{\lvert U \rvert} }{\dfrac{f}{1-f}} - \epsilon'
 \end{equation}
-\end{center}
 
-\begin{thm}{\textbf{Suffix Proofs Security under velvet fork}}
-	Assuming honest majority under velvet fork conditions (\ref{defn:velvet_honest_majority}) such that $t \leq (1 - \delta) \dfrac{n_h}{2}$ where $n_h$ the number of upgraded honest players, the non-interactive proofs-of-proof-of-work construction for computable k-stable monotonic suffix-sensitive predicates under velvet fork conditions in a typical execution is secure.
-\end{thm}
-\textit{Proof.} By contradiction. We follow the proof construction of Theorem \ref{thm:original_suffix_security} 
-and extend it. Let $Q$ be a k-stable monotonic suffix-sensitive chain
-predicate. Assume NIPoPoWs under velvet fork on $Q$ is insecure. Then, during
-an execution at some round  $r_3$, $Q(\mathcal{C})$ is defined and the verifier $V$
-disagrees with some honest participant. $V$
-communicates with adversary $\mathcal{A}$ and honest prover $B$. The verifier receives
-proofs $\pi_\mathcal{A}, \pi_B$ which are of valid structure. Because $B$ is honest, $\pi_B$ is a proof constructed
-based on underlying blockchain $\mathcal{C}_B$ (with $\pi_B \subseteq \mathcal{C}_B$), which $B$
-has adopted during round $r_3$ at which $\pi_B$ was generated. Consider
-$\widetilde{\mathcal{C}}_\mathcal{A}$ the set of blocks defined as
-$\widetilde{C}_\mathcal{A} = \pi_\mathcal{A} \cup \{ \bigcup \{\mathcal{C}_h^r\{:b_\mathcal{A}\}:  \forall b_\mathcal{A} \in \pi_\mathcal{A}, \exists h,r : b_\mathcal{A} \in 
-\mathcal{C}_{h}^{r}\}  \}$ where $\mathcal{C}_h^r$ the chain 
- that the honest player $h$ has at round $r$.
+In order to show Equation~\ref{eq:lemma_eq1} we use $f \leq \dfrac{1}{20}$ which is a typical bound for our setting as discussed above.
+Because all blocks in $\chain$ were generated during $U$ and $\lvert \chain \rvert > k $, $\lvert U \rvert$ follows negative binomial distribution with probability $2^{-\mu} pq(n-t)$ and number of successes $k$.
+Applying a Chernoff bound we have that $\lvert U \rvert > (1-\epsilon) \dfrac{k}{2^{-\mu} pq(n-t)}$. Using the inequalities $k \geq 2\lambda f$ and $pq(n-t) < \dfrac{f}{1-f}$, we deduce that $\lvert U \rvert > (1-\epsilon) 2^{\mu}2\lambda(1-f)$. So we have that 
+\begin{equation*}
+    \dfrac{\delta'}{\lvert U \rvert} < \dfrac{2\lambda f (\dfrac{t}{n-t} \dfrac{1}{1-f} + \epsilon)}{(1-\epsilon)2^{\mu}2\lambda (1-f)}
+\end{equation*}
+ or 
+\begin{equation*}
+     \dfrac{\delta'}{\lvert U \rvert} < \dfrac{t}{n-t} \cdot \dfrac{f}{(1-\epsilon)(1-f)^2} + \epsilon < 0.01 + \epsilon
+\end{equation*}
+We also know that $\delta_3 \leq \dfrac{ 3\lambda f}{5}$, so
+\begin{equation*}
+    \dfrac{2^{\mu} \delta_3}{\lvert U \rvert} < \dfrac{2^\mu \dfrac{ 3\lambda f}{5}}{2^{\mu} 2 \lambda (1-f)}
+\end{equation*}
+or
+\begin{equation*}
+    \dfrac{2^{\mu} \delta_3}{\lvert U \rvert} < \dfrac{3f}{10(1-f)} < 0.01 + \epsilon
+\end{equation*}
 
-The verifier outputs $\neg Q(\mathcal{C}_B)$. Thus it is necessary that $\pi_\mathcal{A} \geq \pi_B$.
-We show that $\pi_\mathcal{A} \geq \pi_B$ is a negligible event.
-Let $b = LCA(\pi_\mathcal{A}, \pi_B)$. Let the levels of comparison decided by the verifier
-be $\mu_\mathcal{A}$ and $\mu_B$ respectively. Let $\mu'_B$ be the adequate level of proof
-$\pi_B$  with respect to block $b$. Call $\alpha_\mathcal{A} = \pi_\mathcal{A} \uparrow^{\mu_\mathcal{A}}\{b:\}$,
-$\alpha'_B = \pi_B \uparrow^{\mu'_B}\{b:\}$.
+By substituting the above and the typical $f$ parameter bound in Equation (\ref{eq:lemma_eq1}) we conclude that it suffices to show that $\dfrac{t}{n-t} < \dfrac{1-\epsilon''}{3}g$
+which is equivalent to $\dfrac{t}{n-t} < \dfrac{1-\delta_v}{3}g$ for $\epsilon'' = \delta_v$, which is the (1/4) velvet honest majority assumption, so the claim is proven.
+\end{proof}
 
-From Corollary \ref{cor:adversarial_proof_scheme} we have that the adversarial proof 
-consists of a smooth interlink subchain followed by a thorny interlink subchain. We will refer to the smooth part of $\alpha_\mathcal{A}$ as $\alpha^{\mathcal{S}}_\mathcal{A}$ and to the thorny part as $\alpha^{\mathcal{T}}_\mathcal{A}$.   
+\begin{lemma}\label{lem:claim1_lemma}
+    Consider Algorithm \ref{alg:update_interlink} under velvet fork with parameter $g$ and (1/4)-bounded velvet honest majority. Consider the  property $Q$ for blocks of level $\mu$. Let $U$ be a set of consecutive rounds and $\chain$ the chain of an honest party at the end of $U$ of a typical execution and $\chain_U = \{ b \in \chain: \text{b was generated during U} \}$. Suppose that no block in $\chain_U$ is of level $\mu$.\\
+    Then $\lvert U \rvert \leq \delta_1$ where
+    $\delta_1 = \dfrac{(2+\epsilon) 2^{\mu} + \delta'}{(1-\epsilon)f(1-f) - 2\dfrac{t}{n-t}\dfrac{f}{1-f} -3\epsilon f}$.
+\end{lemma}
+\begin{proof}
+    The statement results immediately form the Unsuppressibility Lemma. Suppose for contradiciton that $\lvert U \rvert > \delta_1 $.
+    Then from the Unsuppressibility Lemma we have that there is a subset of consecutive rounds $S$ of $U$ for which it holds that
+    $\lvert S \rvert \geq Y(U) - 2Z(U) - \delta'$ where
+    $\delta' = 2 \lambda f (\dfrac{t}{n-t} \cdot \dfrac{1}{1-f} + \epsilon)$. By substituting
+    $Y(U) > (1-\epsilon)f(1-f) \lvert U \rvert$ and
+    $Z(U) < \dfrac{t}{n-t} \dfrac{f}{1-f} +\epsilon f \lvert U \rvert$ we have that $\lvert S \rvert > (2+\epsilon)2^{\mu}$ but $Q$-blocks generated during $S$ follow the distribution as in a chain where no suppression attacks occur. Therefore at least one block of level $\mu$ would appear in $\chain_U$, thus we have reached a contradiction and the statement is proven.
+\end{proof}
 
-%%%%%%%%   reconsider this paragraph
-Our proof construction is based on the following intuition: we show that the competing
-suffix proofs can be conceived as consisting of three distinct parts. Each part denotes a specific set of consecutive rounds and is named after the number of blocks existing
-in $\alpha_\mathcal{A}$ for that round set. Part $k_1$ stands for the first part of each proof
-between blocks $b = LCA(\pi_\mathcal{A}, \pi_B)$ and $b_2 = LCA(\alpha^{\mathcal{S}}_\mathcal{A}, \mathcal{C}_B)$. Now consider that the block following $b_2$ in $\alpha_\mathcal{A}$ is a smooth one. Let's call this block $b'_2$. This means that $b'_2$ does not belong to $\mathcal{C}_B$ but to a forked chain. In this case part $k_2$ stands for the second part of the proofs and refers to the consecutive rounds from block $b_2$ and until
-the Common Prefix is established at $\mathcal{C}_B$ for that fork point. In the case that $b'_2$ is a thorny block, then because of Corollary \ref{cor:adversarial_proof_scheme} no more smooth block are included in $\alpha_\mathcal{A}$ and we consider that $k_2 = 0$.
-The third and last part, $k_3$, stands for the rest of the blocks in each proof, where $\alpha_\mathcal{A}$ contains only thorny blocks.\\
+\begin{theorem}[Suffix Proofs Security under velvet fork]
+	Assuming honest majority under velvet fork conditions (\ref{defn:velvet_honest_majority}) such that $t \leq (1 - \delta_v) \dfrac{n_h}{3}$ where $n_h$ the number of upgraded honest parties, the Non-Interactive Proofs of Proof-of-Work construction for computable $k$-stable monotonic suffix-sensitive predicates under velvet fork conditions in a typical execution is secure.
+\end{theorem}
+\begin{proof}
+By contradiction. Let $Q$ be a $k$-stable monotonic suffix-sensitive chain predicate. Assume for contradiction that NIPoPoWs under velvet fork on $Q$ is insecure. Then, during an execution at some round  $r_3$, $Q(\chain)$ is defined and the verifier $V$ disagrees with some honest participant. $V$ communicates with adversary $\mathcal{A}$ and honest prover $B$. The verifier receives proofs $\pi_\mathcal{A}, \pi_B$ which are of valid structure. Because $B$ is honest, $\pi_B$ is a proof constructed based on underlying blockchain $\chain_B$ (with $\pi_B \subseteq \chain_B$), which $B$ has adopted during round $r_3$ at which $\pi_B$ was generated. Consider $\widetilde{\chain}_\mathcal{A}$ the set of blocks defined as $\widetilde{C}_\mathcal{A} = \pi_\mathcal{A} \cup \{ \bigcup \{\chain_h^r\{{:}b_\mathcal{A}\}:  b_\mathcal{A} \in \pi_\mathcal{A}, \exists h,r : b_\mathcal{A} \in \chain_{h}^{r}\}  \}$ where $\chain_h^r$ the chain that the honest party $h$ has at round $r$. Consider also $\chain^S_B$ the set of smooth blocks of honest chain $\chain_B$. We apply security parameter
+\begin{equation*}
+    m = 2k + \dfrac{2+\epsilon + \delta'}{\dfrac{t}{n-t}\dfrac{f}{1-f}[f(1-f) - \dfrac{2}{3}\dfrac{f}{1-f}]}
+\end{equation*}
+
+Suppose for contradiction that the verifier outputs $\neg Q(\chain_B)$. Thus it is necessary that $\pi_\mathcal{A} {\geq}_m \pi_B$. We show that $\pi_\mathcal{A} {\geq}_m \pi_B$ is a negligible event.
+Let the levels of comparison decided by the verifier be $\mu_\mathcal{A}$ and $\mu_B$ respectively. Let $b_0 = LCA(\pi_\mathcal{A}, \pi_B)$. Call $\alpha_\mathcal{A} = \pi_\mathcal{A} \upchain^{\mu_\mathcal{A}}\{b_0{:}\}$, $\alpha_B = \pi_B \upchain^{\mu_B}\{b_0{:}\}$.
+
+From Corollary \ref{cor:adversarial_proof_scheme} we have that the adversarial proof consists of a smooth interlink subchain followed by a thorny interlink subchain. We refer to the smooth part of $\alpha_\mathcal{A}$ as $\alpha^{\mathcal{S}}_\mathcal{A}$ and to the thorny part as $\alpha^{\mathcal{T}}_\mathcal{A}$.
+
+Our proof construction is based on the following intuition: we consider that $\alpha_\mathcal{A}$ consists of three distinct parts $\alpha_\mathcal{A}^1, \alpha_\mathcal{A}^2, \alpha_\mathcal{A}^3$ with the following properties.
+Block $b_0 = LCA(\pi_\mathcal{A}, \pi_B)$ is the fork point between $\pi_\mathcal{A} \upchain^{\mu_\mathcal{A}}, \pi_B \upchain^{\mu_B}$. Let block $b_1 = LCA (\alpha^{\mathcal{S}}_\mathcal{A}, \chain^S_B)$ be the fork point between $\pi^{\mathcal{S}}_\mathcal{A} \upchain^{\mu_\mathcal{A}}, \chain_B $ as an honest prover could observe. Part $\alpha_\mathcal{A}^1$ contains the blocks between $b_0$ exclusive and $b_1$ inclusive generated during the set of consecutive rounds $\mathcal{S}_1$ and $\lvert  \alpha_\mathcal{A}^1 \rvert = k_1$. Consider $b_2$ the last block in $\alpha_\mathcal{A}$ generated by an honest party. Part $\alpha_{\mathcal{A}}^2$ contains the blocks between $b_1$ exclusive and $b_2$ inclusive generated during the set of consecutive rounds $\mathcal{S}_2$ and $\vert  \alpha_\mathcal{A}^2 \vert = k_2$. Consider $b_3$ the next block of $b_2$ in $\alpha_\mathcal{A}$. Then $\alpha_{\mathcal{A}}^3 = \alpha_\mathcal{A}[b_3{:}]$ and $\vert  \alpha_\mathcal{A}^3 \vert = k_3$ consisting of adversarial blocks generated during the set of consecutive rounds $\mathcal{S}_3$. Therefore $\vert \alpha_\mathcal{A} \vert = k_1 + k_2 + k_3$ and we will show that $\vert \alpha_\mathcal{A} \vert < \vert \alpha_B \vert$.
+
 The above are illustrated, among other, in Parts I, II of Figure \ref{fig:proof_velvet}.
 
 \begin{figure}[h!]
-	\begin{center}
-		\includegraphics[scale=0.8]{figures/proof_velvet.pdf}
-	\end{center}
-	\caption{\textit{ Wavy lines imply one or more blocks. Dashed lines and arrows imply
-	interlink pointers to superblocks. \textbf{I}: the three round sets in two competing
-	proofs at different levels, \textbf{II}: the corresponding 0-level blocks implied by the two proofs,
-	\textbf{III}: blocks participating in chain $\mathcal{C}_B$ and block set $\widetilde{\mathcal{C}}_\mathcal{A}$ from the verifier's perspective.}}	
+    \begin{center}
+        \includegraphics[width=0.9\columnwidth]{figures/proof_velvet-crop.pdf}
+    \end{center}
+    \caption{I. The three round sets in two competing proofs at different levels, II. the corresponding 0-level blocks implied by the two proofs, III: blocks in $\chain_B$ and block set $\widetilde{\chain}_\mathcal{A}$ from the verifier's perspective.}
     \label{fig:proof_velvet}
 \end{figure}
 
-We will now show three successive claims under velvet fork conditions: First,
-$\alpha^{\mathcal{S}}_\mathcal{A}$ and $\alpha'_B \downarrow$ are mostly
-disjoint. Second, $a_\mathcal{A}$ contains mostly adversarially generated blocks. And third,
-the adversary is able to produce this $a_\mathcal{A}$ with negligible probability.\\
-Let $\vert \alpha_\mathcal{A} \vert = k_1 + k_2 + k_3$ and let $k_1, k_2, k_3$ be as defined in the
-following Claims.\\
-Let round $r_1$ be the round when block $b$ is generated and round $r_2$ when block
-$b_2 = LCA(\alpha_\mathcal{A}, \mathcal{C}_B)$ is generated.\\
+We now show three successive claims: First that $\alpha_\mathcal{A}^1$ contains few blocks. Second, $\alpha_\mathcal{A}^2$ contains few blocks. And third, the adversary can produce a winning $a_\mathcal{A}$ with negligible probability.
 
-\textbf{Claim 1:} $\alpha^{\mathcal{S}}_\mathcal{A}$ and
-$\alpha'_B\downarrow$ are mostly disjoint. Following the proof of Theorem 
-\ref{thm:original_suffix_security} and considering the percentage  of the blocks that contain interlink, we conclude that 
-$\vert \alpha^{\mathcal{S}}_\mathcal{A} \cap \alpha'_B\downarrow[1:] \vert \leq k_{1} = g(2^{\mu'_B - \mu_\mathcal{A}})
-$, where $g$ the velvet parameter denoting the percentage of upgraded honest parties. 
-In order to see this under the velvet fork conditions, first consider that there are no thorny blocks in the adversary's proof between $b$ and $b_2$. This means that if $b_2$ was generated at round $r_{b_2}$ and $\alpha^{\mathcal{S}}_\mathcal{A}[-1]$ in round $r$, then $r \geq r_{b_2}$. In this case Claim 1 of
-Theorem \ref{thm:original_suffix_security} applies directly with respect to the velvet parameter $g$. In the opposite case, the adversary includes a thorny block $b_t = \alpha^{\mathcal{T}}_{\mathcal{A}}[0]$ after $b$ and before $b_2$, thus the inequality still
-holds and because of Lemma \ref{lemm:thorny_after_thorny} no more honestly generated blocks can be included
-in $\alpha_\mathcal{A}$ after $b_t$ and we can immediately proceed to Claim 3 of this proof.
+\textbf{Claim 1:} \textit{$\alpha_\mathcal{A}^1 = (\alpha_\mathcal{A}\{b_0 : b_1\} \cup b_1)$ contains only a few blocks.} Let $\lvert \alpha^1_\mathcal{A} \rvert = k_1$. We have defined the blocks $b_0 = LCA(\pi_\mathcal{A}, \pi_B)$ and $b_1 = LCA(\alpha^{\mathcal{S}}_\mathcal{A}, \chain^S_B)$. First observe that because of the Corollary \ref{cor:adversarial_proof_scheme} there are no thorny blocks in $\alpha_\mathcal{A}^1$ since $\alpha_\mathcal{A}^1[-1] = b_1$ is a smooth block. This means that if $b_1$ was generated at round $r_{b_1}$ and $\alpha^{\mathcal{S}}_\mathcal{A}[-1]$ in round $r$ then $r \geq r_{b_1}$. Therefore, $\alpha_\mathcal{A}^1$ contains smooth blocks of $\chain_B$. We show the claim by considering the two possible cases for the relation of $\mu_\mathcal{A}, \mu_B$.
 
-We conclude that there are at least $\vert\alpha_\mathcal{A}\vert - k_1$
-blocks after block $b$ in $\alpha_\mathcal{A}$ which are not honestly generated blocks existing in
-$\mathcal{C}_B$. In other words, there are $\vert \alpha_\mathcal{A} \vert - k_1$
-blocks after block $b$ in $\alpha_\mathcal{A}$, which are either thorny blocks existing in $\mathcal{C}_B$ either don't belong in $\mathcal{C}_B$.\\
+\textit{\underline{Claim 1a}:} \textit{If $\mu_B \leq \mu_\mathcal{A}$ then $k_1 = 0$}. In order to see this, first observe that every block in $\alpha_\mathcal{A}$ would also be of lower level $\mu_B$. Subsequently, any block in $\alpha_\mathcal{\mathcal{A}}\{b_0{:}\}$ would also be included in proof $\alpha_B$ but this contradicts the minimality of block $b_0$.
 
-\textbf{Claim 2.} 
-At least $k_3$ superblocks of $\alpha_\mathcal{A}$ are adversarially generated. Just as
-the proof of Theorem \ref{thm:original_suffix_security} and using a similar notation, because of the Common Prefix
-property on parameter $k_{2\downarrow}$, $\alpha_\mathcal{A}[k_{1}+k_{2}:]$ could contain
-no honestly generated blocks. In order to see this for the velvet fork conditions
-let's again consider the case that there is no thorny block in the first
-$(k_1 + k_2)$ blocks of $\alpha_\mathcal{A}$ in which case Claim 2 of Theorem 
-\ref{thm:original_suffix_security} is immediately applied. In the opposite case,
-the adversary includes in her proof a
-thorny block at some earlier point. Again, because of Lemma 
-\ref{lemm:thorny_after_thorny} the inequality still holds and no more
-honestly generated blocks can be included in $\alpha_\mathcal{A}$, so we can proceed to Claim 3
-of this proof.\\
+\textit{\underline{Claim 1b}:} \textit{If $\mu_B > \mu_\mathcal{A}$ then $k_1 \leq \dfrac{\delta_1 2^{-\mu_\mathcal{A}}}{(1+\epsilon)\dfrac{t}{n-t}\dfrac{f}{1-f}}$}. In order to show this we consider block $b$ the first block in $\alpha_B$. Now suppose for contradiction that $k_1 > \dfrac{\delta_1 2^{-\mu_\mathcal{A}}}{(1+\epsilon)\dfrac{t}{n-t}\dfrac{f}{1-f}}$. Then from lemma \ref{lem:claim1_lemma} we have that block $b$ is generated during $S_1$. But $b$ is of lower level $\mu_\mathcal{A}$ and $\alpha^1_\mathcal{A}$ contains smooth blocks of $\chain_B$. Therefore $b$ is also included in $\alpha^1_\mathcal{A}$, which contradicts the minimality of block $b_0$.
 
-%\begin{figure}[h!]
-%	\begin{center}
-%		\includegraphics[scale=0.5]{figures/exclude.png}
-%	\end{center}
-%	\caption{\textit{ Wavy lines imply one or more blocks. Dashed arrows imply interlink 
-%pointers to superblocks. Adversarially generated blocks are colored black. Grey colored 
-%blocks may be honestly or adversarially generated. \textbf{I}: the 0-level chains, 
-%\textbf{II}: the corresponding proof chains; some blocks generated in $C_A$ are excluded 
-%from proof $\pi_A$ in favor of the sewed blocks from $C_B$.}}
-%	\label{fig:exclude}
-%\end{figure}
+Consequently, there are at least $\lvert \alpha_\mathcal{A} \rvert - k_1$ blocks in $\alpha_\mathcal{A}$ which are not honestly generated blocks existing in $\chain_B$. In other words, these are blocks which are either thorny blocks existing in $\chain_B$ either don't belong in $\chain_B$.
 
-\textbf{Claim 3.} The adversary may submit a suffix proof such that $\alpha_\mathcal{A} \geq \alpha_B$
-with negligible probability.
-%%% @TODO: make formal arguments
-As argued earlier the last $k_3$ blocks included in $\alpha_\mathcal{A}$ are all thorny blocks. In the worst case  all $k_3 $ blocks
-are sewed from $\mathcal{C}_B$. This is the worst case scenario since each adversarially
-generated block in $\mathcal{C}_B$ may have dropped one smooth block out of the chain
-because of selfish mining. Considering this scenario, because of the strengthened
-Honest Majority Assumption for $(1/3)$-bounded adversary, Theorem 3 for Chain
-Quality guarantees that the majority of the blocks in $\mathcal{C}_B$ was computed by
-honest parties, thus the honestly generated blocks in $\mathcal{C}_B$ for the same round
-set sum to more amount of hashing power.\\
-From all the above Claims we have that:\\
-In the first round set, because of the common underlying chain:
-\begin{equation} \label{eq_v_round_set_1}
-2^{\mu_\mathcal{A}} \vert \alpha_\mathcal{A}^{k_1} \vert \leq 2^{\mu'_B} \vert \alpha'{_B^{k_1}} \vert
-\end{equation}
-Because of the adoption by an honest party of chain $\mathcal{C}_B$ at a later round $r_3$, we
-have for the second round set:
-\begin{equation} \label{eq_v_round_set_2}
-2^{\mu_\mathcal{A}} \vert \alpha_\mathcal{A}^{k_2} \vert \leq 2^{\mu'_B} \vert \alpha'{_B^{k_2}} \vert
-\end{equation}
-In the third round set, because of good Chain Quality under the strengthened Honest
-Majority Assumption and Theorem 3 we have:
-\begin{equation} \label{eq_v_round_set_3}
-2^{\mu_\mathcal{A}} \vert \alpha_\mathcal{A}^{k_3} \vert < 2^{\mu'_B} \vert \alpha'{_B^{k_3}} \vert
-\end{equation}
-Consequently we have:
+\textbf{Claim 2.}
+\textit{Part $\alpha_\mathcal{A}^2 = (\alpha_\mathcal{A}\{b_1:b_2\} \cup b_2)$ consists of only a few blocks.} Let $ \lvert \alpha_\mathcal{A}^2 \rvert = k_2$. We have defined $b_2 = \alpha_\mathcal{A}^2[-1]$ to be the last block generated by an honest party in $\alpha_\mathcal{A}$. Consequently no thorny block exists in $\alpha_\mathcal{A}^2$, so all blocks in this part belong in a proper zero-level chain $\chain_\mathcal{A}^2$.  Let $r_{b_1}$ be the round at which $b_1$ was generated. Since $b_1$ is the last block in $\alpha_\mathcal{A}$ which belongs in $\chain_B$, then $\chain_\mathcal{A}^2$ is a fork chain to $\chain_B$ at some block $b'$ generated at round $r' \geq r_{b_1}$. Let $r_2$ be the round when $b_2$ was generated by an honest party. Because an honest party has adopted chain $\chain_B$ at a later round $r_3$ when the proof $\pi_B$ is constructed and because of the Common Prefix property on parameter $k_2$, we conclude that $k_2 \leq 2^{-\mu_\mathcal{A}}k$.
 
-\begin{equation*}
-2^{\mu_\mathcal{A}} ( \vert \alpha_\mathcal{A}^{k_1} \vert + \vert \alpha_\mathcal{A}^{k_2} \vert + \vert
-\alpha_\mathcal{A}^{k_3} \vert ) < 2^{\mu'_B} ( \vert \alpha'{_B^{k_1}} \vert + \vert
-\alpha'{_B^{k_2}} \vert + \vert \alpha'{_B^{k_3}} \vert) \Rightarrow
-\end{equation*}
-
-\begin{equation} \label{eq_v_all_round_sets}
-2^{\mu_\mathcal{A}} \vert \alpha_\mathcal{A} \vert < 2^{\mu'_B} \vert \alpha'{_B} \vert
-\end{equation}
-
-Therefore we have proven that $2^{\mu'_B} \vert \pi_B \uparrow^{\mu'_B} \vert >
-2^{\mu_\mathcal{A}} \vert \pi_\mathcal{A}^{\mu_\mathcal{A}} \vert$. From the definition of $\mu_B$, we know
-that $2^{\mu_B} \vert \pi_B \uparrow^{\mu_B} \vert > 2^{\mu'_B} \vert \pi_B
-\uparrow^{\mu'_B} \vert$ because it was chosen $\mu_B$ as level of comparison
-by the Verifier. So we conclude that $2^{\mu_B} \vert \pi_B \uparrow^{\mu_B}
-\vert > 2^{\mu_\mathcal{A}} \vert \pi_\mathcal{A} \uparrow^{\mu_\mathcal{A}} \vert$.
-
-\begin{flushright}
-$\square$
-\end{flushright}
+\textbf{Claim 3.} \textit{The adversary may submit a suffix proof such that $\lvert \alpha_\mathcal{A}\rvert \geq \lvert \alpha_B \rvert$ with negligible probability.} Let $ \lvert \alpha_\mathcal{A}^3 \rvert = k_3$. As explained earlier part $\alpha^3_\mathcal{A}$ consists only of adversarially generated blocks. Let $S_3$ be the set of consecutive rounds $r_2...r_3$. Then all $k_3$ blocks of this part of the proof are generated during $S_3$. Let $\alpha^{3}_B$ be the last part of the honest proof containing the interlinked $\mu_B$ superblocks generated during $S_3$. Then by applying Lemma \ref{lem:claim3_lemma} $\dfrac{m}{k}$ times we have that $ 2^{\mu_\mathcal{A}}\lvert \alpha^3_\mathcal{A} \rvert < 2^{\mu_B} (\lvert \alpha^{S_3}_{B}\upchain^{\mu_B} \rvert + \dfrac{m\delta_3}{k})$. By substituting the values from all the above Claims and because every block of level $\mu_B$ in $a\alpha_B$ is of equal hashing power to $2^{\mu_B - \mu_\mathcal{A}}$ blocks of level $\mu_\mathcal{A}$ in the adversary's proof we have that:
+$2^{\mu_B} \lvert \alpha{_B^{3}} \rvert - 2^{\mu_\mathcal{A}} \lvert \alpha_\mathcal{A}^{3} \rvert > 2^{\mu_\mathcal{A}}(k_1 + k_2)$
+or $2^{\mu_B} \lvert \alpha{_B^{3}} \rvert > 2^{\mu_\mathcal{A}} \lvert \alpha_\mathcal{A}^{1} + \alpha_\mathcal{A}^{2} + \alpha_\mathcal{A}^{3}\rvert $
+or $2^{\mu_B} \lvert \alpha{_B} \rvert > 2^{\mu_\mathcal{A}} \lvert \alpha_\mathcal{A} \rvert $
+Therefore we have proven that $2^{\mu_B} \lvert \pi_B \upchain^{\mu_B} \rvert > 2^{\mu_\mathcal{A}} \lvert \pi_\mathcal{A}^{\mu_\mathcal{A}} \rvert$.
+\end{proof}
