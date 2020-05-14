@@ -1,0 +1,28 @@
+\begin{center}
+    \section*{Abstract}
+\end{center}
+{\em Superlight} blockchain clients
+learn facts about the blockchain state
+while requiring only polylogarithmic communication in the total
+number of blocks.
+For proof-of-work blockchains
+two known constructions exist: Superblock and FlyClient.
+
+Unfortunately, none of them can be deployed to existing blockchains as they require changes at the consensus layer and at least a soft fork to implement.
+
+In this work, we
+investigate how a blockchain can be upgraded to support superblock clients without a soft fork. We show that it is possible to implement the needed changes without modifying the consensus protocol and by requiring only a minority of miners to upgrade, a process termed a ``velvet fork'' in the literature. While previous work conjectured that Superblock and FlyClient clients can be safely deployed using velvet forks as-is, we show that previous constructions are insecure. We describe a novel class of attacks, called  ``chain-sewing'', which arise in the velvet fork setting: an adversary can cut-and-paste portions of various chains from independent forks, sewing them together to
+fool a superlight client into accepting a false claim.
+We show how previous velvet fork constructions can be attacked via chain-sewing.
+Next we put forth the first provably secure velvet superblock client construction which we show  secure against adversaries that are bounded by 1/4 of the upgraded honest miner population.
+%Like non-velvet superlight clients, our approach allows proving generic predicates about chains using infix proofs and as such can be adopted in practice for fast interaction with the blockchain.
+
+\newpage
+\begin{center}
+    \section*{Περίληψη}
+\end{center}
+Οι \emph{υπερ-ελαφρείς} πελάτες αλυσίδων λαμβάνουν ενημερώσεις για την τρέχουσα κατάσταση της αλυσίδας απαιτώντας ανταλλαγή πληροφοριών λογαριθμικού μήκους σε σχέση με το συνολικό μέγεθος της αλυσίδας. Για τις αλυσίδες ``απόδειξης-εργασίας'' υπάρχουν δύο τέτοιες γνωστές κατασκευές που αναφέρονται στη βιβλιογραφία ως ``Superblock'' και ``FlyClient''. Δυστυχώς καμία από τις δύο αυτές κατασκευές δεν μπορεί να ενσωματωθεί άμεσα σε υπάρχουσες αλυσίδες, διότι απαιτούν αλλαγές στο πρωτόκολλο συναίνεσης και, για αυτό, την αναβάθμιση της συντριπτικής πλειόνοτητας των συμμετεχόντων στο κατανεμημένο δίκτυο. 
+
+Σε αυτήν την εργασία εξετάζουμε την δυνατότητα αναβάθμισης του πρωτοκόλλου συναίνεσης της αλυσίδας για τη λειτουργία υπερλαφρών πελατών από ένα μικρό μόνο μέρος των συμμετεχόντων παικτών, κάτι που στη βιβλιογραφία αναφέρεται ως ``βελούδινο σχίσμα'' (velvet fork). Προηγούμενες εργασίες υπέθεταν ότι υπερλαφείς πελάτες Superblock και FlyClient μπορούν να υποστηριχθούν με ασφάλεια μέσω velvet fork χωρίς περαιτέρω αλλαγές στις κατασκευές τους και υπό τις ίδιες προϋποθέσεις ασφαλείας. Δείχνουμε ότι αυτή η υπόθεση είναι εσφαλμένη. Περιγράφουμε ένα νέο είδος επίθεσης, υπό το όνομα ``ράψιμο της αλυσίδας'' (chainsewing), που εμφανίζεται σε περιβάλλον ενός velvet fork: ένας κακόβουλος χρήστης μπορεί να ``κόψει'' τμήματα διαφόρων ανεξάρτητων αλυσιδών και να τα ``ράψει'' μαζί ώστε να ξεγελάσει έναν υπερλαφρύ πελάτη να δεχτεί έναν λανθασμένο ισχυρισμό για την έγκυρη αλυσίδα. Δείχνουμε πώς οι προαναφερθείσες κατασκευές είναι ευάλωτες σε τέτοιου είδους επιθέσεις. Επιπλέον παρουσιάζουμε την πρώτη αποδεδειγμένα ασφαλή ``βελούδινη'' κατασκευή βασισμένη στα superblocks, για την οποία δίνουμε απόδειξη ασφάλειας για κακόβουλο πληθυσμό που φράσσεται άνω από το 1/4 του αναβαθμισμένου τίμιου πληθυσμού.
+
+\newpage

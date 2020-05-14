@@ -1,0 +1,119 @@
+\chapter{Introduction}
+%Since the release of Bitcoin about a decade ago, the interest in cryptocurrencies has increased tremendously, while a number of other ``altcoins'' have been constructed in the meantime. Given that cryptocurrencies are starting to be considered a generally accepted means of payment and are used for everyday transactions, the issue of efficiently handling cryptocurrencies by light clients, such as smartphones, has become of great importance.
+
+%In this work, we consider the problem of optimizing light clients, or ``SPV clients'' as described in the original Bitcoin paper\cite{nakamoto}. As blockchains are ever growing, the main setback for efficient light client applications is the processing of data amount linear to the size of the blockchain, e.g. for synchronization purposes. 
+
+%Our work is based on the construction of Non-Interactive Proofs of Proof of Work\cite{nipopows} that achieves SPV proofs of polylogarithmic portion of the blockchain size. The NIPoPoWs construction suggests a protocol update, that could be possibly implemented by a soft or a hard fork. Given the reluctancy of the  Bitcoin community to proceed to such forks, we consider the case of a velvet fork\cite{nipopows}\cite{velvet}, where it suffices only a portion of the total players to be updated.
+
+\section{Motivation}
+Blockchain systems such as Bitcoin~\cite{nakamoto} and
+Ethereum~\cite{buterin,wood} have a predetermined expected rate of block
+production and maintain chains of blocks that are growing linearly
+with time. A node synchronizing with the rest of the blockchain
+network for the first time therefore has to download and validate the whole
+chain, if it does not wish to rely on a trusted third party. While a lightweight
+node (SPV) can avoid downloading and validating transactions beyond their
+interest, it must still download the block headers that contain the
+proof-of-work~\cite{pow} of each block in order to determine which chain contains
+the most proof-of-work. The block header data, while smaller by a significant constant
+factor, still grow linearly with time. An Ethereum node synchronizing for the
+first time must download more than $300$ MB of block header data for the purpose
+of proof-of-work verification, even if it elects not to download any
+transactions. This has become a central problem to the usability of blockchain
+systems, especially for vendors who are using mobile phones to accept payments
+or sit behind limited internet bandwidth. They are forced to make a difficult
+choice between decentralization and the ability to start accepting payments in a
+timely manner.
+
+\section{Current approaches}
+Towards the goal of alleviating the burden of this download for SPV clients, a
+number of \emph{superlight} clients has emerged. 
+%These clients are able to
+%choose the best proof-of-work chain by only requesting a small number of
+%\emph{sample} block headers instead of all the block headers. 
+These protocols give rise to  Non-Interactive Proofs of Proof-of-Work (NIPoPoW)
+~\cite{nipopows}, which are short strings
+ that ``compress'' the proof-of-work information of the underlying chain. 
+%It has been shown
+%that the block headers in these proofs are secure representatives of the
+%proof-of-work of the underlying chain:
+The necessary security property of such proofs is that a
+minority adversary can only convince a
+NIPoPoW client that a certain transaction is confirmed, only if they can
+convince an SPV client, too.
+
+There are two general directions for superlight client implementations: In the
+\emph{superblock}~\cite{nipopows,compactsuperblocks} approach, the client
+relies on \emph{superblocks}, blocks that have achieved much better
+proof-of-work than required for block validity. In the
+\emph{FlyClient}~\cite{flyclient} approach, blocks are sampled and committed at random as in a $\Sigma$-protocol (e.g. Schnorr's discrete-log protocol~\cite{schnorr}) and then using 
+the Fiat--Shamir heuristic~\cite{fiatshamir} a non-interactive proof is calculated. The number of block headers
+that need to be sent then grows only logarithmically with time. The NIPoPoW
+client, which is the proof \emph{verifier} in this context, still relies on a connection to full nodes,
+who, acting as \emph{provers},  perform the sampling of blocks from the full
+blockchain. 
+No trust assumptions are made for these provers, as the
+verifier can check the veracity of their claims. As long as the verifier is
+connected to at least one honest prover (an assumption also made in the SPV
+protocol~\cite{eclipse,eclipse-ethereum}), they are able to arrive at the correct claim.
+
+In both approaches, it is essential for the verifier to check that the blocks
+sampled one way or another have been generated in the same order as they have
+been presented by the prover. As such, each block in the proof must contain a
+pointer to the previous block in the proof. As blocks in these proofs are far
+apart in the underlying blockchain, the legacy \emph{previous block pointer},
+which typically appears within block headers, does not suffice.
+Both approaches require modifications to the consensus layer of the underlying
+blockchain to work. In the case of superblock NIPoPoWs, the block header must be
+modified to include, in addition to a pointer to the previous block, pointers to
+a small amount of recent high-proof-of-work blocks. In the case of FlyClient,
+each block must additionally contain pointers to all previous blocks in the
+chain. Both of these modifications can be made efficiently by organizing these
+pointers into Merkle Trees~\cite{merkle} or Merkle Mountain Ranges~\cite{ct,mmr}
+whose root is stored in the block header. The inclusion of extra pointers within
+blocks is termed \emph{interlinking the chain}~\cite{popow}.
+
+The modified block format, which includes the extra pointers, must be respected
+and validated by all full nodes and thus requires either a hard fork or at least
+a soft fork. However, even soft forks require the approval of a supermajority of
+miners, and new features that are considered non-essential by the community have
+taken years to receive approval~\cite{segwit}. Towards the goal of implementing
+superlight clients sooner, we study the question of whether it is possible to
+deploy superlight clients without a soft fork. We propose a series of
+modifications to blocks that are \emph{helpful but untrusted}. These
+modifications mandate that some extra data is included in each block. The extra
+data is placed inside the block by upgraded miners only, while the rest of the
+network does not include the additional data into the blocks and does not verify
+its inclusion, treating them merely as comments. To maintain backwards
+compatibility, contrary to a soft fork, upgraded miners must accept blocks that
+do not contain this extra data that have been produced by unupgraded miners, or
+even blocks that contain invalid or malicious such extra data produced by a
+mining adversary. This acceptance is necessary in order to avoid causing a chain
+split with the unupgraded part of the network. Such a modification to the
+consensus layer is termed a \emph{velvet fork}~\cite{velvet}.
+
+In this context the contributions resulting from this work come as follows:
+\begin{itemize}
+	\item We revise the security proof for superblock suffix proof protocol and compute a concrete value for the security parameter $m$
+  	\item We illustrate that, contrary to claims of previous works, superlight clients designed to work in a soft fork cannot be readily plugged into a velvet fork and expected to work. We present a novel attack termed the \emph{chain-sewing} attack which thwarts the defenses of previous proposals and allows even a minority adversary to cause catastrophic failures.
+	\item We propose the first \emph{backwards-compatible superlight client}. We put forth an interlinking mechanism implementable through a velvet fork. We then construct a superblock NIPoPoW protocol on top of the velvet forked chain and show it allows to build superlight clients for various statements regarding the blockchain state via both ``suffix'' and ``infix'' proofs. 
+	\item We prove our construction secure in the synchronous static difficulty model against adversaries bounded to $1/4$ of the mining power of the honest upgraded nodes. As such, our protocol works even if a constant minority of miners adopts it.
+\end{itemize}
+
+\section{Related work.} 
+Proofs of Proof-of-Work have been proposed in the
+context of superlight clients~\cite{pow,nipopows,flyclient},
+cross-chain communication~\cite{pow-sidechains,burn,crosschain-sok}, as well as
+local data consumption by smart contracts~\cite{derivatives}. Superblock
+NIPoPoWs have been deployed in production using hard forks~\cite{ergo} and have
+been conjectured to work in velvet fork conditions~\cite{nipopows} (we show
+here that these conjectures are ill-informed in the light of our chain-sewing
+attack). Velvet forks~\cite{velvet} have been studied for a variety of other
+applications and have been deployed in practice, e.g., see~\cite{gtklocker}. In this work,
+we focus on consensus state compression. Such compression has been explored in
+the hard-fork setting using zk-SNARKS~\cite{coda} as well as in the
+Proof-of-Stake setting~\cite{pos-sidechains}. Complementary to consensus state
+compression (i.e., the compression of block headers and their ancestry) is
+compression of application state (namely the State Trie, the UTXO, or
+transaction history). There is a series of works complementary and composable with ours that
+discusses the compression of application state~\cite{edrax,ethanos}.

@@ -1,8 +1,6 @@
-\section{Model Definition and Notation}
-Our analysis concerns proof-of-work cryptocurrencies and is based on the standard Backbone 
-model\cite{backbone}.
+\chapter{Background}
 
-\subsection{Blockchain Preliminaries}
+\section{Blockchain Basics}
 A blockchain, or simply chain, is a timely ordered sequence of blocks.  In a cryptocurrecny
 blockchain, like Bitcoin, a block is a proof-of-work verified set of information about a number of
 transactions, the previous block in the block sequence and a nonce. The proof-of-work involves a
@@ -75,7 +73,7 @@ to construct more efficient protocols serving the needs of lightweight clients. 
 the interaction between lightweight clients and full nodes is in our case supported  by the
 NIPoPoWs\cite{nipopows} primitive which allows polylogarithmic poofs to the size of the chain.
 
-\subsection{The Backbone Model}
+\section{The Backbone Model}
 The Backbone protocol is executed by an arbitrary number of parties over an unauthenticated network.
 We consider $n$ parties in total, $t$ of which may be controlled by an adversary.
 
@@ -163,9 +161,7 @@ $\tau \cdot s$ blocks added to the chain of \textit{P}.
 	\label{defn:chain_growth}
 \end{definition}
 
-\subsection{NIPoPoWs Preliminaries}
-
-\subsection{Hard, Soft and Velvet Forks}
+\section{Hard, Soft and Velvet Forks}
 We typically describe the two common types of a blockchain permanent fork as follows.
 
 A \textit{hard fork} is a consensus protocol upgrade which is not backwards
@@ -193,7 +189,6 @@ protocol rules, we do not modify the set of accepted blocks. Therefore, the upgr
 is rather a \textit{recommendation} and not an actual change of the consensus
 protocol.  In reality, the blockchain is never forked. Only the codebase is
 upgraded and the data on the blockchain is interpreted differently\cite{nipopows}.
-
 
 The goal of this work is to provide a modified NIPoPoWs protocol so that it can be
 deployed under a velvet fork in a provably secure manner.
