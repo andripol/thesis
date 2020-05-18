@@ -13,8 +13,8 @@ As already explained, each block appended to the chain must contain an appropria
 	\label{fig:pow}
 \end{figure}
 
-Note that because of the Random Oracle model for the hash function, the outputs of the PoW attempts are uniformly distributed in the domain $\{0, 2^{\kappa} \}$. 
-the values regarding any subdomain follow uniform distribution too. 
+Note that because of the Random Oracle model for the hash function, the outputs of the PoW attempts are uniformly distributed in the domain $\{0, 2^{\kappa} \}$.
+The values regarding any subdomain follow uniform distribution too.
 In essence, a block $b$ with $id < T$ is generated with probability $p = \dfrac{T}{2^\kappa}$, while a block $b_1$ with $id_1 < \dfrac{T}{2}$ is generated with probability $p_1 = \dfrac{T}{2 \cdot 2^\kappa} $ or $p_1 = \dfrac{p}{2}$. As you can see it seems that $b_1$ is a ``luckier'' block than block $b$, and we could even say that it is twice as lucky since such a block is generated half of the times that $b$ is, in expectation. This can be generalized to the following form: a block $b'$ with $\text{id'} < \dfrac{T}{2^\mu}$ is generated with probability $p' = \dfrac{p}{2^\mu}$. We call $\mu$ the level of the block $b'$.
 It should now be obvious that blocks of high levels appear rarely in the chain according to their level. The higher the level $\mu$, the more rare the blocks of that level in the chain. Part II of Figure~\ref{fig:pow} illustrates this result.
 
