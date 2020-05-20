@@ -1,0 +1,90 @@
+\section{The Backbone Model}
+\subsection{The protocol}
+The Backbone protocol is executed by an arbitrary number of parties over an unauthenticated network.
+We consider $n$ parties in total, $t$ of which may be controlled by an adversary.
+
+Table \ref{table:backbone_parameters} contains all the parameters of the Backbone protocol and will
+be a point of reference throughout this work.
+
+\begin{table}[h!]
+	\begin{tabular}{| p{14.74cm} |}
+		\hline
+		$\lambda : \text{security parameter}$\\
+		$\kappa : \text{length of the hash function output}$\\
+		$n : \text{number of parties mining, } t \text{ of which are controlled by the adversary}$\\
+		$T : \text{the target hash value used by parties for solving POW}$\\
+		$t :  \text{number of parties controlled by the adversary}$\\
+		$\delta : \text{advantage of honest parties}, \dfrac{t}{n-t} \leq 1-\delta$\\
+		$f : \text{probability at least one honest party succeeds in finding a POW in a round}$\\
+		$\epsilon : \text{random variables' quality of concentration in typical executions}$\\
+		$k : \text{number of (suffix) blocks for the common prefix property}$\\
+		% be more specific in l please\\
+		$l : \text{number of blocks for the chain quality property}$\\
+		$\mu_Q : \text{chain quality parameter}$\\
+		%% more specific for s too please
+		$s : \text{number of rounds for the chain growth property}$\\
+		$\tau : \text{chain growth parameter}$\\
+		$L : \text{the total run-tiem of the system}$\\
+		\hline
+	\end{tabular}
+	\caption{The parameters of backbone model analysis. Positive integers $n, t, L, s, l, T, k,
+	 \kappa$, positive reals $f, \epsilon, \delta, \mu_Q, \tau, \lambda$ where
+	 $f, \epsilon, \delta, \mu_Q \in (0,1)$.}
+	\label{table:backbone_parameters}
+\end{table}
+
+We will now give a high-level description of the Backbone Protocol and its fundamental components,
+namely the three supporting algorithms for \textit{chain validation}, \textit{chain comparison} and
+\textit{proof of work}. We will also define and discuss the three properties of the protocol, namely
+\textit{Common Prefix}, \textit{Chain Quality} and \textit{Chain Growth}. For a more formal and
+detailed presentation refer to the Backbone paper\cite{backbone}.
+
+Consider that the protocol has already run for some rounds and a chain $C$ has been formed. Consider
+also an honest party that wishes to connect to the network, obtain the up-to-date version of the
+chain and try to extend it.
+The honest party connects to the network and first tries to synchronize to the current chain. The
+chain synchronization takes two steps to conclude. First, the newly connected peer receives a number
+of candidate chains by other peers in the network and validates them one by one as for the structural 
+properties of each block \textit{(Chain Validation)}. In particular, for each block the chain
+validation algorithm checks that the proof-of-work is properly solved, that the hash of the previous
+block is properly included in the block and that the the rest of the information included satisfies
+a certain validity predicate $V(\cdot)$ depending on the application. For example, in Bitcoin
+application it is checked that all the included transactions are valid according to the
+UTXO set.
+
+Afterwards, the \textit{Chain Comparison} algorithm is applied, where all the valid chains are
+compared to each other and the longest one, as for total number of blocks or total hashing power
+included, is considered the current active chain.
+
+At last, in order to expand the chain by appending one more block to it, the \textit{Proof Of Work}
+algorithm is applied, where the miner attempts to solve a proof of work as follows. The miner
+constructs the contents of the block, including the hash of the previous block and a number of new
+transactions published to the network. Consider that he can calculate the value $h = G(s,x)$ up
+to this point. Finally it remains to compute the \textit{ctr} value so that $H(ctr, h) < T$. The
+protocol is running in rounds and each party can make at most $q$ queries to function $H(\cdot)$
+within a single round. If a suitable \textit{ctr} is found, an honest party quits any queries
+remaining and announces the new born block to the network.
+
+\subsection{Basic properties}
+We can now define the three desired properties of the backbone protocol.
+
+\begin{definition}[Common Prefix Property]
+	The common prefix property $Q_{cp}$ with parameter
+$k \in \mathbb{N}$ states that for any pair of honest players $P_1, P_2$ adopting the chains
+$C_1, C_2$ at rounds $r_1 \leq r_2$ respectively, it holds that $C_1^{\lceil k} \preceq C_2$.
+	\label{defn:common_prefix}
+\end{definition}
+
+
+\begin{definition}[Chain Quality Property]
+	The chain quality property $Q_{cq}$ with parameters $\mu_{cq} \in \mathbb{R}$ and $l \in \mathbb{N}$ states that for any honest party $P$ with chain $\mathcal{C}$ it holds that for any $l $ consecutive blocks of $\mathcal{C}$ the ratio of honest blocks is at least $\mu_{cq}$.
+	\label{defn:chain_quality}
+\end{definition}
+
+\begin{definition}[Chain Growth Property]
+	The chain growth property $Q_{cg}$ with
+parameters $\tau \in \mathbb{R}$ and $s \in \mathbb{N}$ states that for any honest party
+\textit{P} with chain $\mathcal{C}$, it holds that for any $s$ rounds there are at least 
+$\tau \cdot s$ blocks added to the chain of \textit{P}.
+	\label{defn:chain_growth}
+\end{definition}

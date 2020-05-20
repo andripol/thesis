@@ -1,0 +1,24 @@
+\subsection{The Random Oracle Model}
+In many cases there is the need to find a ``middle-ground'' between a fully-rigorous proof of security on the one hand and no proof whatsoever on the other. This may be achieved by introducing an idealized model in which to prove security of cryptographic schemes. Though the idealization may not be an accurate reflection of reality, we can at least derive some measure of confidence in the soundness of a scheme's design from a proof within the idealized model. Al long as the model is reasonable, such proofs are cenrtainly better than no proofs at all. 
+
+Towards this end, the \emph{random oracle model} posits the existence of a public, randomly-chosen function $H$ that can be evaluated \emph{only} by querying the oracle - which can be thought of as a ``magic box'' - that returns $H(x)$ when given input x. Now, the idealized model of random oracle can be used to design and validate cryptographic schemes via the following two-step approach:
+\begin{enumerate}
+	\item First, a scheme is designed and proven secure in the random oracle (RO) model 
+	\item When we want to implement the scheme in the real world, a RO is not available. Instead, the RO $H$ in the scheme is \emph{instantiated} with a cryptographic hash function $\tilde{H}$.  
+\end{enumerate}
+The hope is that the cryptographic hash function $\tilde{H}$ is ``sufficiently good'' at simulating a random oracle, so that the security proof given in the first step will carry over to the real-world instantiation of the scheme.\\
+
+\noindent
+\textbf{Defining the RO model.}
+A good way to think about a RO model is as follows. The ``oracle'' is simply a box that takes a binary string $x$ as input and returns a binary string $y$ as output. We refer to such interactions with the box as \emph{querying the oracle on x} and call $x$ itself a \emph{query} made to the oracle. The internal workings of the box are unknown and inscrutable. It is guaranteed that the box is \emph{consistent}: that is, if the box ever outputs $y$ for a particular input $x$, then it always outputs the same output $y$ when given the same input $x$ again. So, we can view the box as implementing a hash function $H$.
+
+Thus we can now provide a formal definition of RO as in Definition~\ref{def:random_oracle}.
+
+\begin{defn}[Random Oracle]
+	\label{def:random_oracle}
+	The Random Oracle is an idealized model for cryptographic hash functions which operates as follows:
+	\begin{itemize}
+		\item given $x \notin \textit{History}$, choose $y \xleftarrow{r} Y \text{ and add } (x,y) \text{ to } \textit{History}$. Return $y$.
+		\item given $x$ such that $(x,y) \in \textit{History}$ for some $y$, return $y$.
+	\end{itemize}
+\end{defn}

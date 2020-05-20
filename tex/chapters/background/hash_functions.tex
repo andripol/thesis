@@ -1,0 +1,40 @@
+\subsection{Collision-Resistant Hash Functions}
+In general, hash functions are just functions that take arbitrary-length strings and \emph{compress} then into shorte strings. The classic use of hash functions is in data structures as a way to achieve $\mathcal{O}(1)$ lookup time for retrieving an element. Specifically, if the size of the range of hte hash function $H$ is $N$, then a table is first allocated with $N$ entries. Then, the element $x$ is stored in cell $H(x)$ in the table. In order to retrieve $x$, it suffices to compute $H(x)$ and probe that table entry. Observe that since the output range of $H$ equals the size of the table, the output length must be rather short or else the table will be too large. A ``good'' hash function for this purpose is one that yields as few \emph{collisions} as possible, where a collision  is a pair of distinct data items $x$ and $x'$ for which $H(x) = H(x')$. Notice that when a collision occurs, two elements end up being stored in the same cell. Therefore, many collisions may result in a higher than desired retrieval complexity. In short, what is desired is that the hash function spreads the elements well in the table, thereby minimizing the number of collisions\cite{katz_lindell}.
+
+\emph{Collision-resistant} or \emph{cryptographic} hash functions are similar in principle to those used in data structures. In particular, they are also functions that compress their input by transforming arbitrary-length input strings into output strings of a fixed shorter length. Furthermore, collisions are a problem. However, the \emph{desire} in data structures to have few collisions is now a \emph{mandatory requirement} in cryptography. That is, a collision-resistant hash function must have the property that no polynomial-time adversary can find a collision in it. Stated differently, no polynomial-time adversary should be able to find a distinct pair of values $x$ and $x'$ such that $H(x) = H(x')$.
+We stress that in data structures some collisions may be tolerated, whereas in cryptography no collisions whatsoever are allowed. Furthermore,the adversary in cryptography specically searches for a collision, whereas in data structures,the ``data items" do not attempt to collide intentionally. This means that the requirements on hash functions in cryptography are much more stringent than the analogous requirements in data structures.It also means that cryptographic hash functions are harder to construct\cite{katz_lindell}.\\
+
+\noindent
+\textbf{Defining collision-resistance.}
+A \emph{collision} in a function $H$ is a pair of distinct inputs $x, x'$ such that $H(x) = H(x')$. $H$ is \emph{collison-resistant} if it is infeasible for any PPT algorithm to find a collision in $H$. Typically, we are interested in functions that have an infinite domain (i.e. they accept all strings of all input lengths) and a finite range. Note that in a such a case collisions will necessarily exist, due to the pigeon-hole principle. The requirement is therefore only that such collisions should be hard to find. 
+
+We need a family of hash functions in order to define what a collision-resistant hash function is. That is because the adversary can have hardwired a collision pair in his code and output it every time we ask him.  Note that this is not a problem for the security of the one-way function, since in that case we ask the adversary for the inversion of a random element in the range of the function.
+ 
+For the definition of the collision resistance property we use the experiment \textsf{Hash-collison} described in Algorithm~\ref{alg:hash-col}.
+
+\begin{algorithm}[h]
+		\caption{\label{alg:hash-col} The \textsf{Hash-collision} experiment}
+		\begin{algorithmic}[1]
+			\Function{$ \textsf{Hash-collision}_{\mathcal{F}, \mathcal{A}}$}{$\kappa$}
+				\Let{(i)}{\textsf{Gen}(1^\kappa)}
+				\Let{(x, x')}{\mathcal{H}_i}
+				\If{$x \neq x' \wedge \mathcal{H}_i(x) \neq \mathcal{H}_i(x')$}
+					\State\Return 1
+				\EndIf
+				\State\Return 0
+			\EndFunction
+		\end{algorithmic}
+\end{algorithm}
+
+\begin{defn}[Collision-Resistant Hash Function]\label{def:hash_function}
+	A family of hash functions $\mathcal{F} = \{ \mathcal{H}_i: D_i \rightarrow R_i \}_{i \in \mathcal{I}}$ is collision resistant if it satisfies the following:
+	\begin{itemize}
+		\item \textbf{Easy to sample:} There exists a PPT algorithm \textsf{Gen}, such that for all $\kappa \in \mathbb{N}$, $\textsf{Gen}(1^\kappa) \in \mathcal{I}$.
+		\item \textbf{Easy to compute:} There exeists PPT algorithm that in input $i \in \mathcal{I}$, $x \in D_i$ returns $\mathcal{H}_i(x)$.
+		\item \textbf{Compressing:} For all $i \in \mathbb{N}$, $\lvert R_i \rvert < \lvert D_i \rvert$.
+		\item \textbf{Collision resistant:} For every PPT adversary $\mathcal{A}$, for all $\kappa \in \mathbb{N}$:
+		\begin{equation*}
+			Pr[\textsf{Hash-collision}_{ \mathcal{F}, \mathcal{A}}(\kappa) = 1] \leq negl(\kappa)
+		\end{equation*}
+	\end{itemize}
+\end{defn}
