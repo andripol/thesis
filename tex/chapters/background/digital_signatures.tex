@@ -47,7 +47,7 @@ We say that $\sigma$ is a \emph{valid signature} on a message \emph{m} with resp
 	\label{def:singature_correctness}
 	A signature scheme $\Pi = (\textsf{Gen, Sign, Ver})$ is correct if for every $m$ from the underlying message space there exists a negligible function \textsf{negl($\cdot$)} such that:
 	\begin{equation*}
-		Pr[\textsf{Sig-correct}_{\mathcal{A}, \Pi}(\kappa, m) = 0] \leq \textsf{negl}(\kappa)
+		Pr[\textsf{Sig-correct}_{\Pi}(\kappa, m) = 0] \leq \textsf{negl}(\kappa)
 	\end{equation*}
 \end{defn}
 
