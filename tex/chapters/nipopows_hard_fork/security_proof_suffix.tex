@@ -116,8 +116,8 @@ We will now define the \emph{adequate level} of an honest suffix proof and some 
 \begin{defn}[Adequate level of honest proof]
 	Let $\pi$ be an
 	honestly generated proof constructed upon some adopted chain $C$ and let $b \in 
-	\pi $. Then $\mu'$ is defined as $\mu' = \max \{ \mu: \vert \pi\{b:\}\uparrow^{\mu}
-	\vert \geq \max( m+1, (1-\delta)2^{-\mu} \vert \pi\{b:\}\uparrow^{\mu}\downarrow \vert )\}$.
+	\pi $. Then $\mu'$ is defined as $\mu' = \max \{ \mu: \vert \pi\{b:\}\upchain^{\mu}
+	\vert \geq \max( m+1, (1-\delta)2^{-\mu} \vert \pi\{b:\}\upchain^{\mu}\downchain \vert )\}$.
 	We call $\mu'$ the adequate level of proof $\pi$ with respect to block $b$ with
 	security parameters $\delta$ and m. Note that the adequate level of a proof is a
 	function of both the proof $\pi$ and the chosen block $b$.
@@ -128,11 +128,11 @@ We will now define the \emph{adequate level} of an honest suffix proof and some 
 	Let $\pi$ be some honest proof generated with security
 	parameters $\delta$, m. Let C be the underlying chain, $b \in C$ be any block
 	and $\mu'$ be the adequate level of the proof with respect to b and the same
-	security parameters.\\Then $C\{b:\}\uparrow^{\mu'} = \pi\{b:\}\uparrow^{\mu'}$.
+	security parameters.\\Then $C\{b:\}\upchain^{\mu'} = \pi\{b:\}\upchain^{\mu'}$.
 	\label{lemm:complete_adequate}
 \end{lemma}
 \begin{proof}
-	$ \pi\{b:\}\uparrow^{\mu'} \subseteq C\{b:\}\uparrow^{\mu'}$ is
+	$ \pi\{b:\}\upchain^{\mu'} \subseteq C\{b:\}\upchain^{\mu'}$ is
 	trivial. For the converse, we have that in the iteration of the \emph{Prove for
 	loop}\cite{nipopows} with $\mu = \mu^*$, the block stored in variable $B$
 	precedes $b$ in $C$.
@@ -144,23 +144,23 @@ We will now define the \emph{adequate level} of an honest suffix proof and some 
 	is violated. This cannot be the first iteration since $B = C[0]$ and Genesis
 	precedes all blocks. By induction hypothesis we see that during the iteration
 	$\mu = mu^* + 1$, $B$ preceded $b$. From the definition of $\mu'$ we know that
-	$\mu'$ is the highest level for which $\vert \pi\{b:\}\uparrow^{\mu} \vert
-	\geq \max( m, (1-\delta)2^{-\mu} \vert \pi\{b:\}\uparrow^{\mu}\downarrow \vert ) $.
+	$\mu'$ is the highest level for which $\vert \pi\{b:\}\upchain^{\mu} \vert
+	\geq \max( m, (1-\delta)2^{-\mu} \vert \pi\{b:\}\upchain^{\mu}\downchain \vert ) $.
 
 	Hence, this property cannot hold for $\mu^* > \mu$ and therefore $\vert
-	\pi\{b:\}\uparrow^{\mu} \vert < m$ or $\neg$local-good$_\delta(\pi\{b:
-	\}\uparrow \mu^*[1:], C, \mu^*)$.
+	\pi\{b:\}\upchain^{\mu} \vert < m$ or $\neg$local-good$_\delta(\pi\{b:
+	\}\upchain \mu^*[1:], C, \mu^*)$.
 
 	In case local-good is violated, variable $B$ remains unmodified and the induction
-	step holds. If local-good is not violated, then $ \vert \pi\{b:\} \uparrow^{\mu^*}[1:]
-	\vert < m$ and so $\pi\uparrow^{\mu^*}[-m]$, which is the updated value of $B$ at the
+	step holds. If local-good is not violated, then $ \vert \pi\{b:\} \upchain^{\mu^*}[1:]
+	\vert < m$ and so $\pi\upchain^{\mu^*}[-m]$, which is the updated value of $B$ at the
 	end of $\mu^*$ iteration, precedes $b$.
 \end{proof}
 
 The intuition behind the adequate level is the following. Adequate is the level $\mu'$ of a proof $\pi$ with respect to block $b$, if this level is of good chain quality and doesn't miss any $\mu'$-superblock coming after $b$. Because of the goodness-aware prover algorithm~\ref{alg:goodness_aware_suffix_prover_soft_fork} each proof $\pi$ has an adequate level for every block $b \in \pi$.
 Note that the adequate level is used in Claim 1a of the Security Proof (Theorem~\ref{thm:suffix_security_soft_fork}).\\
 
-The following lemma is not used our revised version of the security proof (Theorem~\ref{thm:suffix_security_soft_fork}). However, we include in this section since we have fixed some minor mistakes of~\cite{nipopows}. We also believe that it provides intuition regarding the complicated notion of adequate level.
+The following lemma is not used  in our revised version of the security proof (Theorem~\ref{thm:suffix_security_soft_fork}). However, we include it in this section since we have fixed some minor mistakes of~\cite{nipopows}. We also believe that it provides intuition regarding the complicated notion of adequate level.
 \begin{lemma}
 	Suppose the verifier evaluates $\pi_\mathcal{A} \geq \pi_B$ in a
 	protocol interaction where $B$ is honest and assume during the comparison that the
@@ -171,21 +171,21 @@ The following lemma is not used our revised version of the security proof (Theor
 \end{lemma}
 \begin{proof}
 	Because $\mu_B$ is the compared level of the honest party, from
-	the definition of the $\geq_m$ operator, we have $2^{\mu_B} \vert \pi\{b:\}\uparrow^{\mu_B}
-	\vert > 2^{{\mu}'_B} \vert \pi\{b:\}\uparrow^{{\mu}'_B} \vert $. This is true,
+	the definition of the $\geq_m$ operator, we have $2^{\mu_B} \vert \pi\{b:\}\upchain^{\mu_B}
+	\vert > 2^{{\mu}'_B} \vert \pi\{b:\}\upchain^{{\mu}'_B} \vert $. This is true,
 	otherwise the Verifier would have chosen level $\mu'_B$ as level of comparison.
 	The proof is by contradiction. Suppose $\mu'_B < \mu_B$.
-	By definition, $\mu'_B$ is the maximum level such that $\vert \pi_B\{b:\}\uparrow^\mu
-	[1:] \vert \geq max(m, (1-\delta)2^{-\mu}\vert \pi_B\{b:\}\uparrow^\mu [1:]\downarrow
+	By definition, $\mu'_B$ is the maximum level such that $\vert \pi_B\{b:\}\upchain^\mu
+	[1:] \vert \geq max(m, (1-\delta)2^{-\mu}\vert \pi_B\{b:\}\upchain^\mu [1:]\downchain
 	\vert)$, therefore $\mu_B$ does not satisfy this condition.
-	But we know that $\vert \pi_B\{b:\}\uparrow^\mu [1:] \vert > m$ because
+	But we know that $\vert \pi_B\{b:\}\upchain^\mu [1:] \vert > m$ because
 	$\mu_B$ was selected by the Verifier.
-	Therefore $ 2^{\mu_B} \vert \pi\{b:\}\uparrow^{\mu_B} \vert < (1-\delta)\vert
+	Therefore $ 2^{\mu_B} \vert \pi\{b:\}\upchain^{\mu_B} \vert < (1-\delta)\vert
 	\chain\{b:\}\vert $. \\
-	But also $\mu'_B$ satisfies goodness, so $ 2^{\mu'_B} \vert \pi\{b:\}\uparrow^{\mu'_B}
+	But also $\mu'_B$ satisfies goodness, so $ 2^{\mu'_B} \vert \pi\{b:\}\upchain^{\mu'_B}
 	\vert > (1-\delta)\vert \chain\{b:\}\vert $.\\ From the last two equations we obtain
-	$ 2^{\mu_B} \vert \pi\{b:\}\uparrow^{\mu_B} \vert < 2^{\mu'_B} \vert
-	\pi\{b:\}\uparrow^{\mu'_B} \vert$ which contradicts the initial equation.
+	$ 2^{\mu_B} \vert \pi\{b:\}\upchain^{\mu_B} \vert < 2^{\mu'_B} \vert
+	\pi\{b:\}\upchain^{\mu'_B} \vert$ which contradicts the initial equation.
 \end{proof}
 
 The intuition behind the above lemma is the following. The comparison level chosen by the verifier can be
@@ -222,8 +222,8 @@ So, in fact, a more accurate lemma should claim that $\mu'_B = \mu_B$.
 	Let the levels of comparison
 	decided by the verifier be $\mu_\mathcal{A}$ and $\mu_B$ respectively. Let $\mu'_B$
 	be the adequate level of proof $\pi_B$  with respect to block $b_0$. Call
-	$\alpha_\mathcal{A} = \pi_\mathcal{A} \uparrow^{\mu_\mathcal{A}}\{b_0:\}$,
-	$\alpha'_B = \pi_B \uparrow^{\mu'_B}\{b_0:\}$.
+	$\alpha_\mathcal{A} = \pi_\mathcal{A} \upchain^{\mu_\mathcal{A}}\{b_0:\}$,
+	$\alpha'_B = \pi_B \upchain^{\mu'_B}\{b_0:\}$.
 
 	%%ANDRI:
 	Note that the  proof parts succeeding block $b_0$ are the decisive ones 
@@ -259,7 +259,7 @@ So, in fact, a more accurate lemma should claim that $\mu'_B = \mu_B$.
 	
 	\noindent
 	\textit{\underline{Claim 1b}:} If  $\mu'_B > \mu_\mathcal{A}$ then $\vert \alpha_\mathcal{A}[1:] 
-	\cap \alpha'_B\downarrow[1:] \vert = k_1$ where $k_1 \leq 2^{\mu'_B - \mu_\mathcal{A}}$.\\
+	\cap \alpha'_B\downchain[1:] \vert = k_1$ where $k_1 \leq 2^{\mu'_B - \mu_\mathcal{A}}$.\\
 	Let's call $b'$ the first block in $\alpha'_B$ after block $b_0$.
 	Suppose for contradiction that $k_1 > 2^{\mu'_B - \mu_\mathcal{A}}$.  Since $\chain_B^{\mu'_B}$ is
 	of good chain quality, this would mean that block $b'$, of level $\mu'_B$ is also
@@ -284,11 +284,11 @@ So, in fact, a more accurate lemma should claim that $\mu'_B = \mu_B$.
 	We show this by showing that $\alpha_\mathcal{A}[k_1 + k_2 + 1:]$ contains no honestly generated
 	blocks due to the Common Prefix property. Suppose for contradiction that the block $\alpha_\mathcal{A}[i]$ for some $i \geq k_1 +
 	k_2 + 1$ was honestly generated. This means that an honest party adopted the chain
-	$\alpha_\mathcal{A}[:i - 1]\downarrow$ at some round $r_2 \leq r_3$. Because of the way honest
+	$\alpha_\mathcal{A}[:i - 1]\downchain$ at some round $r_2 \leq r_3$. Because of the way honest
 	parties adopt chains, the superchain $\alpha_\mathcal{A}[:i - 1]$ has an underlying properly
 	constructed 0-level anchored chain $\chain_\mathcal{A}$ such that $\alpha_\mathcal{A}[:i - 1] \subseteq \chain_\mathcal{A}$.
 	Let $j$ be the index of block $b_1$ within $\alpha_\mathcal{A}$, $j_\downarrow$ be the index
-	of block $b_2$ within $\chain_\mathcal{A}$ and $k_{2\downarrow} = \vert \alpha_\mathcal{A}[j:j+k_2]\downarrow\vert$.
+	of block $b_2$ within $\chain_\mathcal{A}$ and $k_{2\downarrow} = \vert \alpha_\mathcal{A}[j:j+k_2]\downchain\vert$.
 	See Figure \ref{fig:proof} for a demonstration. Observe that $\vert \chain_\mathcal{A}[:\{\alpha_\mathcal{A}[i-1]\}]
 	\vert \geq \vert \chain_\mathcal{A}[:{j_\downarrow}+k_{2\downarrow}] \vert$, while
 	$\chain_\mathcal{A}[j_\downarrow:j_\downarrow + k_{2\downarrow}] \npreceq \chain_B$ as proved in
@@ -324,9 +324,9 @@ Before stepping into Claim 3 remember that we have defined block $b_2$ the last 
 	adopted by an honest party at round $r_3$ and filtering the blocks by the rounds
 	during which they were generated to obtain $\chain_B^S$, we see that if $b'$ is the
 	most recently generated block in $\alpha_B$ in a round $r \leq r_1$, then $\chain_B^S =
-	\chain_B\{ b': \}$. But $\chain_B^S \uparrow^{\mu'_B}$ is good with respect to $\chain_B^S$.
+	\chain_B\{ b': \}$. But $\chain_B^S \upchain^{\mu'_B}$ is good with respect to $\chain_B^S$.
 	Applying Lemma~\ref{lemma:honest_vs_pure_adversarial_subchain}, we obtain that with overwhelming probability  $2^{\mu_\mathcal{A}} \vert
-	\alpha_\mathcal{A}\{b_3:\} \vert < 2^{\mu'_B} \vert \chain_B^S \uparrow^{\mu'_B} \vert$, which is
+	\alpha_\mathcal{A}\{b_3:\} \vert < 2^{\mu'_B} \vert \chain_B^S \upchain^{\mu'_B} \vert$, which is
 	equal to
 
 	\begin{equation}
@@ -382,12 +382,12 @@ Before stepping into Claim 3 remember that we have defined block $b_2$ the last 
 	\end{equation}
 
 
-	Therefore we have proven that $2^{\mu'_B} \vert \pi_B \uparrow^{\mu'_B} \vert >
+	Therefore we have proven that $2^{\mu'_B} \vert \pi_B \upchain^{\mu'_B} \vert >
 	2^{\mu_\mathcal{A}} \vert \pi_\mathcal{A}^{\mu_\mathcal{A}} \vert$. From the definition of $\mu_B$, we know
-	that $2^{\mu_B} \vert \pi_B \uparrow^{\mu_B} \vert > 2^{\mu'_B} \vert \pi_B
-	\uparrow^{\mu'_B} \vert$ because it was chosen $\mu_B$ as level of comparison
-	by the Verifier. So we conclude that $2^{\mu_B} \vert \pi_B \uparrow^{\mu_B}
-	\vert > 2^{\mu_\mathcal{A}} \vert \pi_\mathcal{A} \uparrow^{\mu_\mathcal{A}} \vert$.
+	that $2^{\mu_B} \vert \pi_B \upchain^{\mu_B} \vert > 2^{\mu'_B} \vert \pi_B
+	\upchain^{\mu'_B} \vert$ because it was chosen $\mu_B$ as level of comparison
+	by the Verifier. So we conclude that $2^{\mu_B} \vert \pi_B \upchain^{\mu_B}
+	\vert > 2^{\mu_\mathcal{A}} \vert \pi_\mathcal{A} \upchain^{\mu_\mathcal{A}} \vert$.
 
 \end{proof}
 
