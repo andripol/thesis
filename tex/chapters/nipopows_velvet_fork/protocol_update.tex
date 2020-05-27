@@ -82,7 +82,7 @@ We now describe the algorithms needed by the upgraded miner, prover and verifier
 The construction of the velvet suffix prover is given in Algorithm~\ref{alg:velvet_suffix_prover}. Again it deviates from the soft fork case by working on the smooth chain $\chain_S$ instead of $\chain$.
 Lastly, the Verify algorithm for the NIPoPoW suffix protocol remains the same as in the case of hard or soft fork, keeping in mind that no \emph{previd} links can be followed when verifying the ancestry of the chain to avoid hitting any thorny blocks.
 
-\begin{algorithm}[h]
+\begin{algorithm}[h!]
 	\caption{\label{alg:smooth_chain_suffix}Smooth chain for suffix proofs}
 	\begin{algorithmic}[1]
 			\Function{\sf smoothChain}{$\chain$}
@@ -125,7 +125,7 @@ Lastly, the Verify algorithm for the NIPoPoW suffix protocol remains the same as
 	\end{algorithmic}
 \end{algorithm}
 
-\begin{algorithm}[h]
+\begin{algorithm}[h!]
 		\caption{\label{alg:update_interlink}Velvet updateInterlink}
 		\begin{algorithmic}[1]
 				\Function{\sf updateInterlinkVelvet}{$\chain_S$}
@@ -139,7 +139,7 @@ Lastly, the Verify algorithm for the NIPoPoW suffix protocol remains the same as
 		\end{algorithmic}
 \end{algorithm}
 
-\begin{algorithm}[h]
+\begin{algorithm}[h!]
 		\caption{\label{alg:velvet_suffix_prover}Velvet Suffix Prover}
 		\begin{algorithmic}
 				\Function{\sf ProveVelvet$_{m,k}$}{$\chain_S$}
@@ -156,42 +156,36 @@ Lastly, the Verify algorithm for the NIPoPoW suffix protocol remains the same as
 \end{algorithm}
 
 \subsubsection{Impossibility of a secure protocol for (1/2)-bounded adversary}
-During our study on the problem we failed to prove the security of several protocol
-constructions under $(\frac{1}{2})$-bounded adversary. We finally concluded that
+During our study on the problem we failed to prove the security of a protocol
+construction under the hypothesis $(\frac{1}{2})$-bounded adversary, though we tried for a number of them. We finally concluded that
 such a secure NIPoPoW construction is impossible under velvet fork conditions.
 Though it is hard to provide a typical proof for this claim, as one should consider
-any possible construction, we try to argue for it in this section.
+any possible construction, we try to argue for it in this section. Our hope is that this discussion will help the reader to obtain a deeper understanding on the problem, as it resembles our own research journey.
 
 \textbf{Claim:} \textit{Assume $t$ adversarial out of $n$ total parties and $n_h = g(n-t)$ the number of upgraded honest parties.
-There is no construction for NIPoPoW suffix proofs under velvet fork conditions,
+There is no construction for superblock NIPoPoW suffix proofs under velvet fork conditions
 which is both succinct and secure for every adversary, such that
 $\dfrac{t}{n_h} < (1 - \delta)$.}
 
 \textit{Discussion.} As explained earlier, since the adversary may use the interlink structure so as to include pointers to arbitrary blocks,  she may construct her own
 chain history utilizing the non-smooth pointers included in the thorny blocks she
-generates. Such an example is given in Figure \ref{fig:generic_attack}.
-
-Let us consider a protocol construction $p$ which allows for NIPoPoW suffix proofs
-under velvet fork and is secure for 1/2-bounded adversary. Our main
-goals are $p$ to be both secure and succinct. We can even loose our non-interactivity
+generates. Such an example is given in Figure \ref{fig:generic_attack}. Let us consider a protocol construction $p$ which allows for  superblock NIPoPoW velvet suffix proofs and is secure for 1/2-bounded adversary. Our main
+goals are $p$ to be both secure and succinct. We are even willing to loose our non-interactivity
 limitations to make it possible to challenge the submitted proofs, so that an honest
-player can contest against an inconsistent proof. However, note that the same power
+player can contest against an inconsistent proof, if this would be of needed. However, note that in such a case the same power
 to challenge any submitted proof is also provided to the adversary.
 
-Now assume an adversary of $ \dfrac{1-\delta}{2} < \dfrac{t}{n_h} < 1-\delta $. Then, as explained
-in the Backbone and Selfish Mining papers \cite{backbone}\cite{selfish} it
-is possible for the adversary to maintain the longest valid chain being of less
-than $50\%$ chain quality in favor of adversarially generated blocks. In particular,
-consider that the adversary mines selfish, meaning that for every block she mines
-she does not immediately announce it to the network. Instead, she waits until an
-honest block is announced. In the worst case, consider an adversary that has a
+Now assume an adversary of $ \dfrac{1-\delta}{2} < \dfrac{t}{n_h} < 1-\delta $, meaning that the adversarial parties count more than 1/3 but less than the 1/2 of the upgraded honest parties. Then, by following a selfish mining strategy~\cite{backbone}\cite{selfish} it
+is possible for the adversary to maintain more than $50\%$ of the blocks in the longest valid chain. In particular,
+consider that the adversary mines selfish, meaning that for every block that she mines,
+she does not immediately announce it to the network. Instead, she waits until an honestly generated block is announced and at this time she announces her block too. In the worst case, consider that the adversary has a
 network advantage regarding the relay of her blocks. Thus in case of two competing
 blocks in a round the adversarial one will be appended to the chain, while the
-honest block is discarded in practice as a temporary fork. Because of this attack
-the total block ratio in the chain will result as illustrated in Figure
-\ref{fig:selfish_mining_pie}. For (1/3) adversary half of the blocks in the
-chain are expected to be adversarial, while for (1/2) adversary no honest block
-is included in the chain in the worst case scenario.
+honest block is discarded as a temporary fork. Because of this attack
+the block distribution in the chain between adversarial and honest parties can be as illustrated in Figure
+\ref{fig:selfish_mining_pie} in the worst case scenario. For (1/3) adversary half of the blocks in the
+chain are expected to be adversarial, while for (1/2) adversary no honest blocks
+are included in the chain.
 
 \begin{figure}[h!]
 	\begin{center}
@@ -208,96 +202,34 @@ is included in the chain in the worst case scenario.
 	\label{fig:selfish_mining_pie}
 \end{figure}
 
-Observe that the property violated in the chainsewing attack is the $prevId$ relation
-between sequential blocks. However since the main purpose of our work is to achieve
-succinctness, the \textit{prevId} relations could not be utilized in a viable manner
-in order to contest adversarial proofs, as it would require proofs of linear length
+Now observe that in the chainsewing attack the $prevId$ block property between two sequential blocks is violated while constructing an attacking proof. Therefore, an initial naive approach would be to resort to the $prevId$ pointers which have been validated with the proof-of-work, in order to contest and unveil an invalid proof chain. However, since the main purpose of our work is to achieve
+succinctness, the $prevId$ relations could not be utilized in a viable manner
+in order to contest adversarial proofs, as it would require data of linear length
 to that of the whole chain.  We thus conclude that we should mostly rely on the
 information given by the interlink pointers as far as the validity of any proof
-is concerned so as to keep our protocol construction efficient.
+is concerned, or else we have no chance in keeping our protocol construction efficient.
 
-Now assume, to honest parties' favor, that it is both possible and efficient to inspect
-the whole chain history that each block is commited to via its interlink pointers. Keep
-in mind that an adversary can keep a consistent chain considering the interlink pointers
-by using only her own mined blocks and, at the same time, these blocks may overwhelm
-the honestly generated ones. In our protocol $p$ it should be decided  under what policy
-an honest party generates blocks and constructs suffix proofs. A decision should be made
-for block generation:
+Now assume, to honest parties' favor, that given a block $b$ we have the means to efficiently inspect
+all the blocks in the intelrinked chain where $b$ belongs. This could be implemented by adding an appropriate Merkle-Mountain-Range root in each block header. Now one should consider the following choices regarding the next step in the protocol construction: 
 \begin{enumerate}
-	\item interlink data are neutral as for adversarially and honestly generated blocks
-	\item interlink data point out inconsistent blocks, meaning blocks with incorrect interlinks
-	\item interlink data exclude inconsistent blocks from being part of the	valid chain formed by the super-pointers
+	\item either require proofs that additionally contain consistency sub-proofs as for the interlinked chain history of each block included or
+	\item permit inconsistencies in the interlinked chain history of the included blocks in order to avoid excluding adversarially generated blocks from honest proofs, with the hope that an honest prover will be able to unveil a submitted proof that utilizes invalid interlink pointers by using the history commited in the MMRs. 
 \end{enumerate}
-Now let's examine the above choices. \\
-In the first case the arguments that an honest player could provide against an
-inconsistent proof could only be based on the 0-level pointers. Such a contesting
-proof should at least provide the 0-level subchain of length equal to the
-following: starting from a block included in the suffix proof and is not a
-block of the chain until the closest block included in the suffix proof and is
-a valid block of the chain. This means that contesting proofs are expected to
-be of length $2^\mu$ where $\mu = log(|C|)$, and subsequently are of complexity
-$\mathcal{O}(|C|)$ which ruins the succinctness of our protocol.
+Observe that neither of these approaches can provide a secure protocol. 
 
-In the second case an honest party could utilize this extra information provided
-in the interlink to prove an inconsistent proof wrong. However, keep in mind that
-the adversary could make such claims too. So, a claim of inconsistency for a
-specific block included should be followed by a proof of its inconsistency.
-Whatever the information considering the incorrect blocks in the interlink may
-be, the adversary could make some of it in her own generated blocks in order to
-contest an honest proof too. So we fall to the previous case turning to
-\textit{prevId} pointers in order to prove the true chain history, where the
-contesting proofs are unacceptable efficiency-wise.
+In the first case, the requirement for consistency sub-proofs essentially compels the adversary to comply to the honest chain history, if she means to utilize honeslty generated blocks in her proof. However, observe that the adversary can even maintain a consistent interlink chain 
+by using only her own mined blocks and these blocks may overwhelm
+the honestly generated ones, as shown in Figure~\ref{fig:selfish_mining_pie}. At the same time, the honest provers are obliged to exclude the inconsistent adversarially generated blocks from their proofs, thus being doomed to utilize only a minority of blocks resulting to non-winning proofs with non-negligible probability. 
 
-In the third case we demand from the honest players to validate the interlink
-structures of the blocks in the chain and exclude the inconsistent ones from
-the chain history that the interlinks provide. In this way we could possibly
-provide contesting proofs using information only from the interlinks thus
-keeping our proofs succinct. This solution would result to two different
-chain histories considering the interlink pointers: the one of the honest
-parties that includes only blocks with valid interlinks, and the one of the
-adversary which may form her own history of invalid blocks probably belonging
-to many different underlying chains but could not include honest blocks if at
-least one invalid block participates in the proof. This solution seems to bring
-us to a notable trade-off point. On the one hand we manage to uncouple from the
-0-level blocks. On the other hand, we compromise that honest players cannot use
-valid adversarially generated blocks in their proof, while the adversary cannot
-include honestly generated blocks in her proofs if inconsistent blocks are also
-included. This solution could not work properly for (1/2)-bounded adversary
-though. The reason lies in the bad chain quality as pointed out earlier and shown in
-Figure \ref{fig:selfish_mining_pie}. If the adversary  could create his own chain
-history including inconsistent blocks from two different chains, then she could
-easily construct a suffix proof that wins over an honest one because the majority
-of the blocks included in the chain could be adversarial with high probability.
+In the second case, in an attempt to overcome the shortcomings of the previous approach, no chain consistency proofs are required. The idea is that an honest prover inspecting the submitted proofs can detect an invalid proof and try to efficiently prove the broken $prevId$ property. Remember that he cannot just send the $prevId$ pointers, as this would destroy the succinctness of our protocol as discussed before. He should use the interlink chain history commintments instead. Consider that after inspecting an invalid proof the honest prover observes a block $b$ pointing to a superblock $b'$ of level $\mu_{b'}$, but $b,b'$ are not connected with $prevId$ pointers. This means that $b'$ belongs to a fork chain. In consequence, any honest block generated after $b$ contains a commitment for the correct $\mu_{b'}$ superblock that should be pointed by the adversarial block $b$. Now consider that the honest prover can submit a merkle proof denoting the inconsistency in order to make the adversarial proof fail. However, this power of calling into question the consistency of a block in the proof is also a power for the adversary, who can question the consistency of honest blocks in an honest proof based on any adversarial block included in the proof. The problem is, that the verifier has no way to distinguish the chain history commitments between honest and adversarial parties. Consequently, this approach would fail to construct a secure protocol too.
 
-We conclude that such a protocol could not exist for (1/2)-bounded adversary.
+We conclude that such a protocol $p$, both succinct and secure, could not exist for (1/2)-bounded adversary.
 
+%\subsubsection{Solution for (1/3)-bounded adversary}
+%The vulnerability that makes this attack possible is the acceptance of thorny blocks. Since we operate under a velvet fork we cannot eliminate such blocks,  but we need, however, to restrict the adversary from being able to claim portion of another chain as part of her own fork chain. The key observation on the Chainsewing Attack is that the adversary needs at least one adversarially generated block in an honest player's chain, in order to create a path of superpointers connecting blocks of two, or more, diverse chains. The final proof chain will make use of this crossing point and may contain both honest or adversarial blocks. 
+%% intuitive reference to 1/4 adversary 
+%In case the proof contains only adversarial blocks, the attack cannot harm security for an adversary of less than $1/3$ of the total hashing power. This fact will be clear in the security proof section. In short, as argued in the previous section an adversary of $1/3$ of the total hashing power may contribute at most $ 50\% $ of the total blocks in the longest valid chain. An attacker of more than $1/3$ hashing power could dominate as of total hashing power expressed in mined blocks in the chain, while the inverse would be true for an attacker of less hashing power than this threshold.
 
-\subsubsection{Solution for (1/3)-bounded adversary}
-The vulnerability that makes this attack possible is the acceptance of thorny
-blocks. Since we operate under a velvet fork we cannot eliminate such blocks, 
-but we need, however, to restrict the adversary from being able to claim portion
-of another chain as part of her own fork chain.The key observation on the
-Chainsewing Attack is that the adversary needs at least one adversarially generated
-block in an honest player's chain (block $a'$), in order to create a path of
-superpointers connecting blocks of two, or more, diverse chains. The final proof
-chain will make use of this crossing point and may contain both honest or
-adversarial blocks.
-%% intuitive reference to 1/4 adversary
-In case the proof contains only adversarial blocks, the attack cannot harm
-security for an adversary of less than $1/3$ of the total hashing power. This
-fact will be clear in the security proof section. In short, as argued in the
-previous section an adversary of $1/3$ of the total hashing power may contribute
-at most $ 50\% $ of the total blocks in the longest valid chain. An attacker of
-more than $1/3$ hashing power could dominate as of total hashing power expressed
-in mined blocks in the chain, while the inverse would be true for an attacker of
-less hashing power than this threshold.
+%So in order to be successful, the attacker needs to also ``sew`` honestly generated blocks. Thus there will be at least one honest block in the superblock path which connects $a$ and $a'$, pointing to an adversarial thorny block.
 
-So in order to be successful, the attacker needs to also ``sew`` honestly generated
-blocks. Thus there will be at least one honest block in the superblock path which
-connects $a$ and $a'$, pointing to an adversarial thorny block.
-
-The idea is to ban all blocks generated by honest players from participating in
-this superblock path. In this way the adversary could not misuse hashing power of
-the honest players and the sewed blocks could only be adversarially generated,
-thus the attack could never succeed for an adversary of less than $1/3$ of the
-total hashing power.
+%The idea is to ban all blocks generated by honest players from participating in this superblock path. In this way the adversary could not misuse hashing power of the honest players and the sewed blocks could only be adversarially generated, thus the attack could never succeed for an adversary of less than $1/3$ of the total hashing power.
