@@ -17,11 +17,18 @@
 \newfontfamily\greekfontsf{Linux Libertine O}
 \usepackage{alphabeta}
 
+\setlength{\parindent}{0em}
+\setlength{\parskip}{0.5em}
+
 \usepackage{fancyhdr}
 \pagestyle{fancy}
 \fancyhf{}
 \lhead{\small A Study on Superlight Clients under Velvet Fork}
-\lfoot{\small Andrianna Polydouri \hspace{0.9cm} p. \thepage}
+\lfoot{\small A. Polydouri \hspace{0.9cm} p. \thepage}
+
+\usepackage{titlesec, blindtext}
+\newcommand{\hsp}{\hspace{20pt}}
+\titleformat{\chapter}[hang]{\Huge\bfseries}{\thechapter{.}\hsp}{0pt}{\Huge\bfseries}
 
 \usepackage{import}
 
