@@ -6,27 +6,25 @@
 
 \import{./}{title.tex}
 
+\pagestyle{empty}
 \clearpage\maketitle
-\thispagestyle{empty}
 \pagebreak
 
-\thispagestyle{empty}
 \input{greek_title.tex}
 \pagebreak
-\thispagestyle{empty}
 \input{subtitle.tex}
 \pagebreak
-\thispagestyle{empty}
 \input{greek_subtitle.tex}
 
 \import{chapters/abstract}{abstract.tex}
 \import{chapters/acknowledgements}{acknowledgements.tex}
 
-\tableofcontents
+\emptypage\tableofcontents
 
 \addcontentsline{toc}{chapter}{\listfigurename}
-\listoffigures
+\emptypage\listoffigures
 
+\pagestyle{plain}
 \input{body}
 
 \cleardoublepage

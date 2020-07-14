@@ -47,3 +47,15 @@
 \newtheorem{corollary}{Corollary} 
 
 \input{macros}
+
+\makeatletter
+\newcommand{\emptypage}[1]{%
+  \cleardoublepage
+  \begingroup
+  \let\ps@plain\ps@empty
+  \pagestyle{empty}
+  #1
+  \cleardoublepage
+  \endgroup
+}
+\makeatletter
