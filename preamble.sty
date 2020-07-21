@@ -3,15 +3,9 @@
 \usepackage[a4paper, total={6.5in, 9in}]{geometry}
 \usepackage[colorlinks=true,citecolor=black,linkcolor=black]{hyperref}
 \usepackage[utf8]{inputenc}
-%\usepackage[greek,english]{babel}
-%
-%\usepackage[LGR,T1]{fontenc}
-%\usepackage{uarial}
-%\renewcommand{\familydefault}{\sfdefault}
 
 \usepackage{xltxtra}
 \usepackage{polyglossia}
-%\setdefaultlanguage{greek}
 \setmainfont{Arial} % put your font of choice right here
 \newfontfamily\greekfont{Linux Libertine O}
 \newfontfamily\greekfontsf{Linux Libertine O}
@@ -26,13 +20,20 @@
 \renewcommand{\cftsecfont}{\bfseries \footnotesize}
 \renewcommand{\cftsubsecfont}{\footnotesize}
 
-\renewcommand\cfttoctitlefont{\hfill\Large\bfseries}
+\renewcommand\cfttoctitlefont{\hfill\large\bfseries}
 \renewcommand\cftaftertoctitle{\hfill\mbox{}}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+%%%%%%% LoF formatting %%%%%%%
+\renewcommand{\cftloftitlefont}{\hspace*{\fill}\large\bfseries}
+\renewcommand{\cftafterloftitle}{\hspace*{\fill}}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%%%% paragraph formatting %%%%
 \setlength{\parindent}{0em}
 \setlength{\parskip}{0.5em}
 
+%%%% header and footer %%%%
 \usepackage{fancyhdr}
 \pagestyle{fancy}
 \fancyhf{}
@@ -41,19 +42,24 @@
 \lfoot{\scriptsize A. Polydouri} 
 \rfoot{\scriptsize \thepage}
 
+%%% chapter, section, subsection formatting %%%%
 \usepackage{titlesec, blindtext}
 \newcommand{\hsp}{\hspace{15pt}}
 \titleformat{\chapter}[hang]{\centering\large\bfseries}{\thechapter{.}\hsp}{0pt}{\large\bfseries\MakeUppercase}
 \titleformat*{\section}{\normalsize\bfseries}
 \titleformat*{\subsection}{\normalsize\bfseries}
 
+%% don't change footer format on the first page of every chapter!
 \fancypagestyle{plain}{%
 \fancyfoot[LE, RO]{\scriptsize \thepage}
 \fancyfoot[LO, RE]{\scriptsize A. Polydouri}}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+%%%% figure and table caption formatting %%%%
 \usepackage{caption}
 \captionsetup[figure]{font=footnotesize,labelfont=bf,textfont={bf,bf}, justification=centering}
 \captionsetup[table]{font=footnotesize,labelfont=bf,textfont={bf,bf}, justification=centering}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \usepackage{import}
 
